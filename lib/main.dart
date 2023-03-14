@@ -1,7 +1,10 @@
 import 'package:elite/screens/main_tabs_page.dart';
+import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -27,7 +30,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MainTabsPage(),
+      routes: {
+        NotificationPage.routeName: (ctx) => NotificationPage(),
+      },
     );
   }
 }
-

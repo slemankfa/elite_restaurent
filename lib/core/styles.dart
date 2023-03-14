@@ -8,6 +8,7 @@ class Styles {
   static const resturentNameColor = Color(0xff16223C);
   static const timeTextColor = Color(0xff243763);
   static const midGrayColor = Color(0xff929292);
+  static const resturantStatusOpenColor = Color(0xff228C22);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);
