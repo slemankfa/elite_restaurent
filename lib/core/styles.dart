@@ -9,7 +9,17 @@ class Styles {
   static const timeTextColor = Color(0xff243763);
   static const midGrayColor = Color(0xff929292);
   static const resturantStatusOpenColor = Color(0xff228C22);
+  static const listTileBorderColr = Color(0xffF0E8F8);
+  static const grayColor = Color(0xff4A4A4A);
+  static const progressColor = Color(0xffFFB400);
+  static const closeBottomSheetBackgroundColor = Color(0xffF2F2F7);
+  static const closeBottomIconColor = Color(0xff3C3C43);
+  static const RatingRivewBoxBorderColor = Color(0xffF3F3F3);
+  static const unselectedStarColor = Color(0xffC4C4C4);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);
+
+  static TextStyle appBarTextStyle = GoogleFonts.openSans(
+      color: grayColor, fontSize: 18, fontWeight: FontWeight.bold);
 }

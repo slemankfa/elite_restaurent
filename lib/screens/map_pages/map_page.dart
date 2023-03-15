@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
-import 'package:elite/screens/map_pages/resturant_details_page.dart';
+import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
