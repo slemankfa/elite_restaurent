@@ -9,6 +9,7 @@ class CustomOutlinedButton extends StatelessWidget {
     this.borderSide,
     required this.onPressedButton,
     required this.textStyle,
+    this.rectangleBorder,
   }) : super(key: key);
 
   final String label;
@@ -17,6 +18,7 @@ class CustomOutlinedButton extends StatelessWidget {
   final BorderSide? borderSide;
   final Function onPressedButton;
   final TextStyle textStyle;
+  final RoundedRectangleBorder? rectangleBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,9 @@ class CustomOutlinedButton extends StatelessWidget {
       padding: EdgeInsets.all(0),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-            side: borderSide, backgroundColor: backGroundColor),
+            shape: rectangleBorder,
+            side: borderSide,
+            backgroundColor: backGroundColor),
         onPressed: () {
           onPressedButton();
         },

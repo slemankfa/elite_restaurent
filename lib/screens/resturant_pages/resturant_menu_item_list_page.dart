@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../core/styles.dart';
+import '../dish_pages.dart/main_dish_details.dart';
 
 class ResturantMenuItemListPage extends StatefulWidget {
   const ResturantMenuItemListPage({super.key, required this.itemName});
@@ -32,91 +33,100 @@ class _ResturantMenuItemListPageState extends State<ResturantMenuItemListPage> {
         margin: EdgeInsets.all(16),
         child: ListView(
           children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Styles.listTileBorderColr,
-                  )),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MainDishDetailsPage()),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                      height: 64,
-                      width: 64,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => const FlutterLogo(
-                        size: 64,
+                    border: Border.all(
+                      color: Styles.listTileBorderColr,
+                    )),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                        height: 64,
+                        width: 64,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const FlutterLogo(
+                          size: 64,
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Margherita Pizza",
-                    style: Styles.mainTextStyle.copyWith(
-                      color: Styles.userNameColor,
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Container(
-                    height: 20,
-                    child: Text(
-                      "This margherita pizza recipe tastes like an artisan pie from Italy! It's the perfect meld of zingy tomato sauce, gooey cheese and chewy crust.",
+                    Text(
+                      "Margherita Pizza",
                       style: Styles.mainTextStyle.copyWith(
-                        color: Styles.grayColor,
-                        fontSize: 16,
+                        color: Styles.userNameColor,
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "4.9",
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Container(
+                      height: 20,
+                      child: Text(
+                        "This margherita pizza recipe tastes like an artisan pie from Italy! It's the perfect meld of zingy tomato sauce, gooey cheese and chewy crust.",
                         style: Styles.mainTextStyle.copyWith(
-                            color: Styles.mainColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                          color: Styles.grayColor,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(
-                        width: 6,
-                      ),
-                      SvgPicture.asset("assets/icons/star.svg"),
-                      const SizedBox(
-                        width: 6,
-                      ),
-                      Flexible(
-                        child: Text(
-                          "(55 Reviews)",
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "4.9",
                           style: Styles.mainTextStyle.copyWith(
-                            color: Styles.midGrayColor,
-                            fontSize: 16,
+                              color: Styles.mainColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        SvgPicture.asset("assets/icons/star.svg"),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        Flexible(
+                          child: Text(
+                            "(55 Reviews)",
+                            style: Styles.mainTextStyle.copyWith(
+                              color: Styles.midGrayColor,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                  ],
+                ),
               ),
             )
           ],

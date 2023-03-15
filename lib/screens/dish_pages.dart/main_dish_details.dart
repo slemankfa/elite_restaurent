@@ -7,6 +7,7 @@ import 'package:elite/screens/dish_pages.dart/dish_prices_page.dart';
 import 'package:elite/screens/dish_pages.dart/dish_ratings_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/custom_outline_button.dart';
 import 'widgets/dish_image_header.dart';
 
 class MainDishDetailsPage extends StatefulWidget {
@@ -43,21 +44,23 @@ class _MainDishDetailsPageState extends State<MainDishDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    return NestedScrollView(
-      controller: _scrollController,
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget>[
-          _buildSliverAppBar(innerBoxIsScrolled, tabs, resturantImages)
-        ];
-      },
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          DishDesciptionPage(),
-          DishNatruatonsPage(),
-          DishPricesPage(),
-          DishRatingsPage()
-        ],
+    return Scaffold(
+      body: NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            _buildSliverAppBar(innerBoxIsScrolled, tabs, resturantImages)
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            DishDesciptionPage(),
+            DishNatruatonsPage(),
+            DishPricesPage(),
+            DishRatingsPage()
+          ],
+        ),
       ),
     );
   }
