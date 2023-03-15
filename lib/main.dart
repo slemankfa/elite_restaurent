@@ -1,3 +1,4 @@
+import 'package:elite/screens/dish_pages.dart/main_dish_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MainTabsPage(),
+      home: MainDishDetailsPage(),
+      //  const MainTabsPage(),
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),
       },
