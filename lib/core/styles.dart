@@ -16,6 +16,7 @@ class Styles {
   static const closeBottomIconColor = Color(0xff3C3C43);
   static const RatingRivewBoxBorderColor = Color(0xffF3F3F3);
   static const unselectedStarColor = Color(0xffC4C4C4);
+  static const commentDateTextColor = Color(0xff8D8D8D);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/screens/resturant_pages/add_resturant_review_page.dart';
+import 'package:elite/screens/resturant_pages/resturant_menu_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
 import 'package:elite/screens/resturant_pages/widgets/resturant_image_item.dart';
 import 'package:flutter/material.dart';
@@ -296,7 +297,13 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       ),
                       CustomOutlinedButton(
                           label: "menu",
-                          onPressedButton: () {},
+                          onPressedButton: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResturanMenuPage()),
+                            );
+                          },
                           icon: SvgPicture.asset("assets/icons/menu.svg"),
                           borderSide: BorderSide(color: Styles.mainColor),
                           textStyle: Styles.mainTextStyle.copyWith(
