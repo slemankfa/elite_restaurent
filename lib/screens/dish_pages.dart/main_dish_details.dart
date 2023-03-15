@@ -39,8 +39,21 @@ class _MainDishDetailsPageState extends State<MainDishDetailsPage>
   void initState() {
     _scrollController = ScrollController();
     _tabController = TabController(vsync: this, length: 4);
+    _tabController.addListener(() {
+      print("it changes");
+      if (_tabController.index == 2 || _tabController.index == 3) {
+        if (_scrollController.positions.isEmpty) return;
+        _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+    });
     super.initState();
   }
+
+  ScrollController mainMealPriceScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +70,9 @@ class _MainDishDetailsPageState extends State<MainDishDetailsPage>
           children: <Widget>[
             DishDesciptionPage(),
             DishNatruatonsPage(),
-            DishPricesPage(),
+            DishPricesPage(
+              scrollController: mainMealPriceScrollController,
+            ),
             DishRatingsPage()
           ],
         ),
@@ -103,7 +118,19 @@ class _MainDishDetailsPageState extends State<MainDishDetailsPage>
       forceElevated: innerBoxIsScrolled,
       bottom: TabBar(
         controller: _tabController,
+
         isScrollable: true,
+        onTap: (index) {
+          if (index == 2 || index == 3) {
+            print("login here");
+            if (_scrollController.positions.isEmpty) return;
+            _scrollController.animateTo(
+              _scrollController.position.minScrollExtent,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 300),
+            );
+          }
+        },
         indicatorColor: Styles.mainColor,
         labelColor: Styles.mainColor,
         unselectedLabelColor: Styles.grayColor,

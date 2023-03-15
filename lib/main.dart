@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MainTabsPage(),
+      home: MainDishDetailsPage(),
+      // const MainTabsPage(),
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),
       },

@@ -6,10 +6,12 @@ import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
 
 class DishPricesPage extends StatefulWidget {
-  const DishPricesPage({super.key});
+   DishPricesPage({super.key, required this.scrollController});
 
   @override
   State<DishPricesPage> createState() => _DishPricesPageState();
+
+  final ScrollController scrollController ;
 }
 
 class _DishPricesPageState extends State<DishPricesPage>
@@ -23,7 +25,7 @@ class _DishPricesPageState extends State<DishPricesPage>
             child: Container(
               margin: EdgeInsets.all(16),
               child: SingleChildScrollView(
-                // controller: ,
+                controller: widget.scrollController,
                 child: Column(
                   children: [
                     ListTile(
