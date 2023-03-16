@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
+import 'package:elite/screens/reservation_pages%20/reservation_avalible_tables_page.dart';
 import 'package:elite/screens/reservation_pages%20/reservation_policy_page.dart';
 import 'package:elite/screens/resturant_pages/add_resturant_review_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_menu_page.dart';
@@ -264,6 +265,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       const SizedBox(
                         height: 10,
                       ),
+
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -483,21 +485,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       const SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        // height: 200,
-                        child: SfDateRangePicker(
-                          showNavigationArrow: true,
-                          // backgroundColor: Styles.mainColor,
-                          selectionColor: Styles.mainColor,
-                          view: DateRangePickerView.month,
-                          monthViewSettings: DateRangePickerMonthViewSettings(
-                              showTrailingAndLeadingDates: true),
-                          monthCellStyle: DateRangePickerMonthCellStyle(
-                            
-                              textStyle: Styles.mainTextStyle
-                                  .copyWith(color: Styles.mainColor)),
-                        ),
-                      ),
+
                       CustomOutlinedButton(
                           label: "View reviews",
                           icon: Container(),
@@ -553,6 +541,12 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   void _showResvationOptionBottomSheet() {
     // int resevedPeopleCount = 2;
     List<int> resevedPeopleCountList = [2, 4, 6, 8];
+
+    if (DateTime.now().hour >= 12) {
+      _sliding = 1;
+    } else {
+      _sliding = 0;
+    }
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -668,48 +662,32 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     height: 17,
                   ),
                   Container(
-                      // height: 200,
-                      child: SfDateRangePicker(
-                    showNavigationArrow: true,
-                    view: DateRangePickerView.month,
-                    monthViewSettings: DateRangePickerMonthViewSettings(
-                        showTrailingAndLeadingDates: true),
-                    monthCellStyle: DateRangePickerMonthCellStyle(
-                      blackoutDatesDecoration: BoxDecoration(
-                          color: Colors.red,
-                          border: Border.all(
-                              color: const Color(0xFFF44436), width: 1),
-                          shape: BoxShape.circle),
-                      weekendDatesDecoration: BoxDecoration(
-                          color: const Color(0xFFDFDFDF),
-                          border: Border.all(
-                              color: const Color(0xFFB6B6B6), width: 1),
-                          shape: BoxShape.circle),
-                      specialDatesDecoration: BoxDecoration(
-                          color: Colors.green,
-                          border: Border.all(
-                              color: const Color(0xFF2B732F), width: 1),
-                          shape: BoxShape.circle),
-                      blackoutDateTextStyle: TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.lineThrough),
-                      specialDatesTextStyle:
-                          const TextStyle(color: Colors.white),
-                    ),
-                  )
-                      //  SfDateRangePicker(
-                      //   showNavigationArrow: true,
-                      //   monthCellStyle: DateRangePickerMonthCellStyle(
-                      //       todayTextStyle: Styles.mainTextStyle
-                      //           .copyWith(color: Styles.mainColor)),
-                      //   selectionColor: Styles.mainColor,
-                      //   onSelectionChanged: (date) {
-                      //     print(date.value);
-                      //   },
-                      // ),
+                    // height: 200,
+                    child: SfDateRangePicker(
+                      showNavigationArrow: true,
+                      // backgroundColor: Styles.mainColor,
+                      selectionColor: Styles.mainColor,
+                      view: DateRangePickerView.month,
+                      headerStyle: DateRangePickerHeaderStyle(
+                        textStyle: Styles.mainTextStyle.copyWith(
+                            color: Styles.mainColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600),
                       ),
-                  const SizedBox(
-                    height: 17,
+                      monthViewSettings: DateRangePickerMonthViewSettings(
+                          dayFormat: "E", showTrailingAndLeadingDates: false),
+                      monthCellStyle: DateRangePickerMonthCellStyle(
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(color: Styles.mainColor),
+                          todayCellDecoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Styles.mainColor)),
+                          todayTextStyle: Styles.mainTextStyle
+                              .copyWith(color: Styles.mainColor)),
+                      onSelectionChanged: (selectedDate) {
+                        print(selectedDate.value);
+                      },
+                    ),
                   ),
                   const Divider(),
                   const SizedBox(
@@ -771,28 +749,33 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         width: 6,
                       ),
                       Container(
-                        // padding: EdgeInsets.all(8),
-                        // height: 60,
-                        child: CupertinoSlidingSegmentedControl(
-                            padding: EdgeInsets.all(5),
-                            backgroundColor:
-                                Styles.timeBackGroundColor.withOpacity(0.12),
-                            children: {
-                              0: Text('AM',
-                                  style: Styles.mainTextStyle
-                                      .copyWith(fontSize: 13)),
-                              1: Text('PM',
-                                  style: Styles.mainTextStyle
-                                      .copyWith(fontSize: 13)),
-                            },
-                            groupValue: _sliding,
-                            onValueChanged: (newValue) {
-                              // return ;
-                              setState(() {
-                                _sliding = newValue!;
-                                print(newValue.toString());
-                              });
-                            }),
+                        padding: EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                            color: Styles.timeBackGroundColor.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(9)),
+                        child: Row(
+                          children: [
+                            Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(9),
+                                    color: _sliding == 0 ? Colors.white : null),
+                                child: Text('AM',
+                                    style: Styles.mainTextStyle
+                                        .copyWith(fontSize: 13))),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(9),
+                                    color: _sliding == 1 ? Colors.white : null),
+                                child: Text('PM',
+                                    style: Styles.mainTextStyle
+                                        .copyWith(fontSize: 13)))
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -810,11 +793,11 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         ),
                         icon: Container(),
                         onPressedButton: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => ResturantReviewsPage()),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReservationAvalibleTabelsPage()),
+                          );
                         },
                         backGroundColor: Styles.mainColor,
                         // backGroundColor: Styles.mainColor,
