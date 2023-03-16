@@ -46,6 +46,8 @@ dependencies:
   expandable_page_view: ^1.0.17
   shared_preferences: ^2.0.18
   bot_toast: ^4.0.3
+  syncfusion_flutter_datepicker: "20.3.61"
+  time_picker_spinner_pop_up: ^1.0.4
   # google_maps_flutter: ^2.2.5
 
 dev_dependencies:

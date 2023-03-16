@@ -6,10 +6,13 @@ import 'package:elite/screens/resturant_pages/add_resturant_review_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_menu_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
 import 'package:elite/screens/resturant_pages/widgets/resturant_image_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
@@ -56,7 +59,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     _showResvationOptionBottomSheet();
   }
 
-  int? _peopleCount = 0;
+  int? _selectedPeopleCountIndex = 0;
+  int _sliding = 0;
+  TimePickerSpinnerController _timePickerSpinnerController =
+      TimePickerSpinnerController();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -290,29 +296,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       const SizedBox(
                         height: 20,
                       ),
-                      Wrap(
-                        spacing: 5.0,
-                        children: List<Widget>.generate(
-                          4,
-                          (int index) {
-                            return ChoiceChip(
-                              label: Text(
-                                '${2 + index }',
-                                style: Styles.mainTextStyle.copyWith(
-                                    color: Styles.grayColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              selected: _peopleCount == index,
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  _peopleCount = selected ? index : null;
-                                });
-                              },
-                            );
-                          },
-                        ).toList(),
-                      ),
+                      //////////////////
+
+                      //////////////////
                       CustomOutlinedButton(
                           label: "menu",
                           onPressedButton: () {
@@ -497,6 +483,21 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       const SizedBox(
                         height: 20,
                       ),
+                      Container(
+                        // height: 200,
+                        child: SfDateRangePicker(
+                          showNavigationArrow: true,
+                          // backgroundColor: Styles.mainColor,
+                          selectionColor: Styles.mainColor,
+                          view: DateRangePickerView.month,
+                          monthViewSettings: DateRangePickerMonthViewSettings(
+                              showTrailingAndLeadingDates: true),
+                          monthCellStyle: DateRangePickerMonthCellStyle(
+                            
+                              textStyle: Styles.mainTextStyle
+                                  .copyWith(color: Styles.mainColor)),
+                        ),
+                      ),
                       CustomOutlinedButton(
                           label: "View reviews",
                           icon: Container(),
@@ -550,6 +551,8 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   }
 
   void _showResvationOptionBottomSheet() {
+    // int resevedPeopleCount = 2;
+    List<int> resevedPeopleCountList = [2, 4, 6, 8];
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -558,65 +561,273 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
         borderRadius: BorderRadius.circular(13.0),
       ),
       builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.8,
-          color: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(13.0),
-                    topRight: const Radius.circular(13.0))),
-            child: ListView(
-              children: <Widget>[
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Find Table",
-                        style: Styles.mainTextStyle.copyWith(fontSize: 20),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        // padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Styles.closeBottomSheetBackgroundColor),
-                        child: Icon(
-                          Icons.close,
-                          color: Styles.closeBottomIconColor.withOpacity(0.6),
+        return StatefulBuilder(builder: (BuildContext context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            color: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(13.0),
+                      topRight: const Radius.circular(13.0))),
+              child: ListView(
+                children: <Widget>[
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Find Table",
+                          style: Styles.mainTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          // padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Styles.closeBottomSheetBackgroundColor),
+                          child: Icon(
+                            Icons.close,
+                            color: Styles.closeBottomIconColor.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  Text(
+                    "Party Size",
+                    style: Styles.mainTextStyle.copyWith(
+                        color: Styles.grayColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Wrap(
+                    spacing: 5.0,
+                    children: List<Widget>.generate(
+                      4,
+                      (int index) {
+                        return Container(
+                          // width: 81,
+                          child: ChoiceChip(
+                            backgroundColor: Colors.white,
+                            selectedColor: Colors.white,
+                            // selectedColor: ,
+                            side: BorderSide(
+                                width:
+                                    _selectedPeopleCountIndex == index ? 2 : 1,
+                                color: _selectedPeopleCountIndex == index
+                                    ? Styles.mainColor
+                                    : Styles.midGrayColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            // padding: EdgeInsets.all(8),
+                            label: Container(
+                              width: 50,
+                              child: Text(
+                                '${resevedPeopleCountList[index]}',
+                                style: Styles.mainTextStyle.copyWith(
+                                    color: Styles.grayColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            selected: _selectedPeopleCountIndex == index,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                _selectedPeopleCountIndex =
+                                    selected ? index : null;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  Container(
+                      // height: 200,
+                      child: SfDateRangePicker(
+                    showNavigationArrow: true,
+                    view: DateRangePickerView.month,
+                    monthViewSettings: DateRangePickerMonthViewSettings(
+                        showTrailingAndLeadingDates: true),
+                    monthCellStyle: DateRangePickerMonthCellStyle(
+                      blackoutDatesDecoration: BoxDecoration(
+                          color: Colors.red,
+                          border: Border.all(
+                              color: const Color(0xFFF44436), width: 1),
+                          shape: BoxShape.circle),
+                      weekendDatesDecoration: BoxDecoration(
+                          color: const Color(0xFFDFDFDF),
+                          border: Border.all(
+                              color: const Color(0xFFB6B6B6), width: 1),
+                          shape: BoxShape.circle),
+                      specialDatesDecoration: BoxDecoration(
+                          color: Colors.green,
+                          border: Border.all(
+                              color: const Color(0xFF2B732F), width: 1),
+                          shape: BoxShape.circle),
+                      blackoutDateTextStyle: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.lineThrough),
+                      specialDatesTextStyle:
+                          const TextStyle(color: Colors.white),
                     ),
-                  ],
-                ),
-                Divider(),
-                const SizedBox(
-                  height: 17,
-                ),
-                Text(
-                  "Party Size",
-                  style: Styles.mainTextStyle.copyWith(
-                      color: Styles.grayColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Divider(),
-              ],
+                  )
+                      //  SfDateRangePicker(
+                      //   showNavigationArrow: true,
+                      //   monthCellStyle: DateRangePickerMonthCellStyle(
+                      //       todayTextStyle: Styles.mainTextStyle
+                      //           .copyWith(color: Styles.mainColor)),
+                      //   selectionColor: Styles.mainColor,
+                      //   onSelectionChanged: (date) {
+                      //     print(date.value);
+                      //   },
+                      // ),
+                      ),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Time",
+                          style: Styles.mainTextStyle.copyWith(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      TimePickerSpinnerPopUp(
+                        mode: CupertinoDatePickerMode.time,
+                        controller: _timePickerSpinnerController,
+                        initTime: DateTime.now(),
+                        minTime:
+                            DateTime.now().subtract(const Duration(days: 10)),
+                        maxTime: DateTime.now().add(const Duration(days: 10)),
+                        barrierColor:
+                            Colors.black12, //Barrier Color when pop up show
+                        onChange: (dateTime) {
+                          print(dateTime.hour);
+                          print(dateTime.minute);
+                          if (dateTime.hour >= 12) {
+                            _sliding = 1;
+                          } else {
+                            _sliding = 0;
+                          }
+                          setState(() {});
+                          // Implement your logic with select dateTime
+                        },
+                        // Customize your time widget
+                        timeWidgetBuilder: (dateTime) {
+                          return InkWell(
+                            onTap: () {
+                              _timePickerSpinnerController.showMenu();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Styles.timeBackGroundColor
+                                      .withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(6)),
+                              child: Text(
+                                "${dateTime.hour} : ${dateTime.minute} ",
+                                style:
+                                    Styles.mainTextStyle.copyWith(fontSize: 20),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      Container(
+                        // padding: EdgeInsets.all(8),
+                        // height: 60,
+                        child: CupertinoSlidingSegmentedControl(
+                            padding: EdgeInsets.all(5),
+                            backgroundColor:
+                                Styles.timeBackGroundColor.withOpacity(0.12),
+                            children: {
+                              0: Text('AM',
+                                  style: Styles.mainTextStyle
+                                      .copyWith(fontSize: 13)),
+                              1: Text('PM',
+                                  style: Styles.mainTextStyle
+                                      .copyWith(fontSize: 13)),
+                            },
+                            groupValue: _sliding,
+                            onValueChanged: (newValue) {
+                              // return ;
+                              setState(() {
+                                _sliding = newValue!;
+                                print(newValue.toString());
+                              });
+                            }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  Container(
+                    color: Colors.white,
+                    margin: EdgeInsets.all(8),
+                    child: CustomOutlinedButton(
+                        label: "Find Table",
+                        // borderSide: BorderSide(),
+                        rectangleBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        icon: Container(),
+                        onPressedButton: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => ResturantReviewsPage()),
+                          // );
+                        },
+                        backGroundColor: Styles.mainColor,
+                        // backGroundColor: Styles.mainColor,
+                        textStyle: Styles.mainTextStyle.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
