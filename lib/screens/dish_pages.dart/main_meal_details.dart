@@ -1,23 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:elite/core/styles.dart';
-import 'package:elite/screens/dish_pages.dart/dish_description_page.dart';
-import 'package:elite/screens/dish_pages.dart/dish_nutrations_page.dart';
-import 'package:elite/screens/dish_pages.dart/dish_prices_page.dart';
-import 'package:elite/screens/dish_pages.dart/dish_ratings_page.dart';
+import 'package:elite/screens/dish_pages.dart/meal_description_page.dart';
+import 'package:elite/screens/dish_pages.dart/meal_nutrations_page.dart';
+import 'package:elite/screens/dish_pages.dart/meal_prices_page.dart';
+import 'package:elite/screens/dish_pages.dart/meal_ratings_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
 import 'widgets/dish_image_header.dart';
 
-class MainDishDetailsPage extends StatefulWidget {
-  const MainDishDetailsPage({super.key});
+class MaiMealDetailsPage extends StatefulWidget {
+  const MaiMealDetailsPage({super.key});
 
   @override
-  State<MainDishDetailsPage> createState() => _MainDishDetailsPageState();
+  State<MaiMealDetailsPage> createState() => _MaiMealDetailsPageState();
 }
 
-class _MainDishDetailsPageState extends State<MainDishDetailsPage>
+class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
     with SingleTickerProviderStateMixin {
   final List<String> tabs = <String>[
     'Description',
@@ -69,11 +69,11 @@ class _MainDishDetailsPageState extends State<MainDishDetailsPage>
           controller: _tabController,
           children: <Widget>[
             DishDesciptionPage(),
-            DishNatruatonsPage(),
-            DishPricesPage(
+            MealNatruationsPage(),
+            MealPricesPage(
               scrollController: mainMealPriceScrollController,
             ),
-            DishRatingsPage()
+            MealRatingsPage()
           ],
         ),
       ),

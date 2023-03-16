@@ -16,7 +16,7 @@ class CustomOutlinedButton extends StatelessWidget {
   final Widget icon;
   final Color? backGroundColor;
   final BorderSide? borderSide;
-  final Function onPressedButton;
+  final Function? onPressedButton;
   final TextStyle textStyle;
   final RoundedRectangleBorder? rectangleBorder;
 
@@ -31,9 +31,11 @@ class CustomOutlinedButton extends StatelessWidget {
             shape: rectangleBorder,
             side: borderSide,
             backgroundColor: backGroundColor),
-        onPressed: () {
-          onPressedButton();
-        },
+        onPressed: onPressedButton == null
+            ? null
+            : () {
+                onPressedButton!();
+              },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,

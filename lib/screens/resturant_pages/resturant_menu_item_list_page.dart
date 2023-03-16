@@ -5,7 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../core/styles.dart';
-import '../dish_pages.dart/main_dish_details.dart';
+import '../dish_pages.dart/main_meal_details.dart';
 
 class ResturantMenuItemListPage extends StatefulWidget {
   const ResturantMenuItemListPage({super.key, required this.itemName});
@@ -38,7 +38,7 @@ class _ResturantMenuItemListPageState extends State<ResturantMenuItemListPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MainDishDetailsPage()),
+                      builder: (context) => MaiMealDetailsPage()),
                 );
               },
               child: Container(

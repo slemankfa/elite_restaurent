@@ -7,14 +7,14 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../core/styles.dart';
 
-class DishReviewsPage extends StatefulWidget {
-  const DishReviewsPage({super.key});
+class MealReviewsPage extends StatefulWidget {
+  const MealReviewsPage({super.key});
 
   @override
-  State<DishReviewsPage> createState() => _DishReviewsPageState();
+  State<MealReviewsPage> createState() => _MealReviewsPageState();
 }
 
-class _DishReviewsPageState extends State<DishReviewsPage> {
+class _MealReviewsPageState extends State<MealReviewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -44,6 +44,8 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   carousel_slider: ^4.2.1
   expandable_page_view: ^1.0.17
+  shared_preferences: ^2.0.18
+  bot_toast: ^4.0.3
   # google_maps_flutter: ^2.2.5
 
 dev_dependencies:

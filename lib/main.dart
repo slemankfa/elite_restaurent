@@ -1,4 +1,5 @@
-import 'package:elite/screens/dish_pages.dart/main_dish_details.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
@@ -30,7 +32,9 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MainDishDetailsPage(),
+      home: MainTabsPage(),
+      builder: BotToastInit(), //1. call BotToastInit
+      navigatorObservers: [BotToastNavigatorObserver()],
       // const MainTabsPage(),
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),

@@ -1,5 +1,5 @@
 import 'package:elite/screens/dish_pages.dart/add_meal_review_page.dart';
-import 'package:elite/screens/dish_pages.dart/dish_reviews_page.dart';
+import 'package:elite/screens/dish_pages.dart/meal_reviews_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -8,14 +8,14 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
 
-class DishRatingsPage extends StatefulWidget {
-  const DishRatingsPage({super.key});
+class MealRatingsPage extends StatefulWidget {
+  const MealRatingsPage({super.key});
 
   @override
-  State<DishRatingsPage> createState() => _DishRatingsPageState();
+  State<MealRatingsPage> createState() => _MealRatingsPageState();
 }
 
-class _DishRatingsPageState extends State<DishRatingsPage>
+class _MealRatingsPageState extends State<MealRatingsPage>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
@@ -126,7 +126,7 @@ class _DishRatingsPageState extends State<DishRatingsPage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DishReviewsPage()),
+                          builder: (context) => MealReviewsPage()),
                     );
                   },
                   borderSide: BorderSide(

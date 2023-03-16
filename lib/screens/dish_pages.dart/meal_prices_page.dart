@@ -5,16 +5,16 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
 
-class DishPricesPage extends StatefulWidget {
-   DishPricesPage({super.key, required this.scrollController});
+class MealPricesPage extends StatefulWidget {
+   MealPricesPage({super.key, required this.scrollController});
 
   @override
-  State<DishPricesPage> createState() => _DishPricesPageState();
+  State<MealPricesPage> createState() => _MealPricesPageState();
 
   final ScrollController scrollController ;
 }
 
-class _DishPricesPageState extends State<DishPricesPage>
+class _MealPricesPageState extends State<MealPricesPage>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {

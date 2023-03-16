@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class DishNatruatonsPage extends StatefulWidget {
-  const DishNatruatonsPage({super.key});
+class MealNatruationsPage extends StatefulWidget {
+  const MealNatruationsPage({super.key});
 
   @override
-  State<DishNatruatonsPage> createState() => _DishNatruatonsPageState();
+  State<MealNatruationsPage> createState() => _MealNatruationsPageState();
 }
 
-class _DishNatruatonsPageState extends State<DishNatruatonsPage> with AutomaticKeepAliveClientMixin{
+class _MealNatruationsPageState extends State<MealNatruationsPage> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(

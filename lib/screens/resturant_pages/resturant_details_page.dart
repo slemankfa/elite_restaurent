@@ -1,4 +1,7 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:elite/core/helper_methods.dart';
+import 'package:elite/screens/reservation_pages%20/reservation_policy_page.dart';
 import 'package:elite/screens/resturant_pages/add_resturant_review_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_menu_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
@@ -23,12 +26,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   final scrollDirection = Axis.vertical;
   double expandedHeight = 210;
 
-  late ScrollController controller;
-
-  bool isExpaned = true;
-  bool get _isAppBarExpanded {
-    return controller.hasClients && controller.offset > (160 - kToolbarHeight);
-  }
+  HelperMethods _helperMethods = HelperMethods();
 
   @override
   void initState() {
@@ -36,32 +34,29 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
 
     super.initState();
 
-    controller = ScrollController(
-        // viewportBoundaryGetter: () =>
-        //     Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-        // axis: scrollDirection,
-        )
-      ..addListener(() {
-        _isAppBarExpanded
-            ? isExpaned != false
-                ? setState(
-                    () {
-                      isExpaned = false;
-                      print('setState is called');
-                    },
-                  )
-                : {}
-            : isExpaned != true
-                ? setState(() {
-                    print('setState is called');
-                    isExpaned = true;
-                  })
-                : {};
-      });
-
     // controller.addListener();
   }
 
+  _reserveTable() async {
+    final bool status = await _helperMethods.checkIsAcceptReservationPolicy();
+    if (!status) {
+      final selectedCity = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          // fullscreenDialog: true,
+          builder: (BuildContext context) => const ReservationPolicyPage(),
+        ),
+      );
+      if (selectedCity == null) {
+        return;
+      }
+      // BotToast.showText(text: "accepted");
+      _showResvationOptionBottomSheet();
+    }
+    // BotToast.showText(text: "accepted");
+    _showResvationOptionBottomSheet();
+  }
+
+  int? _peopleCount = 0;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -149,7 +144,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         right: 16,
                         child: SafeArea(
                           child: InkWell(
-                            onTap: _showBottomSheet,
+                            onTap: _showWorksHourBottomSheet,
                             child: Container(
                               width: 40,
                               height: 40,
@@ -295,6 +290,29 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       const SizedBox(
                         height: 20,
                       ),
+                      Wrap(
+                        spacing: 5.0,
+                        children: List<Widget>.generate(
+                          4,
+                          (int index) {
+                            return ChoiceChip(
+                              label: Text(
+                                '${2 + index }',
+                                style: Styles.mainTextStyle.copyWith(
+                                    color: Styles.grayColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              selected: _peopleCount == index,
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  _peopleCount = selected ? index : null;
+                                });
+                              },
+                            );
+                          },
+                        ).toList(),
+                      ),
                       CustomOutlinedButton(
                           label: "menu",
                           onPressedButton: () {
@@ -315,7 +333,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       ),
                       CustomOutlinedButton(
                           label: "Reserve Table",
-                          onPressedButton: () {},
+                          onPressedButton: _reserveTable,
                           icon: SvgPicture.asset(
                             "assets/icons/profile.svg",
                             color: Colors.white,
@@ -531,9 +549,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     );
   }
 
-  void _showBottomSheet() {
+  void _showResvationOptionBottomSheet() {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(13.0),
@@ -541,6 +560,78 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
       builder: (BuildContext context) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.8,
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(13.0),
+                    topRight: const Radius.circular(13.0))),
+            child: ListView(
+              children: <Widget>[
+                Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Find Table",
+                        style: Styles.mainTextStyle.copyWith(fontSize: 20),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        // padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Styles.closeBottomSheetBackgroundColor),
+                        child: Icon(
+                          Icons.close,
+                          color: Styles.closeBottomIconColor.withOpacity(0.6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(),
+                const SizedBox(
+                  height: 17,
+                ),
+                Text(
+                  "Party Size",
+                  style: Styles.mainTextStyle.copyWith(
+                      color: Styles.grayColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Divider(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showWorksHourBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(13.0),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
           color: Colors.transparent,
           child: Container(
             padding: EdgeInsets.all(16),
@@ -616,119 +707,6 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
           ),
         );
       },
-    );
-  }
-
-  _buildSliverAppbar() {
-    return SliverAppBar(
-      backgroundColor: Colors.white,
-      expandedHeight: expandedHeight,
-      floating: false,
-      pinned: true,
-      centerTitle: true,
-      iconTheme: IconThemeData(color: isExpaned ? Colors.white : Colors.black),
-      title: !_isAppBarExpanded
-          ? null
-          : Text(
-              "Coast Pizzeria",
-              style: Styles.mainTextStyle
-                  .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-      actions: [
-        Transform(
-          transform: Matrix4.translationValues(-16, 0.0, 0.0),
-          child: InkWell(
-            onTap: () {
-              // Share.share('check out my website https://example.com',
-              //     subject: 'Look what I made!');
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: SvgPicture.asset(
-                "assets/icons/calendar.svg",
-                width: 20,
-                height: 20,
-              ),
-            ),
-          ),
-        )
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-          collapseMode: CollapseMode.parallax,
-          background: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  height: expandedHeight - 20,
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-                    // height: 64,
-                    // width: 64,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const FlutterLogo(
-                      size: 64,
-                    ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                ),
-              ),
-              // Positioned(child: child)
-              Positioned(
-                bottom: 10,
-                child: Align(
-                  // bottom: collapsedHeight + 30,
-                  // left: MediaQuery.of(context).size.width / 2 ,
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: ShapeDecoration(
-                        color: Styles.mainColor,
-                        shape: CircleBorder(),
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.4),
-                            blurRadius: 1,
-                            spreadRadius: 12,
-                          ),
-                          BoxShadow(
-                              color: Styles.mainColor.withOpacity(0.2),
-                              blurRadius: 1,
-                              spreadRadius: 7),
-                          BoxShadow(
-                              color: Styles.mainColor.withOpacity(0.3),
-                              blurRadius: 1,
-                              spreadRadius: 5),
-                        ]),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                        height: 64,
-                        width: 64,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => const FlutterLogo(
-                          size: 64,
-                        ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )),
     );
   }
 }
