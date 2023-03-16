@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
+import 'package:elite/core/widgets/custom_outline_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -130,4 +131,6 @@ class HelperMethods {
               ),
             ));
   }
+
+ 
 }

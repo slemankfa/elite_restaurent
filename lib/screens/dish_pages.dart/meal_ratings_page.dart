@@ -122,6 +122,7 @@ class _MealRatingsPageState extends State<MealRatingsPage>
               CustomOutlinedButton(
                   label: "View reviews",
                   icon: Container(),
+                  isIconVisible: false,
                   onPressedButton: () {
                     Navigator.push(
                       context,
@@ -142,6 +143,7 @@ class _MealRatingsPageState extends State<MealRatingsPage>
               ),
               CustomOutlinedButton(
                   label: "Write a review",
+                  isIconVisible: false,
                   icon: Container(),
                   onPressedButton: () {
                     Navigator.push(

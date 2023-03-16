@@ -214,6 +214,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                 CustomOutlinedButton(
                     label: "POST",
                     icon: Container(),
+                     isIconVisible: false,
                     onPressedButton: () {
                     
                     },

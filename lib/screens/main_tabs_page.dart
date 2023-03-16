@@ -3,6 +3,8 @@ import 'package:elite/screens/map_pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'profile_pages/profile_page.dart';
+
 class MainTabsPage extends StatefulWidget {
   const MainTabsPage({super.key});
 
@@ -11,7 +13,7 @@ class MainTabsPage extends StatefulWidget {
 }
 
 class _MainTabsPageState extends State<MainTabsPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -24,7 +26,7 @@ class _MainTabsPageState extends State<MainTabsPage> {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: [MapPage(), Placeholder()],
+        children: [MapPage(), ProfilePage()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[

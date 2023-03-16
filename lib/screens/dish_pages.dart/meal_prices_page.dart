@@ -74,6 +74,7 @@ class _MealPricesPageState extends State<MealPricesPage>
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 icon: Container(),
+                 isIconVisible: false,
                 onPressedButton: () {
                   // Navigator.push(
                   //   context,

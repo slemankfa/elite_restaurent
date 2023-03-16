@@ -10,6 +10,7 @@ class CustomOutlinedButton extends StatelessWidget {
     required this.onPressedButton,
     required this.textStyle,
     this.rectangleBorder,
+    required this.isIconVisible,
   }) : super(key: key);
 
   final String label;
@@ -19,6 +20,7 @@ class CustomOutlinedButton extends StatelessWidget {
   final Function? onPressedButton;
   final TextStyle textStyle;
   final RoundedRectangleBorder? rectangleBorder;
+  final bool? isIconVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,16 @@ class CustomOutlinedButton extends StatelessWidget {
               label,
               style: textStyle,
             ),
-            const SizedBox(
-              width: 10,
+            Visibility(
+              visible: isIconVisible!,
+              child: const SizedBox(
+                width: 10,
+              ),
             ),
-            icon
+            Visibility(
+              visible: isIconVisible!,
+              child: icon,
+            ),
           ],
         ),
       ),

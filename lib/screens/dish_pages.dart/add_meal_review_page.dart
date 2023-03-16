@@ -132,6 +132,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                 CustomOutlinedButton(
                     label: "POST",
                     icon: Container(),
+                    isIconVisible: false,
                     onPressedButton: () {},
                     borderSide: BorderSide(
                       color: Styles.mainColor,

@@ -133,6 +133,7 @@ class _ReservationPolicyPageState extends State<ReservationPolicyPage> {
                 label: "Next",
                 onPressedButton: _acceptTerms ? _onSaved : null,
                 icon: Container(),
+                 isIconVisible: false,
                 rectangleBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),

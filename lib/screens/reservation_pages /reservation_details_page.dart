@@ -64,6 +64,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                       width: 150,
                       child: CustomOutlinedButton(
                           label: "OK",
+                           isIconVisible: false,
                           onPressedButton: () {
                             Navigator.of(context).pop();
                             // Navigator.push(
@@ -325,6 +326,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                 ),
                 CustomOutlinedButton(
                     label: "Confirm",
+                     isIconVisible: false,
                     icon: Container(),
                     onPressedButton: () => showConfirmDilog(context: context),
                     borderSide: BorderSide(

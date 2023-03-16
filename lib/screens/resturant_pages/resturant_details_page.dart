@@ -55,6 +55,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
       }
       // BotToast.showText(text: "accepted");
       _showResvationOptionBottomSheet();
+      return;
     }
     // BotToast.showText(text: "accepted");
     _showResvationOptionBottomSheet();
@@ -102,8 +103,6 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       Positioned(
                         bottom: 0,
                         child: Align(
-                          // bottom: collapsedHeight + 30,
-                          // left: MediaQuery.of(context).size.width / 2 ,
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             padding: EdgeInsets.all(5),
@@ -303,6 +302,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       //////////////////
                       CustomOutlinedButton(
                           label: "menu",
+                          isIconVisible: true,
                           onPressedButton: () {
                             Navigator.push(
                               context,
@@ -322,6 +322,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       CustomOutlinedButton(
                           label: "Reserve Table",
                           onPressedButton: _reserveTable,
+                          isIconVisible: true,
                           icon: SvgPicture.asset(
                             "assets/icons/profile.svg",
                             color: Colors.white,
@@ -489,6 +490,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       CustomOutlinedButton(
                           label: "View reviews",
                           icon: Container(),
+                          isIconVisible: false,
                           onPressedButton: () {
                             Navigator.push(
                               context,
@@ -509,6 +511,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       ),
                       CustomOutlinedButton(
                           label: "Write a review",
+                          isIconVisible: false,
                           icon: Container(),
                           onPressedButton: () {
                             Navigator.push(
@@ -792,11 +795,13 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         icon: Container(),
+                        isIconVisible: false,
                         onPressedButton: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ReservationAvalibleTabelsPage()),
+                                builder: (context) =>
+                                    ReservationAvalibleTabelsPage()),
                           );
                         },
                         backGroundColor: Styles.mainColor,

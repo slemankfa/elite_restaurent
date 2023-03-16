@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
+import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
       // const MainTabsPage(),
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),
+        EditProfilePage.routeName: (context) => EditProfilePage(),
       },
     );
   }
