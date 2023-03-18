@@ -87,8 +87,11 @@ class _ProfileCustomFormFieldState extends State<ProfileCustomFormField> {
           widget.label,
           style: widget.labelTextStyle,
         ),
-        const SizedBox(
-          height: 12,
+        Visibility(
+          visible: widget.label.trim().isNotEmpty ? true : false,
+          child: const SizedBox(
+            height: 12,
+          ),
         ),
         TextFormField(
           controller: widget.controller,
@@ -99,7 +102,9 @@ class _ProfileCustomFormFieldState extends State<ProfileCustomFormField> {
           textInputAction: widget.action,
           style: widget.textStyle,
           readOnly: widget.readOnly,
-          onTap: () => widget.onTapFuncation,
+          onTap: () {
+             widget.onTapFuncation();
+          },
           // onEditingComplete: (() {
           //   print("asdasd");
           // }),

@@ -49,6 +49,8 @@ dependencies:
   syncfusion_flutter_datepicker: "20.3.61"
   time_picker_spinner_pop_up: ^1.0.4
   image_picker: ^0.8.7
+  intl: ^0.18.0
+  dropdown_button2: ^2.0.0
   # google_maps_flutter: ^2.2.5
 
 dev_dependencies:
