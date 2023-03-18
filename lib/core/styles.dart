@@ -20,6 +20,9 @@ class Styles {
   static const chipBackGroundColor = Color(0xffE9EBEF);
   static const timeBackGroundColor = Color(0xff767680);
   static const formFieldBorderColor = Color(0xffE5E5E5);
+  static const cancelREdColor = Color(0xffD90612);
+  static const starGradientColor = Color(0xffFFAA4A);
+  static const deleteBackGroundColor = Color(0xffFBE6E7);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);

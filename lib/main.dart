@@ -3,8 +3,12 @@ import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
+import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'screens/profile_pages/my_resvation_list_page.dart';
+import 'screens/profile_pages/points_page.dart';
 
 void main() async {
   await ScreenUtil.ensureScreenSize();
@@ -40,6 +44,9 @@ class MyApp extends StatelessWidget {
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),
         EditProfilePage.routeName: (context) => EditProfilePage(),
+        MyOrdersPage.routeName: (ctx) => MyOrdersPage(),
+        PointsPage.routeName: (ctx) => PointsPage(),
+        MyReservationListPage.routeName: (context) => MyReservationListPage()
       },
     );
   }
