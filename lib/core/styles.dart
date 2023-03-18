@@ -19,6 +19,7 @@ class Styles {
   static const commentDateTextColor = Color(0xff8D8D8D);
   static const chipBackGroundColor = Color(0xffE9EBEF);
   static const timeBackGroundColor = Color(0xff767680);
+  static const formFieldBorderColor = Color(0xffE5E5E5);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);
