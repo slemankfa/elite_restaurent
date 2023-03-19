@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:elite/screens/profile_pages/points_page.dart';
+import 'package:elite/screens/profile_pages/support_chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -237,6 +238,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           Divider(),
                           // chat
                           ListTile(
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(SupportChatPage.RouteName),
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "199915173922",
+    "project_id": "elite-380601",
+    "storage_bucket": "elite-380601.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199915173922:android:3a4c4861d9fd4c664b327b",
+        "android_client_info": {
+          "package_name": "com.elitetech.elite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199915173922-237tlokuou71tc4as2d7ar6jvmnj4q6c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJJAn6_7XKtqSR3REBu7BEhfCAEqehfDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199915173922-237tlokuou71tc4as2d7ar6jvmnj4q6c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "199915173922-du6gm8jauavj2chsrrco92ogrg1t7ff8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitetech.elite"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

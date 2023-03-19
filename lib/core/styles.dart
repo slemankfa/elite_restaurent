@@ -23,6 +23,8 @@ class Styles {
   static const cancelREdColor = Color(0xffD90612);
   static const starGradientColor = Color(0xffFFAA4A);
   static const deleteBackGroundColor = Color(0xffFBE6E7);
+  static const youChatTextColor = Color(0xff400F6E);
+  static const supportChatBBlMessageColor = Color(0xffF0E8F8);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);

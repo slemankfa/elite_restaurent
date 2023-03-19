@@ -10,7 +10,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'screens/profile_pages/my_resvation_list_page.dart';
 import 'screens/profile_pages/points_page.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'screens/profile_pages/support_chat_page.dart';
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
@@ -46,7 +54,8 @@ class MyApp extends StatelessWidget {
         EditProfilePage.routeName: (context) => EditProfilePage(),
         MyOrdersPage.routeName: (ctx) => MyOrdersPage(),
         PointsPage.routeName: (ctx) => PointsPage(),
-        MyReservationListPage.routeName: (context) => MyReservationListPage()
+        MyReservationListPage.routeName: (context) => MyReservationListPage(),
+        SupportChatPage.RouteName: (context) => SupportChatPage()
       },
     );
   }
