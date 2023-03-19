@@ -50,12 +50,20 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   void initState() {
     if (widget.controller.text.trim().isNotEmpty) {
-      borderColor = true;
+      setState(() {
+        borderColor = true;
+      });
     }
     super.initState();
     widget.controller.addListener(() {
       if (widget.controller.text.trim().isNotEmpty) {
-        borderColor = true;
+        setState(() {
+          borderColor = true;
+        });
+      } else {
+        setState(() {
+          borderColor = false;
+        });
       }
     });
   }

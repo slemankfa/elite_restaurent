@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:elite/core/lunchers_helper.dart';
+import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:elite/screens/profile_pages/points_page.dart';
@@ -19,6 +21,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  LuncherHelper _luncherHelper = LuncherHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,6 +267,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           Divider(),
                           // call us
                           ListTile(
+                            onTap: (){
+                              _luncherHelper.launchPhoneCall("00966");
+                            },
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
@@ -298,6 +306,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           // delete account
                           // chat
                           ListTile(
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(DeletePage.routeName),
                             trailing: Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,

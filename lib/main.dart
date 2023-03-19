@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
+import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
@@ -48,14 +49,14 @@ class MyApp extends StatelessWidget {
       home: MainTabsPage(),
       builder: BotToastInit(), //1. call BotToastInit
       navigatorObservers: [BotToastNavigatorObserver()],
-      // const MainTabsPage(),
       routes: {
         NotificationPage.routeName: (ctx) => NotificationPage(),
         EditProfilePage.routeName: (context) => EditProfilePage(),
         MyOrdersPage.routeName: (ctx) => MyOrdersPage(),
         PointsPage.routeName: (ctx) => PointsPage(),
         MyReservationListPage.routeName: (context) => MyReservationListPage(),
-        SupportChatPage.RouteName: (context) => SupportChatPage()
+        SupportChatPage.RouteName: (context) => SupportChatPage(),
+        DeletePage.routeName: (ctx) => DeletePage(),
       },
     );
   }
