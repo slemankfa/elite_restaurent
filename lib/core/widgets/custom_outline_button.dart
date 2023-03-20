@@ -10,6 +10,7 @@ class CustomOutlinedButton extends StatelessWidget {
     required this.onPressedButton,
     required this.textStyle,
     this.rectangleBorder,
+    this.isRevesedRow = false,
     required this.isIconVisible,
   }) : super(key: key);
 
@@ -21,6 +22,7 @@ class CustomOutlinedButton extends StatelessWidget {
   final TextStyle textStyle;
   final RoundedRectangleBorder? rectangleBorder;
   final bool? isIconVisible;
+  final bool? isRevesedRow;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +44,11 @@ class CustomOutlinedButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              label,
-              style: textStyle,
+            Flexible(
+              child: Text(
+                label,
+                style: textStyle,
+              ),
             ),
             Visibility(
               visible: isIconVisible!,

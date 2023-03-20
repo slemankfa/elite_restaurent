@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:elite/screens/auth_pages.dart/start_page.dart';
 import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
@@ -8,6 +9,8 @@ import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'screens/auth_pages.dart/create_account_page.dart';
+import 'screens/auth_pages.dart/login_page.dart';
 import 'screens/profile_pages/my_resvation_list_page.dart';
 import 'screens/profile_pages/points_page.dart';
 
@@ -46,7 +49,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MainTabsPage(),
+      home: StartPage(),
+      //  MainTabsPage(),
       builder: BotToastInit(), //1. call BotToastInit
       navigatorObservers: [BotToastNavigatorObserver()],
       routes: {
@@ -57,6 +61,8 @@ class MyApp extends StatelessWidget {
         MyReservationListPage.routeName: (context) => MyReservationListPage(),
         SupportChatPage.RouteName: (context) => SupportChatPage(),
         DeletePage.routeName: (ctx) => DeletePage(),
+        LoginPage.routeName: (ctx) => LoginPage(),
+        CreateAccountPage.routeName: (ctx) => CreateAccountPage(),
       },
     );
   }
