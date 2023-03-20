@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Styles {
-  static const mainColor = Color(0xff6918B4);
+  static const mainColor = Color(0xff1B2A6F);
+  // static const mainColor = Color(0xff6918B4);
   static const unslectedItemColor = Color(0xff808080);
   static const userNameColor = Color(0xff49597E);
   static const resturentNameColor = Color(0xff16223C);

@@ -10,10 +10,12 @@ class MainTabsPage extends StatefulWidget {
 
   @override
   State<MainTabsPage> createState() => _MainTabsPageState();
+
+  static const routeName = "/main-tabs=page";
 }
 
 class _MainTabsPageState extends State<MainTabsPage> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {

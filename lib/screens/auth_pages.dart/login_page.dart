@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../core/styles.dart';
 import '../../core/widgets/custom_form_field.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../main_tabs_page.dart';
 import '../profile_pages/widgtes/profile_custom_form_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                     icon: Container(),
                     isIconVisible: false,
                     onPressedButton: () =>
-                        Navigator.of(context).pushNamed(LoginPage.routeName),
+                        Navigator.of(context).pushNamed(MainTabsPage.routeName),
                     // borderSide: BorderSide(
                     //   color: Styles.mainColor,
                     // ),

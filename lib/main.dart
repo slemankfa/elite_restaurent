@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: StartPage(),
-      //  MainTabsPage(),
+      // MainTabsPage(),
       builder: BotToastInit(), //1. call BotToastInit
       navigatorObservers: [BotToastNavigatorObserver()],
       routes: {
@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
         DeletePage.routeName: (ctx) => DeletePage(),
         LoginPage.routeName: (ctx) => LoginPage(),
         CreateAccountPage.routeName: (ctx) => CreateAccountPage(),
+        MainTabsPage.routeName: (ctx) => MainTabsPage(),
       },
     );
   }
