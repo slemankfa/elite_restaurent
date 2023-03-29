@@ -1,6 +1,5 @@
+import 'package:elite/core/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class DishDesciptionPage extends StatefulWidget {
   const DishDesciptionPage({super.key});
@@ -16,11 +15,14 @@ class _DishDesciptionPageState extends State<DishDesciptionPage>
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FlutterLogo(),
-            Placeholder(),
-            Placeholder(),
-            Placeholder(),
+            Center(
+                child: Text(
+              "قيد التطوير",
+              style: Styles.mainTextStyle.copyWith(fontSize: 20),
+            ))
           ],
         ),
       ),

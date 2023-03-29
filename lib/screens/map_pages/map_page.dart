@@ -127,7 +127,9 @@ class _MapPageState extends State<MapPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>  ResturentDetailPage()),
+                            builder: (context) => ResturentDetailPage(
+                                  resturantId: "1",
+                                )),
                       );
                     },
                     child: Container(
