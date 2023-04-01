@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:elite/models/meal_size_model.dart';
 import 'package:elite/models/resturant_menu_item.dart';
 import 'package:elite/models/resturant_model.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
 import '../core/helper_methods.dart';
+import '../models/menu_item_meals_list_model.dart';
 
 class ResturantProvider with ChangeNotifier {
   Dio _dio = Dio();
@@ -61,7 +63,9 @@ class ResturantProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getResturantMenu(
-      {required BuildContext context, required int pageNumber, required String restId}) async {
+      {required BuildContext context,
+      required int pageNumber,
+      required String restId}) async {
     List<ResturantMenuItemModel> _tempList = [];
     try {
       Response response =
@@ -84,12 +88,78 @@ class ResturantProvider with ChangeNotifier {
       for (var item in loadedList) {
         _tempList.add(ResturantMenuItemModel.fromJson(item, context));
       }
-      // _tempList.add(NotifiactionModel(id: "13", title:  "مرحبا بكم في شحنه ", body: "تم إنشاء حسابك بنجاح الآن أصبح بإمكانك التمتع بالخدمات المقدمة من شحنة"));
-      // print(addressesList.length.toString());
       return {"list": _tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
       return {"list": _tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getResturantMenuItemMeals(
+      {required BuildContext context,
+      required int pageNumber,
+      required String restId,
+      required String menuItemId}) async {
+    List<MenuItemMealsListModel> _tempList = [];
+    try {
+      Response response = await _dio.get(
+          "${API_URL}Items/GetItems?ResturantID=$restId&CatID=$menuItemId",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ));
+      // print("response" + response.data.toString());
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        _tempList.add(MenuItemMealsListModel.fromJson(item, context));
+      }
+      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+    } on DioError catch (e) {
+      print(e.toString());
+      return {"list": _tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<List<MealSizeModel>> getMealSize(
+      {required BuildContext context,
+      required int pageNumber,
+      required String restId,
+      required String menuItemId}) async {
+    List<MealSizeModel> _tempList = [];
+    try {
+      Response response = await _dio.get(
+          "${API_URL}ItemsSizes/GetItemsSize?ItemID=$menuItemId&ResturantID=$restId",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ));
+      // print("response" + response.data.toString());
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        _tempList.add(MealSizeModel.fromJson(item, context));
+      }
+      return _tempList;
+    } on DioError catch (e) {
+      print(e.toString());
+      return[];
     }
   }
 }

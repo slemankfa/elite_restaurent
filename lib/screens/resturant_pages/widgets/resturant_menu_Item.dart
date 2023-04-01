@@ -1,18 +1,20 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/styles.dart';
 import '../../../models/resturant_menu_item.dart';
-import '../resturant_menu_item_list_page.dart';
+import '../../../models/resturant_model.dart';
+import '../resturant_menu_item_meals_list_page.dart';
 
 class ResturantMenuItem extends StatelessWidget {
   const ResturantMenuItem({
     super.key,
     required ResturantMenuItemModel menusItem,
+    required this.resturantDetails,
   }) : _menuItem = menusItem;
 
   final ResturantMenuItemModel _menuItem;
+  final ResturantModel resturantDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +25,9 @@ class ResturantMenuItem extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ResturantMenuItemListPage(
-                        itemName: _menuItem.name,
+                  builder: (context) => ResturantMenuItemMealsListPage(
+                        menuItem: _menuItem,
+                        resturantDetails: resturantDetails,
                       )),
             );
           },

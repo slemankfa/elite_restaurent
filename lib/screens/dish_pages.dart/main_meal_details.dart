@@ -8,13 +8,19 @@ import 'package:elite/screens/dish_pages.dart/meal_ratings_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/menu_item_meals_list_model.dart';
+import '../../models/resturant_model.dart';
 import 'widgets/dish_image_header.dart';
 
 class MaiMealDetailsPage extends StatefulWidget {
-  const MaiMealDetailsPage({super.key});
+  const MaiMealDetailsPage(
+      {super.key, required this.meal, required this.resturantDetails});
 
   @override
   State<MaiMealDetailsPage> createState() => _MaiMealDetailsPageState();
+
+  final MenuItemMealsListModel meal;
+  final ResturantModel resturantDetails;
 }
 
 class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
@@ -72,6 +78,8 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
             MealNatruationsPage(),
             MealPricesPage(
               scrollController: mainMealPriceScrollController,
+              meal: widget.meal,
+              resturantDetails: widget.resturantDetails,
             ),
             MealRatingsPage()
           ],

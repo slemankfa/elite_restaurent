@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/models/resturant_model.dart';
 import 'package:elite/providers/resturant_provider.dart';
-import 'package:elite/screens/resturant_pages/resturant_menu_item_list_page.dart';
+import 'package:elite/screens/resturant_pages/resturant_menu_item_meals_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -102,7 +102,10 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
                 child: ListView.builder(
                     itemCount: _menusList.length,
                     itemBuilder: (context, index) {
-                      return ResturantMenuItem(menusItem: _menusList[index]);
+                      return ResturantMenuItem(
+                        menusItem: _menusList[index],
+                        resturantDetails: widget.resturantDetails,
+                      );
                     }),
               ),
       ),
