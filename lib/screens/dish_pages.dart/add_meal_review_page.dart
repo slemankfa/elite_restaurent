@@ -1,19 +1,75 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
+import 'package:elite/providers/resturant_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/menu_item_meals_list_model.dart';
+import '../../models/resturant_model.dart';
 
 class AddMealReviewPage extends StatefulWidget {
-  const AddMealReviewPage({super.key});
+  const AddMealReviewPage(
+      {super.key, required this.meal, required this.resturantDetails});
 
   @override
   State<AddMealReviewPage> createState() => _AddMealReviewPageState();
   // static const routeNam
+
+  final MenuItemMealsListModel meal;
+  final ResturantModel resturantDetails;
 }
 
 class _AddMealReviewPageState extends State<AddMealReviewPage> {
+  HelperMethods _helperMethods = HelperMethods();
+  double ratings = 1;
+  TextEditingController _commentController = TextEditingController();
+  late Function popUpProgressIndcator;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  postReview() async {
+    // if(_commentController.text.trim().isEmpty){
+    //   BotToast.showText(text: "");
+    //   return ;
+    // }
+    try {
+      popUpProgressIndcator = _helperMethods.showPopUpProgressIndcator();
+
+      Provider.of<ResturantProvider>(context, listen: false)
+          .addMealReview(
+              rating: ratings,
+              review: _commentController.text,
+              restId: widget.resturantDetails.id,
+              mealId: widget.meal.mealId)
+          .then((status) {
+        popUpProgressIndcator.call();
+        if (status) {
+          Navigator.of(context).pop();
+        } else {
+          BotToast.showText(text: "Something went Wrong!");
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+      popUpProgressIndcator.call();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -77,6 +133,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
                           print(rating);
+                          ratings = rating;
                         },
                       ),
                     ],
@@ -96,7 +153,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                   height: 16,
                 ),
                 TextFormField(
-                  // controller: _shipmentDescrpationController,
+                  controller: _commentController,
                   // validator: ((value) => _validationHelper.validateField(value!)),
                   textInputAction: TextInputAction.newline,
                   keyboardType: TextInputType.multiline,
@@ -133,7 +190,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                     label: "POST",
                     icon: Container(),
                     isIconVisible: false,
-                    onPressedButton: () {},
+                    onPressedButton: postReview,
                     borderSide: BorderSide(
                       color: Styles.mainColor,
                     ),

@@ -7,12 +7,18 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/menu_item_meals_list_model.dart';
+import '../../models/resturant_model.dart';
 
 class MealRatingsPage extends StatefulWidget {
-  const MealRatingsPage({super.key});
+  const MealRatingsPage(
+      {super.key, required this.meal, required this.resturantDetails});
 
   @override
   State<MealRatingsPage> createState() => _MealRatingsPageState();
+
+  final MenuItemMealsListModel meal;
+  final ResturantModel resturantDetails;
 }
 
 class _MealRatingsPageState extends State<MealRatingsPage>
@@ -127,7 +133,10 @@ class _MealRatingsPageState extends State<MealRatingsPage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MealReviewsPage()),
+                          builder: (context) => MealReviewsPage(
+                                meal: widget.meal,
+                                resturantDetails: widget.resturantDetails,
+                              )),
                     );
                   },
                   borderSide: BorderSide(
@@ -149,7 +158,10 @@ class _MealRatingsPageState extends State<MealRatingsPage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AddMealReviewPage()),
+                          builder: (context) => AddMealReviewPage(
+                                meal: widget.meal,
+                                resturantDetails: widget.resturantDetails,
+                              )),
                     );
                   },
                   borderSide: BorderSide(

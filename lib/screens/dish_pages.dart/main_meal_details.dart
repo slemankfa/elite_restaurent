@@ -81,7 +81,10 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
               meal: widget.meal,
               resturantDetails: widget.resturantDetails,
             ),
-            MealRatingsPage()
+            MealRatingsPage(
+              meal: widget.meal,
+              resturantDetails: widget.resturantDetails,
+            )
           ],
         ),
       ),

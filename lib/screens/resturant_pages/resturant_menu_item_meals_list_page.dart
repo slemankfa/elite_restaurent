@@ -159,7 +159,8 @@ class MenuItemMeals extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
-                imageUrl: meal.mealImage,
+                imageUrl:  "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                //  meal.mealImage,
                 height: 64,
                 width: 64,
                 fit: BoxFit.cover,

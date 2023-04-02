@@ -1,19 +1,76 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/helper_methods.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/resturant_model.dart';
+import '../../providers/resturant_provider.dart';
 
 class AddResturantReviewPage extends StatefulWidget {
-  const AddResturantReviewPage({super.key});
+  const AddResturantReviewPage({super.key, required this.resturantDetails});
 
   @override
   State<AddResturantReviewPage> createState() => _AddResturantReviewPageState();
   // static const routeNam
+
+  final ResturantModel resturantDetails;
 }
 
 class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
+  HelperMethods _helperMethods = HelperMethods();
+  double _goodTreatment = 1;
+  double _requsetSpeed = 1;
+  double _sanilation = 1;
+  TextEditingController _commentController = TextEditingController();
+  late Function popUpProgressIndcator;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  postReview() async {
+    // if(_commentController.text.trim().isEmpty){
+    //   BotToast.showText(text: "");
+    //   return ;
+    // }
+    try {
+      popUpProgressIndcator = _helperMethods.showPopUpProgressIndcator();
+
+      Provider.of<ResturantProvider>(context, listen: false)
+          .addResturantReview(
+        goodTreatment: _goodTreatment,
+        requsetSpeed: _requsetSpeed,
+        sanilation: _sanilation,
+        review: _commentController.text.trim(),
+        restId: widget.resturantDetails.id,
+      )
+          .then((status) {
+        popUpProgressIndcator.call();
+        if (status) {
+          Navigator.of(context).pop();
+        } else {
+          BotToast.showText(text: "Something went Wrong!");
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+      popUpProgressIndcator.call();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -76,7 +133,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
-                          print(rating);
+                          _goodTreatment = rating;
                         },
                       ),
                     ],
@@ -117,7 +174,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
-                          print(rating);
+                          _requsetSpeed = rating;
                         },
                       ),
                     ],
@@ -158,7 +215,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
-                          print(rating);
+                          _sanilation = rating;
                         },
                       ),
                     ],
@@ -214,10 +271,8 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                 CustomOutlinedButton(
                     label: "POST",
                     icon: Container(),
-                     isIconVisible: false,
-                    onPressedButton: () {
-                    
-                    },
+                    isIconVisible: false,
+                    onPressedButton:postReview,
                     borderSide: BorderSide(
                       color: Styles.mainColor,
                     ),

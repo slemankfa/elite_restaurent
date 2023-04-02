@@ -558,7 +558,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ResturantReviewsPage()),
+                                                ResturantReviewsPage(
+                                                  resturantDetails:
+                                                      _resturantDetails!,
+                                                )),
                                       );
                                     },
                                     borderSide: BorderSide(
@@ -581,7 +584,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                AddResturantReviewPage()),
+                                                AddResturantReviewPage(
+                                                  resturantDetails:
+                                                      _resturantDetails!,
+                                                )),
                                       );
                                     },
                                     borderSide: BorderSide(
