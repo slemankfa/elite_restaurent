@@ -69,7 +69,35 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     _showResvationOptionBottomSheet();
   }
 
+  findTabels() async {
+    try {
+      if (pickedDate.isEmpty) {
+        BotToast.showText(text: "You must select a date");
+        return;
+      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReservationAvalibleTabelsPage(
+                  date: pickedDate,
+                  resturantDetails: _resturantDetails!,
+                  time: "",
+                  numberOfSeats:
+                      resevedPeopleCountList[_selectedPeopleCountIndex!]
+                          .toString(),
+                )),
+      ).then((value) {
+        print("removedate");
+        pickedDate = "";
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   int? _selectedPeopleCountIndex = 0;
+  List<int> resevedPeopleCountList = [2, 4, 6, 8];
+  String pickedDate = "";
   int _sliding = 0;
   TimePickerSpinnerController _timePickerSpinnerController =
       TimePickerSpinnerController();
@@ -612,7 +640,6 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
 
   void _showResvationOptionBottomSheet() {
     // int resevedPeopleCount = 2;
-    List<int> resevedPeopleCountList = [2, 4, 6, 8];
 
     if (DateTime.now().hour >= 12) {
       _sliding = 1;
@@ -757,7 +784,12 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                           todayTextStyle: Styles.mainTextStyle
                               .copyWith(color: Styles.mainColor)),
                       onSelectionChanged: (selectedDate) {
-                        print(selectedDate.value);
+                        // DateTime tempDate =
+                        //     new DateFormat("yyyy-MM-dd hh:mm:ss", 'en_US')
+                        //         .parse(selectedDate.value.toString());
+                        pickedDate =
+                            DateFormat("yyyy-M-d").format(selectedDate.value);
+                        print(pickedDate.toString());
                       },
                     ),
                   ),
@@ -865,14 +897,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         ),
                         icon: Container(),
                         isIconVisible: false,
-                        onPressedButton: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ReservationAvalibleTabelsPage()),
-                          );
-                        },
+                        onPressedButton: findTabels,
                         backGroundColor: Styles.mainColor,
                         // backGroundColor: Styles.mainColor,
                         textStyle: Styles.mainTextStyle.copyWith(

@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:elite/providers/reservation_provider.dart';
 import 'package:elite/providers/resturant_provider.dart';
 import 'package:elite/screens/auth_pages.dart/start_page.dart';
 import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: ResturantProvider(),
         ),
+        ChangeNotifierProvider.value(
+          value: ReservationProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -66,9 +70,9 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        home: 
-        // StartPage(),
-        MainTabsPage(),
+        home:
+            // StartPage(),
+            MainTabsPage(),
         builder: BotToastInit(), //1. call BotToastInit
         navigatorObservers: [BotToastNavigatorObserver()],
         routes: {
