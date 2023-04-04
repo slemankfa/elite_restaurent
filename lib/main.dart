@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'providers/auth_provider.dart';
 import 'screens/auth_pages.dart/create_account_page.dart';
 import 'screens/auth_pages.dart/login_page.dart';
 import 'screens/profile_pages/my_resvation_list_page.dart';
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: ReservationProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: AuthProvider(),
         ),
       ],
       child: MaterialApp(

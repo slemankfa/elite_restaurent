@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elite/core/valdtion_helper.dart';
+import 'package:elite/models/city_area_model.dart';
 import 'package:elite/screens/profile_pages/widgtes/profile_custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -9,10 +10,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_form_field.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/city_model.dart';
+import '../../providers/auth_provider.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -37,6 +41,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   bool _stateBorderColor = false;
   bool acceptTerms = false;
 
+  bool _isLoading = false;
+
   final List<String> genderItems = [
     'Male',
     'Female',
@@ -44,12 +50,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   String? selectedGenderValue;
 
-  final List<String> stateItems = [
-    'A',
-    'B',
-    'C',
-    'D',
-  ];
+  List<CityModel> _citiesList = [];
+  List<CityAreaModel> _citiesAreaList = [];
+
+  CityModel? _selectedCity;
+  CityAreaModel? _selectedAreaCity;
 
   String? selectedStateValue;
 
@@ -70,6 +75,42 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     _userPhoneTextController.dispose();
     _userPasswordTextController.dispose();
     _userBdTextController.dispose();
+  }
+
+  fetchCities() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<AuthProvider>(context, listen: false)
+          .getCities(
+        context: context,
+      )
+          .then((list) async {
+        _citiesList = list;
+        if (list.isNotEmpty) {
+          _selectedCity = _citiesList[0];
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  fetchCitiesArea() async {
+    if (_selectedCity == null) return;
+    await Provider.of<AuthProvider>(context, listen: false)
+        .getCityAreas(context: context, cityIdenifier: _selectedCity!.id)
+        .then((areasList) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (areasList.isNotEmpty) {
+        _selectedAreaCity = areasList[0];
+      }
+    });
   }
 
   @override
@@ -302,11 +343,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     hint: Text("Select State",
                         style: Styles.mainTextStyle
                             .copyWith(color: Styles.grayColor, fontSize: 16)),
-                    items: stateItems
-                        .map((item) => DropdownMenuItem<String>(
+                    items: _citiesList
+                        .map((item) => DropdownMenuItem<CityModel>(
                               value: item,
                               child: Text(
-                                item,
+                                item.name,
                                 style: Styles.mainTextStyle.copyWith(
                                     fontSize: 16, color: Styles.mainColor),
                               ),
@@ -314,19 +355,22 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         .toList(),
                     validator: (value) {
                       if (value == null) {
-                        return 'Please select gender.';
+                        return 'Please select State.';
                       }
                       return null;
                     },
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       //Do something when changing the item if you want.
                       setState(() {
                         _stateBorderColor = true;
                       });
+                      _selectedCity = value;
+                      await fetchCitiesArea();
                     },
                     onSaved: (value) {
-                      selectedStateValue = value.toString();
-                      print("savedd");
+                      // selectedStateValue = value.toString();
+                      _selectedCity = value;
+                      // print("savedd");
                     },
                     buttonStyleData: const ButtonStyleData(
                       height: 60,
@@ -566,7 +610,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   CustomOutlinedButton(
                       label: "Join",
-                      onPressedButton: acceptTerms ? (){} : null,
+                      onPressedButton: acceptTerms ? () {} : null,
                       icon: Container(),
                       isIconVisible: false,
                       rectangleBorder: RoundedRectangleBorder(
