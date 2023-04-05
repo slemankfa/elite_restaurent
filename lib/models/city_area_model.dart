@@ -1,17 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-class CityAreaModel {
+class CityRegionModel {
   final String id;
   final String name;
 
-  CityAreaModel({
+  CityRegionModel({
     required this.id,
     required this.name,
   });
 
-  factory CityAreaModel.fromJson(Map<String, dynamic> map, BuildContext context) {
-    return CityAreaModel(
+  factory CityRegionModel.fromJson(Map<String, dynamic> map, BuildContext context) {
+    return CityRegionModel(
       id: map["areaID"].toString(),
       name: context.locale.toString() == "en"
           ? map["areaNameE"]

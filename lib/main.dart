@@ -74,9 +74,8 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        home:
-            // StartPage(),
-            MainTabsPage(),
+        home: StartPage(),
+        // MainTabsPage(),
         builder: BotToastInit(), //1. call BotToastInit
         navigatorObservers: [BotToastNavigatorObserver()],
         routes: {

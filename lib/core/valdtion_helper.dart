@@ -11,6 +11,7 @@ class ValidationHelper {
   }
 
   String? validatePassword(String value) {
+    return null;
     if (value.trim().isEmpty) {
       return "هذه الخانة مطلوبه! ";
     } else if (value.trim().length < 4) {
@@ -19,6 +20,7 @@ class ValidationHelper {
       return null;
     }
   }
+
   String? validatePhone(String value) {
     if (value.trim().isEmpty) {
       return "هذه الخانة مطلوبه! ";
@@ -56,6 +58,7 @@ class ValidationHelper {
   // }
 
   String? validateEmail(String value) {
+    return null;
     if (value.isNotEmpty) {
       final RegExp regex = RegExp(
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)| (\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');

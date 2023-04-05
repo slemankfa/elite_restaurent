@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/models/city_area_model.dart';
 import 'package:elite/screens/profile_pages/widgtes/profile_custom_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,11 +39,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   TextEditingController _userBdTextController = TextEditingController();
   TextEditingController _userPasswordTextController = TextEditingController();
   ValidationHelper _validationHelper = ValidationHelper();
-  bool _phoneBorderColor = false;
-  bool _genderBorderColor = false;
-  bool _stateBorderColor = false;
+  late Function showPopUpLoading;
+  HelperMethods _helperMethods = HelperMethods();
   bool acceptTerms = false;
-
   bool _isLoading = false;
 
   final List<String> genderItems = [
@@ -51,10 +52,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   String? selectedGenderValue;
 
   List<CityModel> _citiesList = [];
-  List<CityAreaModel> _citiesAreaList = [];
+  List<CityRegionModel> _citiesRegionList = [];
 
   CityModel? _selectedCity;
-  CityAreaModel? _selectedAreaCity;
+  CityRegionModel? _selectedRegionCity;
 
   String? selectedStateValue;
 
@@ -62,6 +63,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   void initState() {
     // TODO: implement initState
     // selectedGenderType = gendersList[0];
+    fetchCities();
     super.initState();
   }
 
@@ -90,7 +92,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         _citiesList = list;
         if (list.isNotEmpty) {
           _selectedCity = _citiesList[0];
+          await fetchCitiesRegion();
         }
+        setState(() {
+          _isLoading = false;
+        });
       });
     } catch (e) {
       setState(() {
@@ -99,18 +105,72 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     }
   }
 
-  fetchCitiesArea() async {
+  fetchCitiesRegion() async {
     if (_selectedCity == null) return;
-    await Provider.of<AuthProvider>(context, listen: false)
-        .getCityAreas(context: context, cityIdenifier: _selectedCity!.id)
-        .then((areasList) {
-      setState(() {
-        _isLoading = false;
+    try {
+      await Provider.of<AuthProvider>(context, listen: false)
+          .getCityAreas(context: context, cityIdenifier: _selectedCity!.id)
+          .then((areasList) {
+        if (areasList.isNotEmpty) {
+          _citiesRegionList = areasList;
+          _selectedRegionCity = _citiesRegionList[0];
+        }
+        setState(() {
+          _isLoading = false;
+        });
       });
-      if (areasList.isNotEmpty) {
-        _selectedAreaCity = areasList[0];
-      }
-    });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  SignUp() async {
+    if (!_formKey.currentState!.validate()) {
+      // If the form is valid, display a snackbar. In the real world,
+      // you'd often call a server or save the information in a database.
+      return;
+    }
+
+    // if (_selectedCity == null) {
+    //   BotToast.showText(text: "يرجي اختيار المدينة");
+    //   return;
+    // }
+    // if (_selectedRegionCity == null) {
+    //   BotToast.showText(text: "يرجي اختيار المنطقة");
+    //   return;
+    // }
+    // if (_userFirstnameTextController.text.trim().length < 3) {
+    //   BotToast.showText(text: "يجب ان يحتوى الاسم على ثلاث احرف على الاقل");
+    //   return;
+    // }
+
+    // if (_userPhoneTextController.text.trim().length != 9) {
+    //   BotToast.showText(text: "يحب ان يتكون رقم الهاتف من ٩ ارقام");
+    //   return;
+    // }
+
+    try {
+      // showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
+      // await Provider.of<AramexProvider>(context, listen: false)
+      //     .checkAramexAddress(userAddress: userAddress, context: context)
+      //     .then((value) {
+      //   showPopUpLoading();
+      //   if (value) {
+      //     Navigator.push<dynamic>(
+      //       context,
+      //       MaterialPageRoute<dynamic>(
+      //         builder: (BuildContext context) => AramexReciverPage(
+      //           vendorCode: widget.vendorCode,
+      //           senderAddress: userAddress,
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // });
+    } catch (e) {
+      print(e.toString());
+      // showPopUpLoading();
+    }
   }
 
   @override
@@ -123,7 +183,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Styles.grayColor),
           title: Text(
-            "Edit Profile",
+            "Create account",
             style: Styles.appBarTextStyle,
           ),
           actions: [],
@@ -231,10 +291,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                            color: _phoneBorderColor
-                                ? Styles.mainColor
-                                : Styles.formFieldBorderColor)),
+                        border: Border.all(color: Styles.formFieldBorderColor)),
                     child: Row(
                       children: [
                         Container(
@@ -260,22 +317,17 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           width: 6,
                         ),
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
                             controller: _userPhoneTextController,
+                            // validator:(value)=> _validationHelper.validatePhone(value!) ,
                             keyboardType: TextInputType.phone,
                             style: Styles.mainTextStyle.copyWith(
                                 fontSize: 16, color: Styles.mainColor),
-                            onChanged: (text) {
-                              if (text.trim().length == 9) {
-                                setState(() {
-                                  _phoneBorderColor = true;
-                                });
-                              } else if (text.trim().length == 8) {
-                                setState(() {
-                                  _phoneBorderColor = false;
-                                });
-                              }
-                            },
+                            onChanged: (text) {},
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp("(\\d+[]?[\\d]*)")),
+                            ],
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               isDense: true,
@@ -305,88 +357,308 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   const SizedBox(
                     height: 8,
                   ),
-                  DropdownButtonFormField2(
+                  DropdownButtonFormField(
+                    value: _selectedCity,
+                    validator: (value) =>
+                        value == null ? "هذه الخانة مطلوبه! " : null,
+                    icon: const Icon(Icons.keyboard_arrow_down_sharp),
                     decoration: InputDecoration(
-                      //Add isDense true and zero Padding.
-                      //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
-                      isDense: true,
+                      // filled: _cityFillColor,
+                      // fillColor: Styles.fillFormFieldsBackgroundItem,
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
+                      ),
+                      // suffixIcon:
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: BorderSide(
                           color: Styles.mainColor,
                         ),
                       ),
-                      // filled: borderColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: BorderSide(
-                          color: _stateBorderColor
-                              ? Styles.mainColor
-                              : Styles.formFieldBorderColor,
+                          color: Styles.formFieldBorderColor,
                           width: 1.0,
                         ),
                       ),
                       focusColor: Colors.black,
-                      focusedErrorBorder: const OutlineInputBorder(
+                      focusedErrorBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.red,
                         ),
                       ),
-                      contentPadding: EdgeInsets.zero,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      //Add more decoration as you want here
-                      //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
                     ),
                     isExpanded: true,
-                    hint: Text("Select State",
-                        style: Styles.mainTextStyle
-                            .copyWith(color: Styles.grayColor, fontSize: 16)),
-                    items: _citiesList
-                        .map((item) => DropdownMenuItem<CityModel>(
-                              value: item,
-                              child: Text(
-                                item.name,
-                                style: Styles.mainTextStyle.copyWith(
-                                    fontSize: 16, color: Styles.mainColor),
-                              ),
-                            ))
-                        .toList(),
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select State.';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) async {
-                      //Do something when changing the item if you want.
+                    // value:null,
+                    items: _citiesList.map(
+                      (CityModel data) {
+                        return DropdownMenuItem(
+                          value: data,
+                          child: Container(
+                            // alignment: Alignment.center,
+                            child: Text(
+                              data.name.toString(),
+                              textAlign: TextAlign.center,
+                              style:
+                                  Styles.mainTextStyle.copyWith(fontSize: 14),
+                            ),
+                          ),
+                          onTap: () {},
+                        );
+                      },
+                    ).toList(),
+                    onChanged: ((value) {
+                      // _selectedCity = value;
                       setState(() {
-                        _stateBorderColor = true;
+                        _selectedCity = value;
+                        _selectedRegionCity = null;
                       });
-                      _selectedCity = value;
-                      await fetchCitiesArea();
-                    },
-                    onSaved: (value) {
-                      // selectedStateValue = value.toString();
-                      _selectedCity = value;
-                      // print("savedd");
-                    },
-                    buttonStyleData: const ButtonStyleData(
-                      height: 60,
-                      padding: EdgeInsets.only(left: 20, right: 10),
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(Icons.keyboard_arrow_down,
-                          color: Styles.midGrayColor),
-                      iconSize: 30,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+                      fetchCitiesRegion();
+                    }),
+                  ),
+                  // DropdownButtonFormField2(
+                  //   // value: _selectedCity,
+                  //   decoration: InputDecoration(
+                  //     //Add isDense true and zero Padding.
+                  //     //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+                  //     isDense: true,
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(5),
+                  //       borderSide: BorderSide(
+                  //         color: Styles.mainColor,
+                  //       ),
+                  //     ),
+                  //     // filled: borderColor,
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(5),
+                  //       borderSide: BorderSide(
+                  //         color: Styles.formFieldBorderColor,
+                  //         width: 1.0,
+                  //       ),
+                  //     ),
+                  //     focusColor: Colors.black,
+                  //     focusedErrorBorder: const OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.red,
+                  //       ),
+                  //     ),
+                  //     contentPadding: EdgeInsets.zero,
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     //Add more decoration as you want here
+                  //     //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+                  //   ),
+                  //   isExpanded: true,
+                  //   hint: Text("Select",
+                  //       style: Styles.mainTextStyle
+                  //           .copyWith(color: Styles.grayColor, fontSize: 16)),
+                  //   items: _citiesList
+                  //       .map((item) => DropdownMenuItem<CityModel>(
+                  //             value: _selectedCity,
+                  //             child: Text(
+                  //               item.name,
+                  //               style: Styles.mainTextStyle.copyWith(
+                  //                   fontSize: 16, color: Styles.mainColor),
+                  //             ),
+                  //           ))
+                  //       .toList(),
+                  //   validator: (value) {
+                  //     if (value == null) {
+                  //       return 'Please select State.';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onChanged: (value) async {
+                  //     //Do something when changing the item if you want.
+                  //     // setState(() {
+                  //     //   _stateBorderColor = true;
+                  //     // });
+                  //     _selectedCity = value;
+                  //     _citiesRegionList.clear();
+                  //     _selectedRegionCity = null;
+                  //     await fetchCitiesArea();
+                  //   },
+                  //   onSaved: (value) {
+                  //     // selectedStateValue = value.toString();
+                  //     _selectedCity = value;
+                  //     // print("savedd");
+                  //   },
+                  //   buttonStyleData: const ButtonStyleData(
+                  //     height: 60,
+                  //     padding: EdgeInsets.only(left: 20, right: 10),
+                  //   ),
+                  //   iconStyleData: const IconStyleData(
+                  //     icon: Icon(Icons.keyboard_arrow_down,
+                  //         color: Styles.midGrayColor),
+                  //     iconSize: 30,
+                  //   ),
+                  //   dropdownStyleData: DropdownStyleData(
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  // ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Region",
+                        style: Styles.mainTextStyle.copyWith(
+                            fontSize: 16, color: Styles.midGrayColor)),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  DropdownButtonFormField(
+                    value: _selectedRegionCity,
+                    validator: (value) =>
+                        value == null ? "هذه الخانة مطلوبه! " : null,
+                    icon: Icon(Icons.keyboard_arrow_down_sharp),
+                    decoration: InputDecoration(
+                      // filled: _cityFillColor,
+                      // fillColor: Styles.fillFormFieldsBackgroundItem,
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
+                      ),
+                      // suffixIcon:
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Styles.mainColor,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Styles.formFieldBorderColor,
+                          width: 1.0,
+                        ),
+                      ),
+                      focusColor: Colors.black,
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
                       ),
                     ),
+                    isExpanded: true,
+                    // value:null,
+                    items: _citiesRegionList.map(
+                      (CityRegionModel data) {
+                        return DropdownMenuItem(
+                          value: data,
+                          child: Container(
+                            // alignment: Alignment.center,
+                            child: Text(
+                              data.name.toString(),
+                              textAlign: TextAlign.center,
+                              style:
+                                  Styles.mainTextStyle.copyWith(fontSize: 14),
+                            ),
+                          ),
+                          onTap: () {},
+                        );
+                      },
+                    ).toList(),
+                    onChanged: ((value) {
+                      // _selectedCity = value;
+                      setState(() {
+                        _selectedRegionCity = value;
+                      });
+                    }),
                   ),
+
+                  // DropdownButtonFormField2(
+                  //   value: _selectedAreaCity,
+                  //   decoration: InputDecoration(
+                  //     //Add isDense true and zero Padding.
+                  //     //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
+                  //     isDense: true,
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(5),
+                  //       borderSide: BorderSide(
+                  //         color: Styles.mainColor,
+                  //       ),
+                  //     ),
+                  //     // filled: borderColor,
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(5),
+                  //       borderSide: BorderSide(
+                  //         color: Styles.formFieldBorderColor,
+                  //         width: 1.0,
+                  //       ),
+                  //     ),
+                  //     focusColor: Colors.black,
+                  //     focusedErrorBorder: const OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.red,
+                  //       ),
+                  //     ),
+                  //     contentPadding: EdgeInsets.zero,
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     //Add more decoration as you want here
+                  //     //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
+                  //   ),
+                  //   isExpanded: true,
+                  //   hint: Text("Select",
+                  //       style: Styles.mainTextStyle
+                  //           .copyWith(color: Styles.grayColor, fontSize: 16)),
+                  //   items: _citiesAreaList
+                  //       .map((item) => DropdownMenuItem<CityAreaModel>(
+                  //             value: item,
+                  //             child: Text(
+                  //               item.name,
+                  //               style: Styles.mainTextStyle.copyWith(
+                  //                   fontSize: 16, color: Styles.mainColor),
+                  //             ),
+                  //           ))
+                  //       .toList(),
+                  //   validator: (value) {
+                  //     if (value == null) {
+                  //       return 'Please select region.';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onChanged: (value) async {
+                  //     //Do something when changing the item if you want.
+                  //     // setState(() {
+                  //     //   _stateBorderColor = true;
+                  //     // });
+                  //     _selectedAreaCity = value;
+                  //     // await fetchCitiesArea();
+                  //   },
+                  //   onSaved: (value) {
+                  //     // selectedStateValue = value.toString();
+                  //     _selectedAreaCity = value;
+                  //     // print("savedd");
+                  //   },
+                  //   buttonStyleData: const ButtonStyleData(
+                  //     height: 60,
+                  //     padding: EdgeInsets.only(left: 20, right: 10),
+                  //   ),
+                  //   iconStyleData: const IconStyleData(
+                  //     icon: Icon(Icons.keyboard_arrow_down,
+                  //         color: Styles.midGrayColor),
+                  //     iconSize: 30,
+                  //   ),
+                  //   dropdownStyleData: DropdownStyleData(
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  // ),
+
                   const SizedBox(
                     height: 18,
                   ),
@@ -462,9 +734,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: BorderSide(
-                          color: _genderBorderColor
-                              ? Styles.mainColor
-                              : Styles.formFieldBorderColor,
+                          color: Styles.formFieldBorderColor,
                           width: 1.0,
                         ),
                       ),
@@ -503,13 +773,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     },
                     onChanged: (value) {
                       //Do something when changing the item if you want.
-                      setState(() {
-                        _genderBorderColor = true;
-                      });
                     },
                     onSaved: (value) {
                       selectedGenderValue = value.toString();
-                      print("savedd");
                     },
                     buttonStyleData: const ButtonStyleData(
                       height: 60,
@@ -610,7 +876,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   CustomOutlinedButton(
                       label: "Join",
-                      onPressedButton: acceptTerms ? () {} : null,
+                      onPressedButton: acceptTerms ? SignUp : null,
                       icon: Container(),
                       isIconVisible: false,
                       rectangleBorder: RoundedRectangleBorder(
