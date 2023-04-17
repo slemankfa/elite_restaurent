@@ -34,12 +34,12 @@ class ResturantModel {
           ? map["resturantNameE"]
           : map["resturantNameA"],
       id: map["resturantID"].toString(),
-      logo: "${IMAGE_PATH_URL}${map["resturantLogo"]}",
+      logo: "$IMAGE_PATH_URL${map["resturantLogo"]}",
       backGroundImage:
           "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
       traficStatus: "Crowded",
       openStatus: "OPEN",
-      cousineType: map["restaurantTypeID"],
+      cousineType: map["restaurantTypeID"].toString(),
     );
   }
 }

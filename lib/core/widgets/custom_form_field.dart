@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomFormField extends StatefulWidget {
-  CustomFormField(
+  const CustomFormField(
       {super.key,
       required this.controller,
       required this.formatter,
@@ -112,13 +112,13 @@ class _CustomFormFieldState extends State<CustomFormField> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Styles.formFieldBorderColor,
                 width: 1.0,
               ),
             ),
             focusColor: Colors.black,
-            focusedErrorBorder: OutlineInputBorder(
+            focusedErrorBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.red,
               ),

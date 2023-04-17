@@ -1,7 +1,5 @@
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/helper_methods.dart';
@@ -21,11 +19,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _userEmailTextController = TextEditingController();
-  TextEditingController _userPasswordTextController = TextEditingController();
-  ValidationHelper _validationHelper = ValidationHelper();
+  final TextEditingController _userEmailTextController = TextEditingController();
+  final TextEditingController _userPasswordTextController = TextEditingController();
+  final ValidationHelper _validationHelper = ValidationHelper();
   final _formKey = GlobalKey<FormState>();
-  HelperMethods _helperMethods = HelperMethods();
+  final HelperMethods _helperMethods = HelperMethods();
 
   @override
   void dispose() {
@@ -63,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushAndRemoveUntil<dynamic>(
             context,
             MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) => MainTabsPage(),
+              builder: (BuildContext context) => const MainTabsPage(),
             ),
             (route) => false, //if you want to disable back feature set to false
           );
@@ -82,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Login",
             style: Styles.appBarTextStyle,
@@ -91,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Form(
           key: _formKey,
           child: Container(
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             alignment: Alignment.center,
             child: SingleChildScrollView(
               child: Column(
@@ -99,13 +97,13 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   ProfileCustomFormField(
                       controller: _userEmailTextController,
-                      formatter: [],
+                      formatter: const [],
                       isPrefixeIconAvalibel: false,
                       action: TextInputAction.done,
                       hintText: "",
                       textStyle: Styles.mainTextStyle
                           .copyWith(fontSize: 16, color: Styles.mainColor),
-                      hintStyle: TextStyle(),
+                      hintStyle: const TextStyle(),
                       vladationFunction: _validationHelper.validateEmail,
                       textInputType: TextInputType.emailAddress,
                       isSuffixIconAvalibel: false,
@@ -121,14 +119,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   CustomFormField(
                     controller: _userPasswordTextController,
-                    formatter: [],
+                    formatter: const [],
                     textInputType: TextInputType.visiblePassword,
                     vladationFunction: _validationHelper.validatePassword,
                     action: TextInputAction.done,
                     hintText: "",
                     isSecureField: true,
                     textStyle: Styles.mainTextStyle,
-                    hintStyle: TextStyle(),
+                    hintStyle: const TextStyle(),
                     labelTextStyle: Styles.mainTextStyle.copyWith(
                         color: Styles.unslectedItemColor, fontSize: 16),
                     label: "Password",

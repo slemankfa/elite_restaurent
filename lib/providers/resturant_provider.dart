@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:elite/models/meal_size_model.dart';
 import 'package:elite/models/resturant_menu_item.dart';
 import 'package:elite/models/resturant_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
@@ -12,8 +11,8 @@ import '../models/menu_item_meals_list_model.dart';
 import '../models/resturant_review_model.dart';
 
 class ResturantProvider with ChangeNotifier {
-  Dio _dio = Dio();
-  HelperMethods _helperMethods = HelperMethods();
+  final Dio _dio = Dio();
+  final HelperMethods _helperMethods = HelperMethods();
 
   Future<ResturantModel?> getResturantDetails({
     required BuildContext context,
@@ -68,7 +67,7 @@ class ResturantProvider with ChangeNotifier {
       {required BuildContext context,
       required int pageNumber,
       required String restId}) async {
-    List<ResturantMenuItemModel> _tempList = [];
+    List<ResturantMenuItemModel> tempList = [];
     try {
       Response response =
           await _dio.get("${API_URL}ItemCats/GetItemCat?ResturantID=$restId",
@@ -88,12 +87,12 @@ class ResturantProvider with ChangeNotifier {
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(ResturantMenuItemModel.fromJson(item, context));
+        tempList.add(ResturantMenuItemModel.fromJson(item, context));
       }
-      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
-      return {"list": _tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 
@@ -102,7 +101,7 @@ class ResturantProvider with ChangeNotifier {
       required int pageNumber,
       required String restId,
       required String menuItemId}) async {
-    List<MenuItemMealsListModel> _tempList = [];
+    List<MenuItemMealsListModel> tempList = [];
     try {
       Response response = await _dio.get(
           "${API_URL}Items/GetItems?ResturantID=$restId&CatID=$menuItemId",
@@ -122,12 +121,12 @@ class ResturantProvider with ChangeNotifier {
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(MenuItemMealsListModel.fromJson(item, context));
+        tempList.add(MenuItemMealsListModel.fromJson(item, context));
       }
-      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
-      return {"list": _tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 
@@ -136,7 +135,7 @@ class ResturantProvider with ChangeNotifier {
       required int pageNumber,
       required String restId,
       required String menuItemId}) async {
-    List<MealSizeModel> _tempList = [];
+    List<MealSizeModel> tempList = [];
     try {
       Response response = await _dio.get(
           "${API_URL}ItemsSizes/GetItemsSize?ItemID=$menuItemId&ResturantID=$restId",
@@ -156,9 +155,9 @@ class ResturantProvider with ChangeNotifier {
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(MealSizeModel.fromJson(item, context));
+        tempList.add(MealSizeModel.fromJson(item, context));
       }
-      return _tempList;
+      return tempList;
     } on DioError catch (e) {
       print(e.toString());
       return [];
@@ -200,7 +199,7 @@ class ResturantProvider with ChangeNotifier {
       required int pageNumber,
       required String restId,
       required String menuItemId}) async {
-    List<MealReviewModel> _tempList = [];
+    List<MealReviewModel> tempList = [];
     try {
       Response response = await _dio.get(
           "${API_URL}ItemReviews/GetItemReview?ItemID=$menuItemId&ResturantID=$restId",
@@ -220,12 +219,12 @@ class ResturantProvider with ChangeNotifier {
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(MealReviewModel.fromJson(item));
+        tempList.add(MealReviewModel.fromJson(item));
       }
-      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
-      return {"list": _tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 
@@ -234,7 +233,7 @@ class ResturantProvider with ChangeNotifier {
     required int pageNumber,
     required String restId,
   }) async {
-    List<ResturantReviewModel> _tempList = [];
+    List<ResturantReviewModel> tempList = [];
     try {
       Response response = await _dio.get("${API_URL}RestaurantReviews/$restId",
           options: Options(
@@ -253,12 +252,12 @@ class ResturantProvider with ChangeNotifier {
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(ResturantReviewModel.fromJson(item));
+        tempList.add(ResturantReviewModel.fromJson(item));
       }
-      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
-      return {"list": _tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 

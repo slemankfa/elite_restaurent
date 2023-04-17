@@ -1,17 +1,14 @@
-import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/models/city_area_model.dart';
+import 'package:elite/models/user_model.dart';
 import 'package:elite/screens/profile_pages/widgtes/profile_custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +17,7 @@ import '../../core/widgets/custom_form_field.dart';
 import '../../core/widgets/custom_outline_button.dart';
 import '../../models/city_model.dart';
 import '../../providers/auth_provider.dart';
+import '../main_tabs_page.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -32,15 +30,20 @@ class CreateAccountPage extends StatefulWidget {
 class _CreateAccountPageState extends State<CreateAccountPage> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _userFirstnameTextController = TextEditingController();
-  TextEditingController _userLastnameTextController = TextEditingController();
-  TextEditingController _userEmailTextController = TextEditingController();
-  TextEditingController _userPhoneTextController = TextEditingController();
-  TextEditingController _userBdTextController = TextEditingController();
-  TextEditingController _userPasswordTextController = TextEditingController();
-  ValidationHelper _validationHelper = ValidationHelper();
+  final TextEditingController _userFirstnameTextController =
+      TextEditingController();
+  final TextEditingController _userLastnameTextController =
+      TextEditingController();
+  final TextEditingController _userEmailTextController =
+      TextEditingController();
+  final TextEditingController _userPhoneTextController =
+      TextEditingController();
+  final TextEditingController _userBdTextController = TextEditingController();
+  final TextEditingController _userPasswordTextController =
+      TextEditingController();
+  final ValidationHelper _validationHelper = ValidationHelper();
   late Function showPopUpLoading;
-  HelperMethods _helperMethods = HelperMethods();
+  final HelperMethods _helperMethods = HelperMethods();
   bool acceptTerms = false;
   bool _isLoading = false;
 
@@ -131,45 +134,54 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       return;
     }
 
-    // if (_selectedCity == null) {
-    //   BotToast.showText(text: "يرجي اختيار المدينة");
-    //   return;
-    // }
-    // if (_selectedRegionCity == null) {
-    //   BotToast.showText(text: "يرجي اختيار المنطقة");
-    //   return;
-    // }
-    // if (_userFirstnameTextController.text.trim().length < 3) {
-    //   BotToast.showText(text: "يجب ان يحتوى الاسم على ثلاث احرف على الاقل");
-    //   return;
-    // }
-
-    // if (_userPhoneTextController.text.trim().length != 9) {
-    //   BotToast.showText(text: "يحب ان يتكون رقم الهاتف من ٩ ارقام");
-    //   return;
-    // }
-
+    if (_selectedCity == null) {
+      BotToast.showText(text: "يرجي اختيار المدينة");
+      return;
+    }
+    if (_selectedRegionCity == null) {
+      BotToast.showText(text: "يرجي اختيار المنطقة");
+      return;
+    }
+    if (_userFirstnameTextController.text.trim().length < 3) {
+      BotToast.showText(text: "يجب ان يحتوى الاسم على ثلاث احرف على الاقل");
+      return;
+    }
+    if (_userPhoneTextController.text.trim().length != 9) {
+      BotToast.showText(text: "يحب ان يتكون رقم الهاتف من ٩ ارقام");
+      return;
+    }
     try {
-      // showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
-      // await Provider.of<AramexProvider>(context, listen: false)
-      //     .checkAramexAddress(userAddress: userAddress, context: context)
-      //     .then((value) {
-      //   showPopUpLoading();
-      //   if (value) {
-      //     Navigator.push<dynamic>(
-      //       context,
-      //       MaterialPageRoute<dynamic>(
-      //         builder: (BuildContext context) => AramexReciverPage(
-      //           vendorCode: widget.vendorCode,
-      //           senderAddress: userAddress,
-      //         ),
-      //       ),
-      //     );
-      //   }
-      // });
+      UserModel user = UserModel(
+          userName:
+              "${_userFirstnameTextController.text.trim()} ${_userLastnameTextController.text.trim()}",
+          email: _userEmailTextController.text,
+          password: _userPasswordTextController.text.trim(),
+          age: _userBdTextController.text.trim(),
+          cityId: _selectedCity!.id,
+          areaId: _selectedRegionCity!.id,
+          userGender: selectedGenderValue == "Male" ? "1" : "2");
+      showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
+      await Provider.of<AuthProvider>(context, listen: false)
+          .signUp(
+              user: user,
+              selectedCity: _selectedCity!,
+              selectedRegionCity: _selectedRegionCity!,
+              context: context)
+          .then((value) {
+        showPopUpLoading();
+        if (value) {
+            Navigator.pushAndRemoveUntil<dynamic>(
+            context,
+            MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const MainTabsPage(),
+            ),
+            (route) => false, //if you want to disable back feature set to false
+          );
+        }
+      });
     } catch (e) {
       print(e.toString());
-      // showPopUpLoading();
+      showPopUpLoading();
     }
   }
 
@@ -181,28 +193,28 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Create account",
             style: Styles.appBarTextStyle,
           ),
-          actions: [],
+          actions: const [],
         ),
         body: Form(
           key: _formKey,
           child: Container(
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   ProfileCustomFormField(
                       controller: _userFirstnameTextController,
-                      formatter: [],
+                      formatter: const [],
                       action: TextInputAction.done,
                       hintText: "",
                       textStyle: Styles.mainTextStyle
                           .copyWith(fontSize: 16, color: Styles.mainColor),
-                      hintStyle: TextStyle(),
+                      hintStyle: const TextStyle(),
                       vladationFunction: _validationHelper.validateField,
                       textInputType: TextInputType.text,
                       isSuffixIconAvalibel: false,
@@ -219,13 +231,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   ProfileCustomFormField(
                       controller: _userLastnameTextController,
-                      formatter: [],
+                      formatter: const [],
                       isPrefixeIconAvalibel: false,
                       action: TextInputAction.done,
                       hintText: "",
                       textStyle: Styles.mainTextStyle
                           .copyWith(fontSize: 16, color: Styles.mainColor),
-                      hintStyle: TextStyle(),
+                      hintStyle: const TextStyle(),
                       vladationFunction: _validationHelper.validateField,
                       textInputType: TextInputType.name,
                       isSuffixIconAvalibel: false,
@@ -241,13 +253,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   ProfileCustomFormField(
                       controller: _userEmailTextController,
-                      formatter: [],
+                      formatter: const [],
                       isPrefixeIconAvalibel: false,
                       action: TextInputAction.done,
                       hintText: "",
                       textStyle: Styles.mainTextStyle
                           .copyWith(fontSize: 16, color: Styles.mainColor),
-                      hintStyle: TextStyle(),
+                      hintStyle: const TextStyle(),
                       vladationFunction: _validationHelper.validateEmail,
                       textInputType: TextInputType.emailAddress,
                       isSuffixIconAvalibel: false,
@@ -263,14 +275,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   CustomFormField(
                     controller: _userPasswordTextController,
-                    formatter: [],
+                    formatter: const [],
                     textInputType: TextInputType.visiblePassword,
                     vladationFunction: _validationHelper.validatePassword,
                     action: TextInputAction.done,
                     hintText: "",
                     isSecureField: true,
                     textStyle: Styles.mainTextStyle,
-                    hintStyle: TextStyle(),
+                    hintStyle: const TextStyle(),
                     labelTextStyle: Styles.mainTextStyle.copyWith(
                         color: Styles.unslectedItemColor, fontSize: 16),
                     label: "Password",
@@ -288,7 +300,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     height: 18,
                   ),
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(color: Styles.formFieldBorderColor)),
@@ -367,26 +379,26 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       // fillColor: Styles.fillFormFieldsBackgroundItem,
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.red,
                         ),
                       ),
                       // suffixIcon:
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.mainColor,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.formFieldBorderColor,
                           width: 1.0,
                         ),
                       ),
                       focusColor: Colors.black,
-                      focusedErrorBorder: OutlineInputBorder(
+                      focusedErrorBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.red,
                         ),
@@ -519,32 +531,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     value: _selectedRegionCity,
                     validator: (value) =>
                         value == null ? "هذه الخانة مطلوبه! " : null,
-                    icon: Icon(Icons.keyboard_arrow_down_sharp),
+                    icon: const Icon(Icons.keyboard_arrow_down_sharp),
                     decoration: InputDecoration(
                       // filled: _cityFillColor,
                       // fillColor: Styles.fillFormFieldsBackgroundItem,
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.red,
                         ),
                       ),
                       // suffixIcon:
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.mainColor,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.formFieldBorderColor,
                           width: 1.0,
                         ),
                       ),
                       focusColor: Colors.black,
-                      focusedErrorBorder: OutlineInputBorder(
+                      focusedErrorBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.red,
                         ),
@@ -664,7 +676,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   ProfileCustomFormField(
                       controller: _userBdTextController,
-                      formatter: [],
+                      formatter: const [],
                       action: TextInputAction.done,
                       hintText: "",
                       isPrefixeIconAvalibel: false,
@@ -672,10 +684,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           .copyWith(fontSize: 16, color: Styles.mainColor),
                       hintStyle: Styles.mainTextStyle
                           .copyWith(fontSize: 16, color: Styles.midGrayColor),
-                      vladationFunction: _validationHelper.validateEmail,
+                      vladationFunction: _validationHelper.validateField,
                       textInputType: TextInputType.emailAddress,
                       isSuffixIconAvalibel: true,
-                      suffixWidget: Icon(
+                      suffixWidget: const Icon(
                         Icons.calendar_today,
                         color: Styles.midGrayColor,
                       ),
@@ -726,14 +738,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       isDense: true,
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.mainColor,
                         ),
                       ),
                       // filled: borderColor,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Styles.formFieldBorderColor,
                           width: 1.0,
                         ),

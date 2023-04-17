@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:elite/providers/reservation_provider.dart';
 import 'package:elite/providers/resturant_provider.dart';
+import 'package:elite/screens/auth_pages.dart/splash_screen.dart';
 import 'package:elite/screens/auth_pages.dart/start_page.dart';
 import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
@@ -10,6 +11,7 @@ import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -30,12 +32,22 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await ScreenUtil.ensureScreenSize();
-  runApp(EasyLocalization(
-      supportedLocales: [Locale('en'), Locale('ar')],
-      path:
-          'assets/translations', // <-- change the path of the translation files
-      fallbackLocale: Locale('en'),
-      child: MyApp()));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(
+      EasyLocalization(
+          supportedLocales: const [Locale('en'), Locale('ar')],
+          path:
+              'assets/translations', // <-- change the path of the translation files
+          fallbackLocale: const Locale('en'),
+          child: ChangeNotifierProvider<AuthProvider>(
+            child: const MyApp(),
+            create: (BuildContext context) {
+              return AuthProvider();
+            },
+          )),
+    );
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -74,21 +86,49 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        home: StartPage(),
-        // MainTabsPage(),
+        home: FutureBuilder<bool>(
+          future: Provider.of<AuthProvider>(context).tryAutoLogin(),
+          builder: (context, userInformation) {
+            if (userInformation.connectionState == ConnectionState.done) {
+              if (userInformation.error != null ||
+                  userInformation.data == false) {
+                print('error');
+                return const StartPage();
+              }
+
+              // // return PaymentTest();
+              // return ComparingPricesVendorsListPage();
+              // return ShipmentPriceCompresionPage();
+              return const MainTabsPage();
+              //  return ShipmentShowPaymentStatus(isAaramex: true,isDone: true,);
+              // return StepperTest(
+              //   activeIndex: 3,
+              // );
+            }
+            return SplashScreen();
+          },
+          // ActivitonCodePage(
+          //   userMobileNumber: "0111111",
+          // )
+          // const LoginPage(),
+        ),
+
+        // const StartPage(),
+        // const MainTabsPage(),
         builder: BotToastInit(), //1. call BotToastInit
         navigatorObservers: [BotToastNavigatorObserver()],
         routes: {
-          NotificationPage.routeName: (ctx) => NotificationPage(),
-          EditProfilePage.routeName: (context) => EditProfilePage(),
-          MyOrdersPage.routeName: (ctx) => MyOrdersPage(),
-          PointsPage.routeName: (ctx) => PointsPage(),
-          MyReservationListPage.routeName: (context) => MyReservationListPage(),
-          SupportChatPage.RouteName: (context) => SupportChatPage(),
-          DeletePage.routeName: (ctx) => DeletePage(),
-          LoginPage.routeName: (ctx) => LoginPage(),
-          CreateAccountPage.routeName: (ctx) => CreateAccountPage(),
-          MainTabsPage.routeName: (ctx) => MainTabsPage(),
+          NotificationPage.routeName: (ctx) => const NotificationPage(),
+          EditProfilePage.routeName: (context) => const EditProfilePage(),
+          MyOrdersPage.routeName: (ctx) => const MyOrdersPage(),
+          PointsPage.routeName: (ctx) => const PointsPage(),
+          MyReservationListPage.routeName: (context) =>
+              const MyReservationListPage(),
+          SupportChatPage.RouteName: (context) => const SupportChatPage(),
+          DeletePage.routeName: (ctx) => const DeletePage(),
+          LoginPage.routeName: (ctx) => const LoginPage(),
+          CreateAccountPage.routeName: (ctx) => const CreateAccountPage(),
+          MainTabsPage.routeName: (ctx) => const MainTabsPage(),
         },
       ),
     );
