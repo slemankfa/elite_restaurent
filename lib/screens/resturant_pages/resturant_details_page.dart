@@ -12,18 +12,18 @@ import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
 import 'package:elite/screens/resturant_pages/widgets/resturant_image_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../../core/widgets/star_rating_parecntage_item.dart';
 
 class ResturentDetailPage extends StatefulWidget {
-  ResturentDetailPage({Key? key, required this.resturantId}) : super(key: key);
+  const ResturentDetailPage({Key? key, required this.resturantId})
+      : super(key: key);
 
   @override
   _ResturentDetailPageState createState() => _ResturentDetailPageState();
@@ -35,7 +35,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   final scrollDirection = Axis.vertical;
   double expandedHeight = 210;
 
-  HelperMethods _helperMethods = HelperMethods();
+  final HelperMethods _helperMethods = HelperMethods();
 
   ResturantModel? _resturantDetails;
   bool _isLoading = false;
@@ -99,7 +99,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   List<int> resevedPeopleCountList = [2, 4, 6, 8];
   String pickedDate = "";
   int _sliding = 0;
-  TimePickerSpinnerController _timePickerSpinnerController =
+  final TimePickerSpinnerController _timePickerSpinnerController =
       TimePickerSpinnerController();
 
   getResturantDetails() async {
@@ -146,7 +146,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                   : SingleChildScrollView(
                       child: Column(
                         children: [
-                          Container(
+                          SizedBox(
                             height: expandedHeight + 32,
                             // color: Colors.amber,
                             child: Stack(
@@ -154,22 +154,22 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                               children: [
                                 Align(
                                   alignment: Alignment.topCenter,
-                                  child: Container(
+                                  child: SizedBox(
                                     height: expandedHeight,
                                     child: CachedNetworkImage(
-                                      imageUrl:
-                                          _resturantDetails!.backGroundImage,
+                                      imageUrl: _resturantDetails!
+                                          .resturantsImages[0],
                                       // height: 64,
                                       // width: 64,
                                       width: double.infinity,
                                       height: double.infinity,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                       placeholder: (context, url) =>
                                           const FlutterLogo(
                                         size: 64,
                                       ),
                                       errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
+                                          const Icon(Icons.error),
                                     ),
                                   ),
                                 ),
@@ -178,10 +178,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   child: Align(
                                     alignment: Alignment.bottomCenter,
                                     child: Container(
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(5),
                                       decoration: ShapeDecoration(
                                           color: Styles.mainColor,
-                                          shape: CircleBorder(),
+                                          shape: const CircleBorder(),
                                           shadows: [
                                             BoxShadow(
                                               color:
@@ -212,7 +212,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                             size: 64,
                                           ),
                                           errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
+                                              const Icon(Icons.error),
                                         ),
                                       ),
                                     ),
@@ -229,8 +229,8 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                       child: Container(
                                         width: 40,
                                         height: 40,
-                                        padding: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Colors.white,
                                         ),
@@ -250,12 +250,12 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     child: Container(
                                         // width: 40,
                                         // height: 40,
-                                        padding: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: const BoxDecoration(
                                             // shape: BoxShape.circle,
                                             // color: Colors.white,
                                             ),
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.arrow_back_ios,
                                           color: Colors.white,
                                         )
@@ -274,7 +274,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                           //   height: 10,
                           // ),
                           Container(
-                            margin: EdgeInsets.all(16),
+                            margin: const EdgeInsets.all(16),
                             child: Column(
                               children: [
                                 Center(
@@ -350,7 +350,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "4.9",
+                                      "${(double.parse(_resturantDetails!.averageRating.toString()) * 100).round() / 100.0}",
                                       style: Styles.mainTextStyle.copyWith(
                                           color: Styles.mainColor,
                                           fontSize: 16,
@@ -365,7 +365,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     ),
                                     Flexible(
                                       child: Text(
-                                        "(55)",
+                                        "(${_resturantDetails!.totalRating.toString()})",
                                         style: Styles.mainTextStyle.copyWith(
                                           color: Styles.midGrayColor,
                                           fontSize: 16,
@@ -396,8 +396,8 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     },
                                     icon: SvgPicture.asset(
                                         "assets/icons/menu.svg"),
-                                    borderSide:
-                                        BorderSide(color: Styles.mainColor),
+                                    borderSide: const BorderSide(
+                                        color: Styles.mainColor),
                                     textStyle: Styles.mainTextStyle.copyWith(
                                         color: Styles.mainColor,
                                         fontSize: 16,
@@ -423,7 +423,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   height: 20,
                                 ),
                                 Container(
-                                  padding: EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(13),
                                       border: Border.all(
@@ -473,12 +473,18 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                           WrapCrossAlignment.start,
                                       alignment: WrapAlignment.start,
                                       direction: Axis.horizontal,
-                                      children: [
-                                        ResturantImageItem(),
-                                        ResturantImageItem(),
-                                        ResturantImageItem(),
-                                        ResturantImageItem(),
-                                      ],
+                                      children: _resturantDetails!
+                                          .resturantsImages
+                                          .map((image) => ResturantImageItem(
+                                                imageUrl: image,
+                                              ))
+                                          .toList(),
+                                      // children: const [
+                                      //   ResturantImageItem(),
+                                      //   ResturantImageItem(),
+                                      //   ResturantImageItem(),
+                                      //   ResturantImageItem(),
+                                      // ],
                                     ),
                                   ),
                                 ),
@@ -488,7 +494,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                 Container(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    "55 ratings",
+                                    "${_resturantDetails!.totalRating} ratings",
                                     style: Styles.mainTextStyle.copyWith(
                                         fontSize: 14, color: Colors.grey),
                                   ),
@@ -496,83 +502,93 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: LinearPercentIndicator(
-                                    // width: double.infinity,
-                                    lineHeight: 10.0,
-                                    percent: 0.8,
-                                    leading: Text("5 star"),
-                                    trailing: Text("80%"),
-                                    // barRadius: Radius.circular(radius),
-                                    backgroundColor: Colors.grey.shade100,
-                                    progressColor: Styles.progressColor,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 14,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: LinearPercentIndicator(
-                                    // width: double.infinity,
-                                    lineHeight: 10.0,
-                                    percent: 0.9,
-                                    leading: Text("4 star"),
-                                    trailing: Text("90%"),
-                                    // barRadius: Radius.circular(radius),
-                                    backgroundColor: Colors.grey.shade100,
-                                    progressColor: Styles.progressColor,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 14,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: LinearPercentIndicator(
-                                    // width: double.infinity,
-                                    lineHeight: 10.0,
-                                    percent: 0.2,
-                                    leading: Text("3 star"),
-                                    trailing: Text("20%"),
-                                    // barRadius: Radius.circular(radius),
-                                    backgroundColor: Colors.grey.shade100,
-                                    progressColor: Styles.progressColor,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 14,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: LinearPercentIndicator(
-                                    // width: double.infinity,
-                                    lineHeight: 10.0,
-                                    percent: 0.05,
-                                    leading: Text("2 star"),
-                                    trailing: Text("5%"),
-                                    // barRadius: Radius.circular(radius),
-                                    backgroundColor: Colors.grey.shade100,
-                                    progressColor: Styles.progressColor,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 14,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: LinearPercentIndicator(
-                                    // width: double.infinity,
-                                    lineHeight: 10.0,
-                                    percent: 0.0,
-                                    leading: Text("1 star"),
-                                    trailing: Text("0%"),
-                                    // barRadius: Radius.circular(radius),
-                                    backgroundColor: Colors.grey.shade100,
-                                    progressColor: Styles.progressColor,
-                                  ),
-                                ),
+
+                                Column(
+                                    children: _resturantDetails!
+                                        .starRatingParcentageList
+                                        .map((ratingItem) =>
+                                            StarRatingParecntageItem(
+                                              ratingItem: ratingItem,
+                                            ))
+                                        .toList()),
+
+                                // Padding(
+                                //   padding: const EdgeInsets.all(0),
+                                //   child: LinearPercentIndicator(
+                                //     // width: double.infinity,
+                                //     lineHeight: 10.0,
+                                //     percent: 0.8,
+                                //     leading: const Text("5 star"),
+                                //     trailing: const Text("80%"),
+                                //     // barRadius: Radius.circular(radius),
+                                //     backgroundColor: Colors.grey.shade100,
+                                //     progressColor: Styles.progressColor,
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 14,
+                                // ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(0),
+                                //   child: LinearPercentIndicator(
+                                //     // width: double.infinity,
+                                //     lineHeight: 10.0,
+                                //     percent: 0.9,
+                                //     leading: const Text("4 star"),
+                                //     trailing: const Text("90%"),
+                                //     // barRadius: Radius.circular(radius),
+                                //     backgroundColor: Colors.grey.shade100,
+                                //     progressColor: Styles.progressColor,
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 14,
+                                // ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(0),
+                                //   child: LinearPercentIndicator(
+                                //     // width: double.infinity,
+                                //     lineHeight: 10.0,
+                                //     percent: 0.2,
+                                //     leading: const Text("3 star"),
+                                //     trailing: const Text("20%"),
+                                //     // barRadius: Radius.circular(radius),
+                                //     backgroundColor: Colors.grey.shade100,
+                                //     progressColor: Styles.progressColor,
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 14,
+                                // ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(0),
+                                //   child: LinearPercentIndicator(
+                                //     // width: double.infinity,
+                                //     lineHeight: 10.0,
+                                //     percent: 0.05,
+                                //     leading: const Text("2 star"),
+                                //     trailing: const Text("5%"),
+                                //     // barRadius: Radius.circular(radius),
+                                //     backgroundColor: Colors.grey.shade100,
+                                //     progressColor: Styles.progressColor,
+                                //   ),
+                                // ),
+                                // const SizedBox(
+                                //   height: 14,
+                                // ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(0),
+                                //   child: LinearPercentIndicator(
+                                //     // width: double.infinity,
+                                //     lineHeight: 10.0,
+                                //     percent: 0.0,
+                                //     leading: const Text("1 star"),
+                                //     trailing: const Text("0%"),
+                                //     // barRadius: Radius.circular(radius),
+                                //     backgroundColor: Colors.grey.shade100,
+                                //     progressColor: Styles.progressColor,
+                                //   ),
+                                // ),
                                 const SizedBox(
                                   height: 20,
                                 ),
@@ -659,12 +675,12 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
             height: MediaQuery.of(context).size.height * 0.8,
             color: Colors.transparent,
             child: Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(13.0),
-                      topRight: const Radius.circular(13.0))),
+                      topLeft: Radius.circular(13.0),
+                      topRight: Radius.circular(13.0))),
               child: ListView(
                 children: <Widget>[
                   Row(
@@ -684,7 +700,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                           width: 30,
                           height: 30,
                           // padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Styles.closeBottomSheetBackgroundColor),
                           child: Icon(
@@ -695,7 +711,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                       ),
                     ],
                   ),
-                  Divider(),
+                  const Divider(),
                   const SizedBox(
                     height: 17,
                   ),
@@ -730,7 +746,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                               borderRadius: BorderRadius.circular(50.0),
                             ),
                             // padding: EdgeInsets.all(8),
-                            label: Container(
+                            label: SizedBox(
                               width: 50,
                               child: Text(
                                 '${resevedPeopleCountList[index]}',
@@ -773,7 +789,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                             fontSize: 20,
                             fontWeight: FontWeight.w600),
                       ),
-                      monthViewSettings: DateRangePickerMonthViewSettings(
+                      monthViewSettings: const DateRangePickerMonthViewSettings(
                           dayFormat: "E", showTrailingAndLeadingDates: false),
                       monthCellStyle: DateRangePickerMonthCellStyle(
                           textStyle: Styles.mainTextStyle
@@ -835,7 +851,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                               _timePickerSpinnerController.showMenu();
                             },
                             child: Container(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                   color: Styles.timeBackGroundColor
                                       .withOpacity(0.12),
@@ -853,25 +869,25 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         width: 6,
                       ),
                       Container(
-                        padding: EdgeInsets.all(3),
+                        padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                             color: Styles.timeBackGroundColor.withOpacity(0.12),
                             borderRadius: BorderRadius.circular(9)),
                         child: Row(
                           children: [
                             Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(9),
                                     color: _sliding == 0 ? Colors.white : null),
                                 child: Text('AM',
                                     style: Styles.mainTextStyle
                                         .copyWith(fontSize: 13))),
-                            SizedBox(
+                            const SizedBox(
                               width: 6,
                             ),
                             Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(9),
                                     color: _sliding == 1 ? Colors.white : null),
@@ -888,7 +904,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                   ),
                   Container(
                     color: Colors.white,
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     child: CustomOutlinedButton(
                         label: "Find Table",
                         // borderSide: BorderSide(),
@@ -917,8 +933,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   convertWorkingDayDateDate(String? date) {
     if (date == null) return "";
     // "2023-03-18T07:19:23.64"
-    DateTime tempDate =
-        new DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(date);
+    // DateTime tempDate =
+    //     DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(date);
+    DateTime tempDate = DateFormat("hh:mm:ss", 'en_US').parse(date);
     return DateFormat("hh:mm a").format(tempDate);
   }
 
@@ -935,12 +952,12 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
           height: MediaQuery.of(context).size.height * 0.7,
           color: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(13.0),
-                    topRight: const Radius.circular(13.0))),
+                    topLeft: Radius.circular(13.0),
+                    topRight: Radius.circular(13.0))),
             child: ListView(
               children: <Widget>[
                 Row(
@@ -960,7 +977,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         width: 30,
                         height: 30,
                         // padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Styles.closeBottomSheetBackgroundColor),
                         child: Icon(
@@ -971,7 +988,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     ),
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1014,7 +1031,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1057,7 +1074,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1100,7 +1117,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1143,7 +1160,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1186,7 +1203,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1229,7 +1246,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -1272,7 +1289,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                     )
                   ],
                 ),
-                Divider(),
+                const Divider(),
               ],
             ),
           ),
@@ -1281,3 +1298,5 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:elite/core/constants.dart';
 import 'package:elite/models/user_model.dart';
@@ -12,9 +13,7 @@ class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
   final HelperMethods _helperMethods = HelperMethods();
 
-
-
- Future<bool> tryAutoLogin() async {
+  Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('access_token') && !prefs.containsKey('is_guest')) {
       print("There is no Data");
@@ -24,7 +23,6 @@ class AuthProvider with ChangeNotifier {
     return true;
   }
 
-  
   Future<List<CityModel>> getCities({
     required BuildContext context,
   }) async {
@@ -111,7 +109,7 @@ class AuthProvider with ChangeNotifier {
       print(loginResponse.toString());
       saveAccessTokenlocaly(loginResponse.data["token"]);
       return true;
-    } on DioError catch (e) {
+    } on DioError {
       // print(e.toString());
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -119,16 +117,48 @@ class AuthProvider with ChangeNotifier {
       //   // print(e.response?.data);
       //   print(e.response?.data["error_messages"]);
       //   print(e.response?.statusCode);
-      String errorMessages = "";
-      for (var element in e.response?.data["error_messages"]) {
-        errorMessages += element + "\n";
-      }
-      _helperMethods.showErrorDilog(errorText: errorMessages, context: context);
+      // String errorMessages = "";
+      // for (var element in e.response?.data["error_messages"]) {
+      //   errorMessages += element + "\n";
+      // }
+      // _helperMethods.showErrorDilog(errorText: errorMessages, context: context);
 
-      //   BotToast.showText(text: _errorMessages); //popup a text toast;
+      BotToast.showText(
+          text:
+              "Something went Wrong! \n under development!"); //popup a text toast;
       //   // cancel();
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       return false;
+    }
+  }
+
+  Future<bool> logout({required BuildContext context}) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      // final token = await _helperMethods.getToken();
+
+      // Response resendResponse = await _dio.post("$API_URL/auth/logout",
+      //     options: Options(
+      //       headers: {
+      //         "Accept": "application/json",
+      //         "content-type": "application/json",
+      //         "Authorization": token
+      //       },
+      //     ),
+      //     data: {});
+      prefs.remove("access_token");
+      prefs.remove("is_guest");
+
+      notifyListeners();
+      return true;
+    } on DioError {
+      // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
+      // return false;
+      prefs.remove("access_token");
+      prefs.remove("is_guest");
+
+      notifyListeners();
+      return true;
     }
   }
 
@@ -157,10 +187,14 @@ class AuthProvider with ChangeNotifier {
             "AreaID": selectedRegionCity.id,
           });
       print(loginResponse.toString());
-      saveAccessTokenlocaly(loginResponse.data["token"]);
+      // saveAccessTokenlocaly(loginResponse.data["token"]);
+      saveAccessTokenlocaly("asdasd");
       return true;
     } on DioError catch (e) {
       print(e.toString());
+       BotToast.showText(
+          text:
+              "Something went Wrong! \n under development!");
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       // if (e.response != null) {

@@ -1,16 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/lunchers_helper.dart';
+import 'package:elite/screens/auth_pages.dart/start_page.dart';
 import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:elite/screens/profile_pages/points_page.dart';
 import 'package:elite/screens/profile_pages/support_chat_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/styles.dart';
+import '../../providers/auth_provider.dart';
 import 'my_resvation_list_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,9 +22,29 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final LuncherHelper _luncherHelper = LuncherHelper();
 
-  LuncherHelper _luncherHelper = LuncherHelper();
 
+  Future logout(BuildContext context) async {
+    try {
+      Provider.of<AuthProvider>(context, listen: false)
+          .logout(context: context)
+          .then((value) {
+        if (value) {
+          Navigator.pushAndRemoveUntil<dynamic>(
+            context,
+            MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const StartPage(),
+            ),
+            (route) => false, //if you want to disable back feature set to false
+          );
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
             bottom: 1,
             child: SafeArea(
                 child: Container(
-                    margin: EdgeInsets.all(16),
+                    margin: const EdgeInsets.all(16),
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
@@ -73,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   size: 64,
                                 ),
                                 errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
+                                    const Icon(Icons.error),
                               ),
                             ),
                           ),
@@ -94,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushNamed(MyOrdersPage.routeName),
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -127,12 +148,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // points
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushNamed(PointsPage.routeName),
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -172,12 +193,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // resvations
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushNamed(MyReservationListPage.routeName),
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -209,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // credit
                           ListTile(
                             leading: SvgPicture.asset("assets/icons/money.svg"),
@@ -240,12 +261,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // chat
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushNamed(SupportChatPage.RouteName),
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -264,13 +285,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // call us
                           ListTile(
-                            onTap: (){
+                            onTap: () {
                               _luncherHelper.launchPhoneCall("00966");
                             },
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -302,13 +323,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
                           // delete account
                           // chat
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushNamed(DeletePage.routeName),
-                            trailing: Icon(
+                            trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,
                             ),
@@ -323,7 +344,20 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(
                             height: 17,
                           ),
-                          Divider(),
+                          const Divider(),
+                          const SizedBox(
+                            height: 17,
+                          ),
+                          InkWell(
+                            onTap: ()=>logout(context),
+                            child: Center(
+                              child: Text("Logout",
+                                  style: Styles.mainTextStyle.copyWith(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                  )),
+                            ),
+                          )
                         ],
                       ),
                     ))),
@@ -360,7 +394,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.of(context)
                             .pushNamed(EditProfilePage.routeName);
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.edit,
                         color: Styles.midGrayColor,
                       ),

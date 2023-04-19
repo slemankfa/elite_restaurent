@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:elite/core/constants.dart';
+import 'package:elite/models/star_rating_parentage.dart';
 import 'package:flutter/material.dart';
 
 class ResturantModel {
@@ -10,9 +11,11 @@ class ResturantModel {
   final String traficStatus;
   final String openStatus;
   final String cousineType;
-  final double? averageRating;
-  final int? totalRating;
+  final String? averageRating;
+  final String? totalRating;
   ResurantWorkingDaysModel? resurantWorkingDaysModel;
+  final List<String> resturantsImages;
+  final List<StarRatingParcentage> starRatingParcentageList;
 
   ResturantModel(
       {required this.name,
@@ -22,23 +25,45 @@ class ResturantModel {
       required this.traficStatus,
       required this.openStatus,
       required this.cousineType,
+      this.resturantsImages = const [],
+      this.starRatingParcentageList = const [],
       this.averageRating,
       this.resurantWorkingDaysModel,
       this.totalRating});
 
   factory ResturantModel.fromJson(
       Map<String, dynamic> map, BuildContext context) {
-    // print(context.locale.toString());
+    List<String> tempImages = [];
+     List<StarRatingParcentage> tempStarRatingParcentageList = [];
+    //
+    if (map["imagess"] != null) {
+      List? loadedIamages = map["imagess"] as List;
+      for (var imageMap in loadedIamages) {
+        tempImages.add("$IMAGE_PATH_URL${imageMap["resturantImages"]}");
+      }
+    }
+
+     if (map["rating"] != null) {
+      List? loadedratings = map["rating"] as List;
+      for (var ratingItem in loadedratings) {
+        tempStarRatingParcentageList.add(StarRatingParcentage.fromJson(ratingItem));
+      }
+    }
+
     return ResturantModel(
       name: context.locale.toString() == "en"
           ? map["resturantNameE"]
           : map["resturantNameA"],
       id: map["resturantID"].toString(),
+      averageRating: map["agvRating"].toString(),
+      totalRating: map["maxRating"].toString(),
       logo: "$IMAGE_PATH_URL${map["resturantLogo"]}",
-      backGroundImage:
-          "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-      traficStatus: "Crowded",
+      backGroundImage: "",
+      // "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+      traficStatus: map["status"][0]["crowded"] == true ? "Crowded" : "Empty",
       openStatus: "OPEN",
+      starRatingParcentageList: tempStarRatingParcentageList.reversed.toList(),
+      resturantsImages: tempImages,
       cousineType: map["restaurantTypeID"].toString(),
     );
   }

@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +26,8 @@ class ResturantMenuItemMealsListPage extends StatefulWidget {
 class _ResturantMenuItemMealsListPageState
     extends State<ResturantMenuItemMealsListPage> {
   int _pageNumber = 1;
-  ScrollController _mealsListController = ScrollController();
-  HelperMethods _helperMethods = HelperMethods();
+  final ScrollController _mealsListController = ScrollController();
+  final HelperMethods _helperMethods = HelperMethods();
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   List<MenuItemMealsListModel> _mealsList = [];
@@ -88,14 +86,14 @@ class _ResturantMenuItemMealsListPageState
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Styles.grayColor),
+        iconTheme: const IconThemeData(color: Styles.grayColor),
         title: Text(
           widget.menuItem.name,
           style: Styles.appBarTextStyle,
         ),
       ),
       body: Container(
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         child: _mealsList.isEmpty
             ? Center(
                 child: Text(
@@ -147,7 +145,7 @@ class MenuItemMeals extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
@@ -159,15 +157,16 @@ class MenuItemMeals extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
-                imageUrl:  "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                //  meal.mealImage,
+                imageUrl: 
+                //  "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                 meal.mealImage,
                 height: 64,
                 width: 64,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => const FlutterLogo(
                   size: 64,
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             const SizedBox(
@@ -184,10 +183,11 @@ class MenuItemMeals extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            Container(
+            SizedBox(
               height: 20,
               child: Text(
-                "This margherita pizza recipe tastes like an artisan pie from Italy! It's the perfect meld of zingy tomato sauce, gooey cheese and chewy crust.",
+                meal.mealdescrpation,
+                // "This margherita pizza recipe tastes like an artisan pie from Italy! It's the perfect meld of zingy tomato sauce, gooey cheese and chewy crust.",
                 style: Styles.mainTextStyle.copyWith(
                   color: Styles.grayColor,
                   fontSize: 16,
@@ -203,7 +203,9 @@ class MenuItemMeals extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "4.9",
+                  // "4.9",
+                  "${(double.parse(meal.averageRating!) * 100).round() / 100.0}", 
+                    // "(${meal.averageRating.toString()})", 
                   style: Styles.mainTextStyle.copyWith(
                       color: Styles.mainColor,
                       fontSize: 16,
@@ -218,7 +220,7 @@ class MenuItemMeals extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    "(55 Reviews)",
+                    "(${meal.totalRating} Reviews)",
                     style: Styles.mainTextStyle.copyWith(
                       color: Styles.midGrayColor,
                       fontSize: 16,

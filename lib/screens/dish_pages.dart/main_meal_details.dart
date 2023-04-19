@@ -46,7 +46,7 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
     _scrollController = ScrollController();
     _tabController = TabController(vsync: this, length: 4);
     _tabController.addListener(() {
-      print("it changes");
+      // print("it changes");
       if (_tabController.index == 2 || _tabController.index == 3) {
         if (_scrollController.positions.isEmpty) return;
         _scrollController.animateTo(
@@ -74,8 +74,8 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            DishDesciptionPage(),
-            MealNatruationsPage(),
+            const DishDesciptionPage(),
+            const MealNatruationsPage(),
             MealPricesPage(
               scrollController: mainMealPriceScrollController,
               meal: widget.meal,
@@ -117,6 +117,8 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
           collapseMode: CollapseMode.parallax,
           background: DishImagesHeader(
             images: images,
+            meal: widget.meal,
+            resturantDetails: widget.resturantDetails,
           )),
       // The "forceElevated" property causes the SliverAppBar to show
       // a shadow. The "innerBoxIsScrolled" parameter is true when the

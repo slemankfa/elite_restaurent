@@ -4,14 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/styles.dart';
+import '../../../models/menu_item_meals_list_model.dart';
+import '../../../models/resturant_model.dart';
 
 class DishImagesHeader extends StatefulWidget {
   const DishImagesHeader({
     Key? key,
     required this.images,
+    required this.meal,
+    required this.resturantDetails,
   }) : super(key: key);
 
   final List<String> images;
+  final MenuItemMealsListModel meal;
+  final ResturantModel resturantDetails;
   @override
   State<DishImagesHeader> createState() => _DishImagesHeaderState();
 }
@@ -32,7 +38,7 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
     final mediaQuery = MediaQuery.of(context);
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 245,
           child: Stack(
             children: [
@@ -47,10 +53,11 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
                       imageUrl: item.toString(),
                       fit: BoxFit.fill,
                       width: double.infinity,
-                      placeholder: (context, url) => FlutterLogo(
+                      placeholder: (context, url) => const FlutterLogo(
                         size: 40,
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     );
                   }).toList(),
                   carouselController: _controller,
@@ -81,7 +88,7 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
                       child: Container(
                         width: 10.0,
                         height: 10.0,
-                        margin: EdgeInsets.symmetric(
+                        margin: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 4.0),
                         decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
@@ -100,7 +107,7 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
           height: 12,
         ),
         Text(
-          "Creamy Shrimp Pasta",
+          widget.meal.mealName,
           style: Styles.mainTextStyle.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 24,
@@ -114,7 +121,8 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "4.9",
+              "${(double.parse(widget.meal.averageRating!) * 100).round() / 100.0}",
+              // "4.9",
               style: Styles.mainTextStyle.copyWith(
                   color: Styles.mainColor,
                   fontSize: 16,
@@ -129,7 +137,8 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
             ),
             Flexible(
               child: Text(
-                "(55)",
+                "(${widget.meal.totalRating})",
+                // "(55)",
                 style: Styles.mainTextStyle.copyWith(
                   color: Styles.midGrayColor,
                   fontSize: 16,

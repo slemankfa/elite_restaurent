@@ -19,7 +19,7 @@ class MealReviewItem extends StatelessWidget {
     if (date == null) return "";
     // "2023-03-18T07:19:23.64"
     DateTime tempDate =
-        new DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(date);
+        DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(date);
     return DateFormat("MMM dd yyyy").format(tempDate);
   }
 
@@ -37,14 +37,15 @@ class MealReviewItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: CachedNetworkImage(
                     imageUrl:
-                        "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                    review.image,
+                        // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
                     height: 64,
                     width: 64,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => const FlutterLogo(
                       size: 64,
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),

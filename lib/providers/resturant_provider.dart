@@ -19,7 +19,7 @@ class ResturantProvider with ChangeNotifier {
     required String ResturantId,
   }) async {
     try {
-      // final token = await _helperMethods.getToken();
+      // final token = await _helperMethods.getToken()
       Response response = await _dio.get(
         "${API_URL}Restaurants/$ResturantId",
         options: Options(
