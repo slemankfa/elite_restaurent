@@ -14,6 +14,7 @@ class Styles {
   static const grayColor = Color(0xff4A4A4A);
   static const progressColor = Color(0xffFFB400);
   static const closeBottomSheetBackgroundColor = Color(0xffF2F2F7);
+  static const selectedSizeOrderBackgrounColor = Color(0xffA5ADBF);
   static const closeBottomIconColor = Color(0xff3C3C43);
   static const RatingRivewBoxBorderColor = Color(0xffF3F3F3);
   static const unselectedStarColor = Color(0xffC4C4C4);
@@ -25,6 +26,7 @@ class Styles {
   static const starGradientColor = Color(0xffFFAA4A);
   static const deleteBackGroundColor = Color(0xffFBE6E7);
   static const youChatTextColor = Color(0xff400F6E);
+  static const checkOrderSizeColor = Color(0xff0D0D0D);
   static const supportChatBBlMessageColor = Color(0xffF0E8F8);
 
   static TextStyle mainTextStyle =

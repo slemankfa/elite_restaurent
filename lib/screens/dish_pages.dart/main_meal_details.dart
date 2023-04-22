@@ -1,5 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/screens/dish_pages.dart/meal_description_page.dart';
 import 'package:elite/screens/dish_pages.dart/meal_nutrations_page.dart';
@@ -7,7 +5,6 @@ import 'package:elite/screens/dish_pages.dart/meal_prices_page.dart';
 import 'package:elite/screens/dish_pages.dart/meal_ratings_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/custom_outline_button.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
 import 'widgets/dish_image_header.dart';

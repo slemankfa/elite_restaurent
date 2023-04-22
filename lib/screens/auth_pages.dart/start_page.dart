@@ -49,14 +49,14 @@ class _StartPageState extends State<StartPage> {
               child: SafeArea(
                 child: Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(16),
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         const SizedBox(
                           height: 15,
                         ),
-                        FlutterLogo(
+                        const FlutterLogo(
                           size: 120,
                         ),
                         const SizedBox(
@@ -65,7 +65,7 @@ class _StartPageState extends State<StartPage> {
                         Container(
                           width: double.infinity,
                           height: 56,
-                          padding: EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(0),
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.white,
@@ -100,7 +100,7 @@ class _StartPageState extends State<StartPage> {
                         ),
                         Row(
                           children: [
-                            Expanded(
+                            const Expanded(
                                 child: Divider(
                               color: Colors.white,
                             )),
@@ -111,7 +111,7 @@ class _StartPageState extends State<StartPage> {
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Expanded(
+                            const Expanded(
                                 child: Divider(
                               color: Colors.white,
                             )),
@@ -139,7 +139,7 @@ class _StartPageState extends State<StartPage> {
                         ),
                         CustomOutlinedButton(
                             label: "Create new account",
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.add,
                               color: Colors.white,
                             ),
@@ -164,7 +164,7 @@ class _StartPageState extends State<StartPage> {
                             icon: Container(),
                             isIconVisible: false,
                             onPressedButton: () {},
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.white,
                             ),
                             // backGroundColor: Styles.mainColor,

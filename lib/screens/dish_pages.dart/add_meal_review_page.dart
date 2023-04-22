@@ -24,9 +24,9 @@ class AddMealReviewPage extends StatefulWidget {
 }
 
 class _AddMealReviewPageState extends State<AddMealReviewPage> {
-  HelperMethods _helperMethods = HelperMethods();
+  final HelperMethods _helperMethods = HelperMethods();
   double ratings = 1;
-  TextEditingController _commentController = TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
   late Function popUpProgressIndcator;
 
   @override
@@ -78,14 +78,14 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Add Review",
             style: Styles.appBarTextStyle,
           ),
         ),
         body: Container(
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +102,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                 ),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Styles.RatingRivewBoxBorderColor),
@@ -128,7 +128,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                         itemCount: 5,
                         glow: false,
                         unratedColor: Styles.unselectedStarColor,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
@@ -163,19 +163,19 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                         width: 1.0,
                       ),
                     ),
                     focusColor: Colors.black,
-                    focusedErrorBorder: OutlineInputBorder(
+                    focusedErrorBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.red,
                       ),
@@ -191,7 +191,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                     icon: Container(),
                     isIconVisible: false,
                     onPressedButton: postReview,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Styles.mainColor,
                     ),
                     // backGroundColor: Styles.mainColor,

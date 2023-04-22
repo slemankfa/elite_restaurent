@@ -1,6 +1,7 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:elite/providers/cart_provider.dart';
+import 'package:elite/screens/orders_pages/add_order_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/helper_methods.dart';
@@ -10,9 +11,10 @@ import '../../models/meal_size_model.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/resturant_provider.dart';
+import 'widgets/meal_size_list_item.dart';
 
 class MealPricesPage extends StatefulWidget {
-  MealPricesPage(
+  const MealPricesPage(
       {super.key,
       required this.scrollController,
       required this.meal,
@@ -29,8 +31,8 @@ class MealPricesPage extends StatefulWidget {
 class _MealPricesPageState extends State<MealPricesPage>
     with AutomaticKeepAliveClientMixin {
   int _pageNumber = 1;
-  ScrollController _mealsListController = ScrollController();
-  HelperMethods _helperMethods = HelperMethods();
+  final ScrollController _mealsListController = ScrollController();
+  final HelperMethods _helperMethods = HelperMethods();
   late Function popUpProgressIndcator;
   List<MealSizeModel> _mealSizedList = [];
   bool _isLoading = false;
@@ -95,6 +97,7 @@ class _MealPricesPageState extends State<MealPricesPage>
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       body: _isLoading
@@ -118,7 +121,7 @@ class _MealPricesPageState extends State<MealPricesPage>
                           : RefreshIndicator(
                               onRefresh: refreshList,
                               child: ListView.separated(
-                                  padding: EdgeInsets.all(0),
+                                  padding: const EdgeInsets.all(0),
                                   separatorBuilder: (context, index) =>
                                       const SizedBox(
                                         height: 0,
@@ -133,7 +136,7 @@ class _MealPricesPageState extends State<MealPricesPage>
                 ),
                 Container(
                   color: Colors.white,
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   child: CustomOutlinedButton(
                       label: "Order Meal",
                       // borderSide: BorderSide(),
@@ -143,11 +146,24 @@ class _MealPricesPageState extends State<MealPricesPage>
                       icon: Container(),
                       isIconVisible: false,
                       onPressedButton: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => ResturantReviewsPage()),
-                        // );
+                        if (_mealSizedList.isEmpty) {
+                          BotToast.showText(text: "There are no meal sizes");
+                          return;
+                        }
+                        cart.addItem(
+                            mealId: widget.meal.mealId,
+                            size: _mealSizedList[0],
+                            price: _mealSizedList[0].price,
+                            mealImage: widget.meal.mealImage,
+                            title: widget.meal.mealName,
+                            mealSizeList: _mealSizedList);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddOrderPage(
+                                    resturantDetails: widget.resturantDetails,
+                                  )),
+                        );
                       },
                       backGroundColor: Styles.mainColor,
                       // backGroundColor: Styles.mainColor,
@@ -164,52 +180,4 @@ class _MealPricesPageState extends State<MealPricesPage>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-}
-
-class MealSizeListItem extends StatelessWidget {
-  const MealSizeListItem({
-    super.key,
-    required this.mealSize,
-  });
-
-  final MealSizeModel mealSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          // contentPadding: EdgeInsets.all(),
-          trailing: Chip(
-            backgroundColor: Styles.chipBackGroundColor,
-            label: Text(
-              "${mealSize.price} JOD",
-              style: Styles.mainTextStyle.copyWith(
-                  color: Styles.timeTextColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
-            ),
-          ),
-          title: Text(
-            "MEAL SIZE",
-            style: Styles.mainTextStyle.copyWith(
-                color: Styles.midGrayColor,
-                fontSize: 12,
-                fontWeight: FontWeight.bold),
-          ),
-          subtitle: Transform(
-            transform: Matrix4.translationValues(0, 6, 0),
-            child: Text(
-              mealSize.name,
-              style: Styles.mainTextStyle.copyWith(
-                  color: Styles.grayColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
-        Divider(),
-      ],
-    );
-  }
 }

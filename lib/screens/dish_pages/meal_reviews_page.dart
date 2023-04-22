@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:elite/screens/dish_pages.dart/widgets/meal_review_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -14,6 +13,7 @@ import '../../models/meal_review_model.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/resturant_provider.dart';
+import '../dish_pages.dart/widgets/meal_review_item.dart';
 
 class MealReviewsPage extends StatefulWidget {
   const MealReviewsPage(

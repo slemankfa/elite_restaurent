@@ -1,10 +1,10 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:elite/providers/cart_provider.dart';
 import 'package:elite/providers/reservation_provider.dart';
 import 'package:elite/providers/resturant_provider.dart';
 import 'package:elite/screens/auth_pages.dart/splash_screen.dart';
 import 'package:elite/screens/auth_pages.dart/start_page.dart';
-import 'package:elite/screens/dish_pages.dart/main_meal_details.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/profile_pages/delete_page.dart';
@@ -66,6 +66,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: AuthProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: CartProvider(),
         ),
       ],
       child: MaterialApp(
