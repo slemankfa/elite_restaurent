@@ -1,3 +1,5 @@
+import 'package:elite/models/side_dishes.dart';
+
 import 'meal_size_model.dart';
 
 class CartItemModel {
@@ -9,6 +11,7 @@ class CartItemModel {
   final int maxQuntity;
   final MealSizeModel mealSize;
   final List<MealSizeModel> mealSizeList;
+  final List<SideMealDishes> sideDishes;
 
   CartItemModel(
       {required this.mealId,
@@ -17,6 +20,7 @@ class CartItemModel {
       required this.price,
       required this.mealImage,
       required this.maxQuntity,
+      required this.sideDishes,
       required this.mealSizeList,
       required this.mealSize});
 }

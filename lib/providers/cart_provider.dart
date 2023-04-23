@@ -2,6 +2,7 @@ import 'package:elite/models/cart_item_model.dart';
 import 'package:flutter/material.dart';
 
 import '../models/meal_size_model.dart';
+import '../models/side_dishes.dart';
 
 class CartProvider with ChangeNotifier {
   final Map<String, CartItemModel> _items = {};
@@ -18,6 +19,9 @@ class CartProvider with ChangeNotifier {
     var total = 0.0;
     _items.forEach((key, cartItem) {
       total += cartItem.quantity * cartItem.price;
+      for (var element in cartItem.sideDishes) {
+        total += element.price;
+      }
     });
 
     return total;
@@ -32,6 +36,7 @@ class CartProvider with ChangeNotifier {
           mealId,
           (existingCartItem) => CartItemModel(
               mealId: mealId,
+              sideDishes: existingCartItem.sideDishes,
               mealName: existingCartItem.mealName,
               mealImage: existingCartItem.mealImage,
               quantity: existingCartItem.quantity,
@@ -39,7 +44,7 @@ class CartProvider with ChangeNotifier {
               maxQuntity: existingCartItem.maxQuntity,
               mealSize: currentMealSize,
               mealSizeList: existingCartItem.mealSizeList));
-              notifyListeners();
+      notifyListeners();
       print("update meal Size");
     }
   }
@@ -50,6 +55,7 @@ class CartProvider with ChangeNotifier {
       required MealSizeModel size,
       required double price,
       required String title,
+      required List<SideMealDishes> sideDishes,
       required List<MealSizeModel> mealSizeList}) {
     if (_items.containsKey(mealId)) {
       _items.update(
@@ -62,6 +68,7 @@ class CartProvider with ChangeNotifier {
               price: price,
               maxQuntity: 1,
               mealSize: size,
+              sideDishes: existingCartItem.sideDishes,
               mealSizeList: existingCartItem.mealSizeList));
     } else {
       _items.putIfAbsent(
@@ -70,6 +77,7 @@ class CartProvider with ChangeNotifier {
                 mealId: mealId,
                 mealName: title,
                 quantity: 1,
+                sideDishes: sideDishes,
                 mealImage: mealImage,
                 price: price,
                 maxQuntity: 1,
@@ -77,8 +85,8 @@ class CartProvider with ChangeNotifier {
                 mealSize: size,
               ));
     }
-     notifyListeners();
-     print("addItemMethod");
+    notifyListeners();
+    print("addItemMethod");
   }
 
   void removeItem(String mealId) {
@@ -91,6 +99,20 @@ class CartProvider with ChangeNotifier {
       return 0;
     }
     return _items[mealId]!.quantity;
+  }
+
+  removeSideDish({required String mealId, required String sideDishId}) {
+    if (!_items.containsKey(mealId)) {
+      return;
+    }
+    for (var i = 0; i < _items[mealId]!.sideDishes.length; i++) {
+      if (_items[mealId]!.sideDishes[i].id == sideDishId) {
+        _items[mealId]!.sideDishes.removeAt(i);
+      }
+    }
+
+    notifyListeners();
+    print(" removee side dish");
   }
 
   removeSingleItem(String mealId) {
@@ -107,6 +129,7 @@ class CartProvider with ChangeNotifier {
               quantity: existingCartItem.quantity - 1,
               price: existingCartItem.price,
               maxQuntity: 1,
+              sideDishes: existingCartItem.sideDishes,
               mealSizeList: existingCartItem.mealSizeList,
               mealSize: existingCartItem.mealSize));
     } else {
@@ -118,5 +141,6 @@ class CartProvider with ChangeNotifier {
   void clear() {
     _items.clear();
     notifyListeners();
+    print("clear cart");
   }
 }

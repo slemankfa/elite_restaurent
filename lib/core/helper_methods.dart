@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/core/widgets/custom_outline_button.dart';
@@ -72,15 +70,127 @@ class HelperMethods {
     return status ?? false;
   }
 
-  showErrorDilog({required String errorText, required BuildContext context}) {
+  showAlertDilog(
+      {required String message,
+      required BuildContext context,
+      required Function function}) {
     showDialog(
         context: context,
-        builder: (ctx) => Container(
+        builder: (ctx) => SizedBox(
               width: MediaQuery.of(context).size.width,
               child: AlertDialog(
                 scrollable: true,
-                contentPadding: EdgeInsets.all(8),
-                insetPadding: EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.all(12),
+                insetPadding: const EdgeInsets.all(12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                title: Center(
+                  child: Text(
+                    "Alert!",
+                    style: Styles.mainTextStyle
+                         .copyWith(color: Styles.mainColor, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        width: double.infinity,
+                        child: Text(
+                          message,
+                          style: Styles.mainTextStyle
+                              .copyWith(color: Styles.mainColor, fontSize: 16, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    //  CustomOutlinedButton(
+                    //         label: "Delete",
+                    //         icon: Container(),
+                    //         isIconVisible: false,
+                    //         onPressedButton: () {
+                    //           function();
+                    //           Navigator.of(context).pop();
+                    //         },
+                    //         borderSide: BorderSide(
+                    //           color: Colors.black.withOpacity(0.16),
+                    //         ),
+                    //         // backGroundColor: Styles.mainColor,
+                    //         textStyle: Styles.mainTextStyle.copyWith(
+                    //             color: Colors.black.withOpacity(0.7),
+                    //             fontSize: 16,
+                    //             fontWeight: FontWeight.bold)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomOutlinedButton(
+                              label: "Remove",
+                              backGroundColor: Styles.deleteBackGroundColor,
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Styles.cancelREdColor,
+                              ),
+                              isIconVisible: true,
+                              onPressedButton: () {
+                                function();
+                                Navigator.of(context).pop();
+                              },
+                              borderSide: BorderSide(
+                                color: Colors.black.withOpacity(0.16),
+                              ),
+                              // backGroundColor: Styles.mainColor,
+                              textStyle: Styles.mainTextStyle.copyWith(
+                                  color: Styles.cancelREdColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: CustomOutlinedButton(
+                              label: "Cancel",
+                              icon: Container(),
+                              isIconVisible: false,
+                              onPressedButton: () {
+                                Navigator.of(context).pop();
+                              },
+                              // borderSide: BorderSide(
+                              //   color: Colors.black.withOpacity(0.16),
+                              // ),
+                              // backGroundColor: Styles.mainColor,
+                              textStyle: Styles.mainTextStyle.copyWith(
+                                  color: Colors.black.withOpacity(0.7),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ));
+  }
+
+  showErrorDilog({required String errorText, required BuildContext context}) {
+    showDialog(
+        context: context,
+        builder: (ctx) => SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: AlertDialog(
+                scrollable: true,
+                contentPadding: const EdgeInsets.all(8),
+                insetPadding: const EdgeInsets.all(10),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 title: Center(
@@ -95,7 +205,7 @@ class HelperMethods {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Center(
@@ -110,7 +220,7 @@ class HelperMethods {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     // Container(
@@ -131,6 +241,4 @@ class HelperMethods {
               ),
             ));
   }
-
- 
 }

@@ -11,10 +11,12 @@ class ResturantMenuItem extends StatelessWidget {
     super.key,
     required ResturantMenuItemModel menusItem,
     required this.resturantDetails,
+    required this.isFormAddOrderPage,
   }) : _menuItem = menusItem;
 
   final ResturantMenuItemModel _menuItem;
   final ResturantModel resturantDetails;
+  final bool isFormAddOrderPage;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class ResturantMenuItem extends StatelessWidget {
                   builder: (context) => ResturantMenuItemMealsListPage(
                         menuItem: _menuItem,
                         resturantDetails: resturantDetails,
+                        isFormAddOrderPage: isFormAddOrderPage,
                       )),
             );
           },
@@ -41,7 +44,7 @@ class ResturantMenuItem extends StatelessWidget {
               placeholder: (context, url) => const FlutterLogo(
                 size: 40,
               ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           // Container(
@@ -64,7 +67,7 @@ class ResturantMenuItem extends StatelessWidget {
             style: Styles.mainTextStyle
                 .copyWith(color: Styles.grayColor, fontSize: 18),
           ),
-          trailing: Icon(
+          trailing: const Icon(
             Icons.arrow_forward_ios_outlined,
             color: Styles.grayColor,
           ),

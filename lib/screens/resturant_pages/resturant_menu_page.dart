@@ -1,11 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/models/resturant_model.dart';
 import 'package:elite/providers/resturant_provider.dart';
-import 'package:elite/screens/resturant_pages/resturant_menu_item_meals_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/helper_methods.dart';
@@ -14,17 +9,18 @@ import '../../models/resturant_menu_item.dart';
 import 'widgets/resturant_menu_Item.dart';
 
 class ResturanMenuPage extends StatefulWidget {
-  const ResturanMenuPage({super.key, required this.resturantDetails});
+  const ResturanMenuPage({super.key, required this.resturantDetails, required this.isFormAddOrderPage});
 
   @override
   State<ResturanMenuPage> createState() => _ResturanMenuPageState();
   final ResturantModel resturantDetails;
+  final bool isFormAddOrderPage ;
 }
 
 class _ResturanMenuPageState extends State<ResturanMenuPage> {
   int _pageNumber = 1;
-  ScrollController _menuListController = ScrollController();
-  HelperMethods _helperMethods = HelperMethods();
+  final ScrollController _menuListController = ScrollController();
+  final HelperMethods _helperMethods = HelperMethods();
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   List<ResturantMenuItemModel> _menusList = [];
@@ -82,14 +78,14 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Styles.grayColor),
+        iconTheme: const IconThemeData(color: Styles.grayColor),
         title: Text(
           "Menu",
           style: Styles.appBarTextStyle,
         ),
       ),
       body: Container(
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         child: _menusList.isEmpty
             ? Center(
                 child: Text(
@@ -105,6 +101,7 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
                       return ResturantMenuItem(
                         menusItem: _menusList[index],
                         resturantDetails: widget.resturantDetails,
+                        isFormAddOrderPage: widget.isFormAddOrderPage,
                       );
                     }),
               ),

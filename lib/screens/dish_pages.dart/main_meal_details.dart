@@ -11,13 +11,17 @@ import 'widgets/dish_image_header.dart';
 
 class MaiMealDetailsPage extends StatefulWidget {
   const MaiMealDetailsPage(
-      {super.key, required this.meal, required this.resturantDetails});
+      {super.key,
+      required this.meal,
+      required this.resturantDetails,
+      required this.isFormAddOrderPage});
 
   @override
   State<MaiMealDetailsPage> createState() => _MaiMealDetailsPageState();
 
   final MenuItemMealsListModel meal;
   final ResturantModel resturantDetails;
+  final bool isFormAddOrderPage;
 }
 
 class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
@@ -76,6 +80,7 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
             MealPricesPage(
               scrollController: mainMealPriceScrollController,
               meal: widget.meal,
+              isFormAddOrderPage:widget.isFormAddOrderPage ,
               resturantDetails: widget.resturantDetails,
             ),
             MealRatingsPage(

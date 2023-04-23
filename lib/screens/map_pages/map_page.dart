@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MapPage extends StatefulWidget {
@@ -15,6 +14,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+
+  final HelperMethods _helperMethods = HelperMethods() ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +70,7 @@ class _MapPageState extends State<MapPage> {
                           onTap: () => Navigator.of(context)
                               .pushNamed(NotificationPage.routeName),
                           child: Container(
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             // margin: ,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -83,29 +84,34 @@ class _MapPageState extends State<MapPage> {
                         const SizedBox(
                           width: 16,
                         ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          // margin: ,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Filters",
-                                style: Styles.mainTextStyle.copyWith(
-                                  color: Styles.mainColor,
-                                  fontWeight: FontWeight.bold,
+                        InkWell(
+                          onTap: (){
+                            // _helperMethods.showAlertDilog(message: "asdsd", context: context, function: (){});
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            // margin: ,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Filters",
+                                  style: Styles.mainTextStyle.copyWith(
+                                    color: Styles.mainColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              SvgPicture.asset(
-                                "assets/icons/filters.svg",
-                              ),
-                            ],
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                SvgPicture.asset(
+                                  "assets/icons/filters.svg",
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -127,13 +133,13 @@ class _MapPageState extends State<MapPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResturentDetailPage(
+                            builder: (context) => const ResturentDetailPage(
                                   resturantId: "1",
                                 )),
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       width: MediaQuery.of(context).size.width * 0.8,
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -157,7 +163,7 @@ class _MapPageState extends State<MapPage> {
                                 size: 64,
                               ),
                               errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                                  const Icon(Icons.error),
                             ),
                           ),
                           const SizedBox(
@@ -186,7 +192,7 @@ class _MapPageState extends State<MapPage> {
                                       fontSize: 16,
                                       color: Styles.timeTextColor),
                                 ),
-                                TextSpan(text: ' PM'),
+                                const TextSpan(text: ' PM'),
                               ],
                             ),
                           ),

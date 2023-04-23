@@ -13,7 +13,7 @@ import '../dish_pages.dart/main_meal_details.dart';
 
 class ResturantMenuItemMealsListPage extends StatefulWidget {
   const ResturantMenuItemMealsListPage(
-      {super.key, required this.menuItem, required this.resturantDetails});
+      {super.key, required this.menuItem, required this.resturantDetails, required this.isFormAddOrderPage});
 
   @override
   State<ResturantMenuItemMealsListPage> createState() =>
@@ -21,6 +21,8 @@ class ResturantMenuItemMealsListPage extends StatefulWidget {
 
   final ResturantMenuItemModel menuItem;
   final ResturantModel resturantDetails;
+  final bool isFormAddOrderPage ; 
+  
 }
 
 class _ResturantMenuItemMealsListPageState
@@ -112,6 +114,7 @@ class _ResturantMenuItemMealsListPageState
                       return MenuItemMeals(
                         meal: _mealsList[index],
                         resturantDetails: widget.resturantDetails,
+                        isFormAddOrderPage: widget.isFormAddOrderPage,
                       );
                     }),
               ),
@@ -124,11 +127,12 @@ class MenuItemMeals extends StatelessWidget {
   const MenuItemMeals({
     super.key,
     required this.meal,
-    required this.resturantDetails,
+    required this.resturantDetails, required this.isFormAddOrderPage,
   });
 
   final MenuItemMealsListModel meal;
   final ResturantModel resturantDetails;
+   final bool isFormAddOrderPage ; 
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +144,7 @@ class MenuItemMeals extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => MaiMealDetailsPage(
                     meal: meal,
+                    isFormAddOrderPage: isFormAddOrderPage,
                     resturantDetails: resturantDetails,
                   )),
         );

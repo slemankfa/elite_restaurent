@@ -391,6 +391,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                                 ResturanMenuPage(
                                                   resturantDetails:
                                                       _resturantDetails!,
+                                                      isFormAddOrderPage: false,
                                                 )),
                                       );
                                     },

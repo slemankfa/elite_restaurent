@@ -18,7 +18,8 @@ class MealPricesPage extends StatefulWidget {
       {super.key,
       required this.scrollController,
       required this.meal,
-      required this.resturantDetails});
+      required this.resturantDetails,
+      required this.isFormAddOrderPage});
 
   @override
   State<MealPricesPage> createState() => _MealPricesPageState();
@@ -26,6 +27,7 @@ class MealPricesPage extends StatefulWidget {
   final ScrollController scrollController;
   final MenuItemMealsListModel meal;
   final ResturantModel resturantDetails;
+  final bool isFormAddOrderPage;
 }
 
 class _MealPricesPageState extends State<MealPricesPage>
@@ -134,43 +136,52 @@ class _MealPricesPageState extends State<MealPricesPage>
                                   }),
                             )),
                 ),
-                Container(
-                  color: Colors.white,
-                  margin: const EdgeInsets.all(8),
-                  child: CustomOutlinedButton(
-                      label: "Order Meal",
-                      // borderSide: BorderSide(),
-                      rectangleBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      icon: Container(),
-                      isIconVisible: false,
-                      onPressedButton: () {
-                        if (_mealSizedList.isEmpty) {
-                          BotToast.showText(text: "There are no meal sizes");
-                          return;
-                        }
-                        cart.addItem(
-                            mealId: widget.meal.mealId,
-                            size: _mealSizedList[0],
-                            price: _mealSizedList[0].price,
-                            mealImage: widget.meal.mealImage,
-                            title: widget.meal.mealName,
-                            mealSizeList: _mealSizedList);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddOrderPage(
-                                    resturantDetails: widget.resturantDetails,
-                                  )),
-                        );
-                      },
-                      backGroundColor: Styles.mainColor,
-                      // backGroundColor: Styles.mainColor,
-                      textStyle: Styles.mainTextStyle.copyWith(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
+                SafeArea(
+                  child: Container(
+                    color: Colors.white,
+                    margin: const EdgeInsets.all(8),
+                    child: CustomOutlinedButton(
+                        label:
+                            widget.isFormAddOrderPage ? "Add This" : "Order Meal",
+                        // borderSide: BorderSide(),
+                        rectangleBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        icon: Container(),
+                        isIconVisible: false,
+                        onPressedButton: () {
+                          if (_mealSizedList.isEmpty) {
+                            BotToast.showText(text: "There are no meal sizes");
+                            return;
+                          }
+                          if (!widget.isFormAddOrderPage) {
+                            cart.clear();
+                          }
+                
+                          print(widget.meal.sideDhshes.length);
+                          cart.addItem(
+                              mealId: widget.meal.mealId+DateTime.now().microsecond.toString(),
+                              size: _mealSizedList[0],
+                              price: _mealSizedList[0].price,
+                              mealImage: widget.meal.mealImage,
+                              sideDishes: [...widget.meal.sideDhshes],
+                              title: widget.meal.mealName,
+                              mealSizeList: _mealSizedList);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddOrderPage(
+                                      resturantDetails: widget.resturantDetails,
+                                    )),
+                          );
+                        },
+                        backGroundColor: Styles.mainColor,
+                        // backGroundColor: Styles.mainColor,
+                        textStyle: Styles.mainTextStyle.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  ),
                 ),
               ],
             ),
