@@ -6,6 +6,7 @@ import 'package:elite/providers/resturant_provider.dart';
 import 'package:elite/screens/auth_pages.dart/splash_screen.dart';
 import 'package:elite/screens/auth_pages.dart/start_page.dart';
 import 'package:elite/screens/main_tabs_page.dart';
+import 'package:elite/screens/map_pages/filter_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
@@ -99,10 +100,10 @@ class MyApp extends StatelessWidget {
                 return const StartPage();
               }
 
-              // // return PaymentTest();
+              return const FilterPge();
               // return ComparingPricesVendorsListPage();
               // return ShipmentPriceCompresionPage();
-              return const MainTabsPage();
+              // return const MainTabsPage();
               //  return ShipmentShowPaymentStatus(isAaramex: true,isDone: true,);
               // return StepperTest(
               //   activeIndex: 3,
