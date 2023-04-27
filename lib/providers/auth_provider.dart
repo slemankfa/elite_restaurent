@@ -2,7 +2,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:elite/core/constants.dart';
 import 'package:elite/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/helper_methods.dart';
@@ -88,6 +90,54 @@ class AuthProvider with ChangeNotifier {
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       return tempList;
     }
+  }
+
+  Future<bool> signInWithGoogle() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+    try {
+      GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: [
+          'email',
+          // 'https://www.googleapis.com/auth/contacts.readonly',
+        ],
+      );
+      GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      if (googleSignInAccount == null) {
+        return false;
+      }
+
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      final UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+
+      user = userCredential.user;
+
+      print(user!.displayName.toString());
+      print(user.photoURL.toString());
+      print(user.uid.toString());
+      print(user.email.toString());
+      //  print(user..toString());
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      print("Fireabse erorr  $e");
+      if (e.code == 'account-exists-with-different-credential') {
+        // handle the error here
+      } else if (e.code == 'invalid-credential') {
+        // handle the error here
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return false;
   }
 
   Future<bool> login(
@@ -192,9 +242,7 @@ class AuthProvider with ChangeNotifier {
       return true;
     } on DioError catch (e) {
       print(e.toString());
-       BotToast.showText(
-          text:
-              "Something went Wrong! \n under development!");
+      BotToast.showText(text: "Something went Wrong! \n under development!");
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       // if (e.response != null) {

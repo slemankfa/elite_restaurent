@@ -1,10 +1,11 @@
+
 import 'package:elite/core/styles.dart';
+import 'package:elite/providers/auth_provider.dart';
 import 'package:elite/screens/auth_pages.dart/create_account_page.dart';
 import 'package:elite/screens/auth_pages.dart/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
 
@@ -17,6 +18,14 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
+  signInWithGoogle() async {
+    try {
+      Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +82,7 @@ class _StartPageState extends State<StartPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: signInWithGoogle,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
+import 'package:elite/screens/map_pages/filter_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-
-  final HelperMethods _helperMethods = HelperMethods() ;
+  final HelperMethods _helperMethods = HelperMethods();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +85,12 @@ class _MapPageState extends State<MapPage> {
                           width: 16,
                         ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  const FilterPge(),
+                                ));
                             // _helperMethods.showAlertDilog(message: "asdsd", context: context, function: (){});
                           },
                           child: Container(
