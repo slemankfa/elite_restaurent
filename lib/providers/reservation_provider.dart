@@ -28,7 +28,7 @@ class ReservationProvider with ChangeNotifier {
           ));
       // print("response" + response.data.toString());
 
-      var loadedList = response.data[0]["tables"] as List;
+      var loadedList = response.data as List;
 
       var loadedNextPage = false;
       //     response.data['data']["notifications"]["next_page_url"] != null
@@ -40,8 +40,8 @@ class ReservationProvider with ChangeNotifier {
         ));
       }
       return {"list": tempList, "isThereNextPage": loadedNextPage};
-    } on DioError catch (e) {
-      print(e.toString());
+    } on DioError {
+      // print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
     }
   }

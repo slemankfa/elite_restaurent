@@ -32,8 +32,8 @@ class ReservationAvalibleTabelsPage extends StatefulWidget {
 class _ReservationAvalibleTabelsPageState
     extends State<ReservationAvalibleTabelsPage> {
   int _pageNumber = 1;
-  ScrollController _menuListController = ScrollController();
-  HelperMethods _helperMethods = HelperMethods();
+  final ScrollController _menuListController = ScrollController();
+  final HelperMethods _helperMethods = HelperMethods();
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   bool _isLoading = false;
@@ -102,14 +102,14 @@ class _ReservationAvalibleTabelsPageState
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Styles.grayColor),
+        iconTheme: const IconThemeData(color: Styles.grayColor),
         title: Text(
           "Select Table",
           style: Styles.appBarTextStyle,
         ),
       ),
       body: Container(
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         child: _isLoading
             ? Center(
                 child: _helperMethods.progressIndcator(),
@@ -152,7 +152,7 @@ class TableItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ReservationDetailsPage()),
+          MaterialPageRoute(builder: (context) => const ReservationDetailsPage()),
         );
       },
       child: Container(
@@ -169,7 +169,7 @@ class TableItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
@@ -182,14 +182,14 @@ class TableItem extends StatelessWidget {
                 placeholder: (context, url) => const FlutterLogo(
                   size: 40,
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             // const SizedBox(
             //   height: 16,
             // ),
             Container(
-              margin: EdgeInsets.all(16),
+              margin: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   Expanded(
@@ -204,7 +204,8 @@ class TableItem extends StatelessWidget {
                   Chip(
                       backgroundColor: Styles.listTileBorderColr,
                       label: Text(
-                        "Corner Table",
+                        // "Corner Table",
+                        table.descreption,
                         style: Styles.mainTextStyle.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
