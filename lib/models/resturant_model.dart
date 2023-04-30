@@ -60,7 +60,7 @@ class ResturantModel {
       logo: "$IMAGE_PATH_URL${map["resturantLogo"]}",
       backGroundImage: "$IMAGE_PATH_URL${map["backgroundImage"]}",
       // "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-      traficStatus: map["status"] ==null ?"Empty"  : map["status"][0]["crowded"] == true ? "Crowded" : "Empty",
+      traficStatus: map["status"] ==null || map["status"].isEmpty ?"Empty"  : map["status"][0]["crowded"] == true ? "Crowded" : "Empty",
       openStatus: "OPEN",
       starRatingParcentageList: tempStarRatingParcentageList.reversed.toList(),
       resturantsImages: tempImages,

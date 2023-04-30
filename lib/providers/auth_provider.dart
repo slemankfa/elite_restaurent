@@ -164,11 +164,12 @@ class AuthProvider with ChangeNotifier {
             'username': email,
             'password': password,
           });
-      print(loginResponse.toString());
+      // print(loginResponse.toString());
 
       UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
 
-      saveAccessTokenlocaly(loginResponse.data["token"], userModel);
+      saveAccessTokenlocaly("asdsa", userModel);
+      // saveAccessTokenlocaly(loginResponse.data["token"], userModel);
       return true;
     } on DioError {
       // print(e.toString());

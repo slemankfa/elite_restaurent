@@ -49,7 +49,7 @@ class UserModel {
         cityId: map["cityID"],
         userGender: map["sexID"],
         areaId: map["areaID"],
-        userImage: map["userImage"],
+        userImage: map["userImage"].toString(),
         userId: map["userID"].toString());
   }
 
@@ -60,7 +60,7 @@ class UserModel {
         "cityID": cityId,
         "sexID": userGender,
         "areaID": areaId,
-        "userImage": userImage,
+        "userImage": userImage.toString(),
         "userID": userId,
         "phoneNo":userPhone
       };

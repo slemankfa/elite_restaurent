@@ -68,7 +68,7 @@ class _ReservationAvalibleTabelsPageState
     });
     try {
       await Provider.of<ReservationProvider>(context, listen: false)
-          .getResturantMenuItemMeals(
+          .getResturantAvalibleTabels(
               context: context,
               pageNumber: _pageNumber,
               restId: widget.resturantDetails.id,

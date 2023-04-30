@@ -26,7 +26,7 @@ class StarRatingParecntageItem extends StatelessWidget {
             percent: ratingItem.starPercentage.round() / 100,
             leading: Text("${ratingItem.starRate} star"),
             trailing:
-                Text("${(ratingItem.starPercentage * 100).round() / 100.0}%"),
+                Text("${ratingItem.starPercentage}%"),
             // trailing: Text(
             //     "${(ratingItem.starPercentage.round() / 100) * 100}%"),
             // barRadius: Radius.circular(radius),

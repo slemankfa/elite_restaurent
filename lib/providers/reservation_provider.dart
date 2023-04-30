@@ -6,16 +6,16 @@ import '../core/constants.dart';
 import '../core/helper_methods.dart';
 
 class ReservationProvider with ChangeNotifier {
-  Dio _dio = Dio();
-  HelperMethods _helperMethods = HelperMethods();
+  final Dio _dio = Dio();
+  final HelperMethods _helperMethods = HelperMethods();
 
-  Future<Map<String, dynamic>> getResturantMenuItemMeals(
+  Future<Map<String, dynamic>> getResturantAvalibleTabels(
       {required BuildContext context,
       required int pageNumber,
       required String restId,
       required String date,
       required String Seats}) async {
-    List<TableModel> _tempList = [];
+    List<TableModel> tempList = [];
     try {
       Response response = await _dio.get(
           "${API_URL}Tables/FindTable?ResturentID=$restId&NoOfSeat=$Seats&dateTime=$date",
@@ -28,21 +28,21 @@ class ReservationProvider with ChangeNotifier {
           ));
       // print("response" + response.data.toString());
 
-      var loadedList = response.data as List;
+      var loadedList = response.data[0]["tables"] as List;
 
       var loadedNextPage = false;
       //     response.data['data']["notifications"]["next_page_url"] != null
       //         ? true
       //         : false;
       for (var item in loadedList) {
-        _tempList.add(TableModel.fromJson(
+        tempList.add(TableModel.fromJson(
           item,
         ));
       }
-      return {"list": _tempList, "isThereNextPage": loadedNextPage};
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError catch (e) {
       print(e.toString());
-      return {"list": _tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 }

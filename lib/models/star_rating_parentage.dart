@@ -5,7 +5,9 @@ class StarRatingParcentage {
   StarRatingParcentage({required this.starRate, required this.starPercentage});
 
   factory StarRatingParcentage.fromJson(Map<String, dynamic> map) {
-    return StarRatingParcentage(starRate: map["yourRate"], starPercentage: 20);
+    return StarRatingParcentage(
+        starRate: map["yourRate"],
+        starPercentage: double.parse(map["percentage"].toString()));
     // starPercentage: double.parse(map["percentage"].toString()));
   }
 }
