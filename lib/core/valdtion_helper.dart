@@ -10,6 +10,7 @@ class ValidationHelper {
   }
 
   String? validatePassword(String value) {
+     return null;
     if (value.trim().isEmpty) {
       return "هذه الخانة مطلوبه! ";
     } else if (value.trim().length < 4) {

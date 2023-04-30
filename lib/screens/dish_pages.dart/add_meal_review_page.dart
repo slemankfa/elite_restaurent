@@ -52,7 +52,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
 
       Provider.of<ResturantProvider>(context, listen: false)
           .addMealReview(
-              rating: ratings,
+              rating: ratings.round(),
               review: _commentController.text,
               restId: widget.resturantDetails.id,
               mealId: widget.meal.mealId)
@@ -124,7 +124,7 @@ class _AddMealReviewPageState extends State<AddMealReviewPage> {
                         initialRating: 1,
                         minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
+                        allowHalfRating: false,
                         itemCount: 5,
                         glow: false,
                         unratedColor: Styles.unselectedStarColor,

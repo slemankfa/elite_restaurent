@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:elite/core/constants.dart';
@@ -14,6 +16,12 @@ import '../models/city_model.dart';
 class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
   final HelperMethods _helperMethods = HelperMethods();
+
+  UserModel? _userInformation;
+
+  UserModel? get userInformation {
+    return _userInformation;
+  }
 
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
@@ -157,7 +165,10 @@ class AuthProvider with ChangeNotifier {
             'password': password,
           });
       print(loginResponse.toString());
-      saveAccessTokenlocaly(loginResponse.data["token"]);
+
+      UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
+
+      saveAccessTokenlocaly(loginResponse.data["token"], userModel);
       return true;
     } on DioError {
       // print(e.toString());
@@ -238,7 +249,8 @@ class AuthProvider with ChangeNotifier {
           });
       print(loginResponse.toString());
       // saveAccessTokenlocaly(loginResponse.data["token"]);
-      saveAccessTokenlocaly("asdasd");
+      UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
+      // saveAccessTokenlocaly("asdasd", );
       return true;
     } on DioError catch (e) {
       print(e.toString());
@@ -264,9 +276,34 @@ class AuthProvider with ChangeNotifier {
 
   Future saveAccessTokenlocaly(
     String accessToken,
+    UserModel userModel,
   ) async {
     final pref = await SharedPreferences.getInstance();
     pref.setString("access_token", accessToken);
     pref.setBool("is_guest", false);
+    pref.setString("userData", json.encode(userModel.toJson()));
+  }
+
+  Future<void> getUserInformation(BuildContext context) async {
+    try {
+      // final token = await _helperMethods.getToken();
+      UserModel? userModel = await _helperMethods.getUser();
+      // print(userModel!.toJson().toString());
+      if(userModel == null) return ;
+      Response response = await _dio.get("${API_URL}Users/${userModel.userId}",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ));
+
+      _userInformation = UserModel.fromJson(response.data[0]);
+
+      notifyListeners();
+    } on DioError catch (e) {
+      print(e.toString());
+    }
   }
 }

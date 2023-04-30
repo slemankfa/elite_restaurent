@@ -28,6 +28,7 @@ class Styles {
   static const youChatTextColor = Color(0xff400F6E);
   static const checkOrderSizeColor = Color(0xff0D0D0D);
   static const supportChatBBlMessageColor = Color(0xffF0E8F8);
+  static const DividerColor = Color(0xffEBE9F2);
 
   static TextStyle mainTextStyle =
       GoogleFonts.openSans(color: Colors.black, fontSize: 14);

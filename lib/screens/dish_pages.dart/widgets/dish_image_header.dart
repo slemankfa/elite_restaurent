@@ -42,42 +42,50 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
           height: 245,
           child: Stack(
             children: [
-              Positioned(
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0,
-                child: CarouselSlider(
-                  items: widget.images.map((item) {
-                    return CachedNetworkImage(
-                      imageUrl: item.toString(),
-                      fit: BoxFit.fill,
-                      width: double.infinity,
-                      placeholder: (context, url) => const FlutterLogo(
-                        size: 40,
+              widget.images.isEmpty
+                  ? const Positioned(
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      bottom: 0,
+                      child: FlutterLogo(),
+                    )
+                  : Positioned(
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      bottom: 0,
+                      child: CarouselSlider(
+                        items: widget.images.map((item) {
+                          return CachedNetworkImage(
+                            imageUrl: item.toString(),
+                            fit: BoxFit.fill,
+                            width: double.infinity,
+                            placeholder: (context, url) => const FlutterLogo(
+                              size: 40,
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          );
+                        }).toList(),
+                        carouselController: _controller,
+                        options: CarouselOptions(
+                            autoPlay: true,
+                            // autoPlayAnimationDuration: D,
+                            enlargeCenterPage: false,
+                            viewportFraction: 1.0,
+                            aspectRatio: 1.0,
+                            // enlargeCenterPage: true,
+                            // aspectRatio: 2.0,
+                            // pageSnapping: false,
+                            padEnds: true,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _current = index;
+                              });
+                            }),
                       ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    );
-                  }).toList(),
-                  carouselController: _controller,
-                  options: CarouselOptions(
-                      autoPlay: true,
-                      // autoPlayAnimationDuration: D,
-                      enlargeCenterPage: false,
-                      viewportFraction: 1.0,
-                      aspectRatio: 1.0,
-                      // enlargeCenterPage: true,
-                      // aspectRatio: 2.0,
-                      // pageSnapping: false,
-                      padEnds: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _current = index;
-                        });
-                      }),
-                ),
-              ),
+                    ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Row(

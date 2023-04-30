@@ -69,18 +69,20 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
-            _buildSliverAppBar(innerBoxIsScrolled, tabs, resturantImages)
+            _buildSliverAppBar(innerBoxIsScrolled, tabs, widget.meal.mealImages)
           ];
         },
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
             const DishDesciptionPage(),
-            const MealNatruationsPage(),
+            MealNatruationsPage(
+              meal: widget.meal,
+            ),
             MealPricesPage(
               scrollController: mainMealPriceScrollController,
               meal: widget.meal,
-              isFormAddOrderPage:widget.isFormAddOrderPage ,
+              isFormAddOrderPage: widget.isFormAddOrderPage,
               resturantDetails: widget.resturantDetails,
             ),
             MealRatingsPage(

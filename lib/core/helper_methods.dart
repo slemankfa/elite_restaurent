@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/core/widgets/custom_outline_button.dart';
+import 'package:elite/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,20 +39,20 @@ class HelperMethods {
     return token;
   }
 
-  clearAramexShipmentData() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove("aramex_shipment_details");
-    prefs.remove("aramex_sender");
-    prefs.remove("aramex_reciver");
-    print("clearAramexShipmentDataMethod");
-  }
-
-  clearSmbShipmentData() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove("smb_shipment_details");
-    prefs.remove("smb_sender");
-    prefs.remove("smb_reciver");
-    print("clearSmbShipmentDataMethod");
+  Future<UserModel?> getUser() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      Map<String, dynamic>? extractedUserData =
+          json.decode(prefs.getString('userData')!);
+      if (extractedUserData == null) {
+        return null;
+      }
+      UserModel user = UserModel.fromSavedJson(extractedUserData);
+      return user;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
   }
 
   Future<bool?> checkIsGuest() async {
@@ -87,8 +90,10 @@ class HelperMethods {
                 title: Center(
                   child: Text(
                     "Alert!",
-                    style: Styles.mainTextStyle
-                         .copyWith(color: Styles.mainColor, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: Styles.mainTextStyle.copyWith(
+                        color: Styles.mainColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 content: Column(
@@ -105,8 +110,10 @@ class HelperMethods {
                         width: double.infinity,
                         child: Text(
                           message,
-                          style: Styles.mainTextStyle
-                              .copyWith(color: Styles.mainColor, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: Styles.mainTextStyle.copyWith(
+                              color: Styles.mainColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                       ),

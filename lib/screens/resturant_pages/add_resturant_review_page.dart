@@ -21,11 +21,11 @@ class AddResturantReviewPage extends StatefulWidget {
 }
 
 class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
-  HelperMethods _helperMethods = HelperMethods();
+  final HelperMethods _helperMethods = HelperMethods();
   double _goodTreatment = 1;
   double _requsetSpeed = 1;
   double _sanilation = 1;
-  TextEditingController _commentController = TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
   late Function popUpProgressIndcator;
 
   @override
@@ -42,18 +42,18 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
   }
 
   postReview() async {
-    // if(_commentController.text.trim().isEmpty){
-    //   BotToast.showText(text: "");
-    //   return ;
-    // }
+    if (_commentController.text.trim().isEmpty) {
+      BotToast.showText(text: "");
+      return;
+    }
     try {
       popUpProgressIndcator = _helperMethods.showPopUpProgressIndcator();
 
       Provider.of<ResturantProvider>(context, listen: false)
           .addResturantReview(
-        goodTreatment: _goodTreatment,
-        requsetSpeed: _requsetSpeed,
-        sanilation: _sanilation,
+        goodTreatment: _goodTreatment.round(),
+        requsetSpeed: _requsetSpeed.round(),
+        sanilation: _sanilation.round(),
         review: _commentController.text.trim(),
         restId: widget.resturantDetails.id,
       )
@@ -79,14 +79,14 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Add Review",
             style: Styles.appBarTextStyle,
           ),
         ),
         body: Container(
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +103,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                 ),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Styles.RatingRivewBoxBorderColor),
@@ -125,11 +125,12 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         initialRating: 1,
                         minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
+                        allowHalfRating: false,
                         itemCount: 5,
                         glow: false,
                         unratedColor: Styles.unselectedStarColor,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding:
+                            const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
@@ -144,7 +145,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                 ),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Styles.RatingRivewBoxBorderColor),
@@ -166,11 +167,12 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         initialRating: 1,
                         minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
+                        allowHalfRating: false,
                         itemCount: 5,
                         glow: false,
                         unratedColor: Styles.unselectedStarColor,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding:
+                            const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
@@ -185,7 +187,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                 ),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Styles.RatingRivewBoxBorderColor),
@@ -207,11 +209,12 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                         initialRating: 1,
                         minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
+                        allowHalfRating: false,
                         itemCount: 5,
                         glow: false,
                         unratedColor: Styles.unselectedStarColor,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemPadding:
+                            const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) =>
                             SvgPicture.asset("assets/icons/star.svg"),
                         onRatingUpdate: (rating) {
@@ -235,7 +238,7 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                   height: 16,
                 ),
                 TextFormField(
-                  // controller: _shipmentDescrpationController,
+                  controller: _commentController,
                   // validator: ((value) => _validationHelper.validateField(value!)),
                   textInputAction: TextInputAction.newline,
                   keyboardType: TextInputType.multiline,
@@ -245,19 +248,19 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                         width: 1.0,
                       ),
                     ),
                     focusColor: Colors.black,
-                    focusedErrorBorder: OutlineInputBorder(
+                    focusedErrorBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.red,
                       ),
@@ -272,8 +275,8 @@ class _AddResturantReviewPageState extends State<AddResturantReviewPage> {
                     label: "POST",
                     icon: Container(),
                     isIconVisible: false,
-                    onPressedButton:postReview,
-                    borderSide: BorderSide(
+                    onPressedButton: postReview,
+                    borderSide: const BorderSide(
                       color: Styles.mainColor,
                     ),
                     // backGroundColor: Styles.mainColor,

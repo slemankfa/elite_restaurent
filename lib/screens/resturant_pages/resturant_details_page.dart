@@ -157,13 +157,13 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   child: SizedBox(
                                     height: expandedHeight,
                                     child: CachedNetworkImage(
-                                      imageUrl: _resturantDetails!
-                                          .resturantsImages[0],
+                                      imageUrl:
+                                          _resturantDetails!.backGroundImage,
                                       // height: 64,
                                       // width: 64,
                                       width: double.infinity,
                                       height: double.infinity,
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           const FlutterLogo(
                                         size: 64,
@@ -247,24 +247,29 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   top: 16,
                                   left: 16,
                                   child: SafeArea(
-                                    child: Container(
-                                        // width: 40,
-                                        // height: 40,
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: const BoxDecoration(
-                                            // shape: BoxShape.circle,
-                                            // color: Colors.white,
-                                            ),
-                                        child: const Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Colors.white,
-                                        )
-                                        //  SvgPicture.asset(
-                                        //   "assets/icons/calendar.svg",
-                                        //   width: 20,
-                                        //   height: 20,
-                                        // ),
-                                        ),
+                                    child: InkWell(
+                                      onTap: (){
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                          // width: 40,
+                                          // height: 40,
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: const BoxDecoration(
+                                              // shape: BoxShape.circle,
+                                              // color: Colors.white,
+                                              ),
+                                          child: const Icon(
+                                            Icons.arrow_back_ios,
+                                            color: Colors.white,
+                                          )
+                                          //  SvgPicture.asset(
+                                          //   "assets/icons/calendar.svg",
+                                          //   width: 20,
+                                          //   height: 20,
+                                          // ),
+                                          ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -391,7 +396,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                                 ResturanMenuPage(
                                                   resturantDetails:
                                                       _resturantDetails!,
-                                                      isFormAddOrderPage: false,
+                                                  isFormAddOrderPage: false,
                                                 )),
                                       );
                                     },
@@ -1299,5 +1304,3 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     );
   }
 }
-
-

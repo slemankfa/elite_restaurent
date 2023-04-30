@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:elite/models/meal_size_model.dart';
 import 'package:elite/models/resturant_menu_item.dart';
 import 'package:elite/models/resturant_model.dart';
+import 'package:elite/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
 import '../core/helper_methods.dart';
 import '../models/meal_review_model.dart';
 import '../models/menu_item_meals_list_model.dart';
+import '../models/nutrations_model.dart';
 import '../models/resturant_review_model.dart';
 
 class ResturantProvider with ChangeNotifier {
@@ -165,11 +167,13 @@ class ResturantProvider with ChangeNotifier {
   }
 
   Future<bool> addMealReview(
-      {required double rating,
+      {required int rating,
       required String review,
       required String restId,
       required String mealId}) async {
     try {
+      UserModel? userModel = await _helperMethods.getUser();
+      print(userModel!.userId.toString());
       Response response = await _dio.post("${API_URL}ItemReviews",
           options: Options(
             headers: {
@@ -181,7 +185,7 @@ class ResturantProvider with ChangeNotifier {
           data: {
             "resturantID": restId,
             "itemID": mealId,
-            "userID": "admin",
+            "userID": userModel.userId,
             "review": review,
             "yourRate": rating,
             "date": "2023-03-27T17:30:11.693Z"
@@ -228,6 +232,65 @@ class ResturantProvider with ChangeNotifier {
     }
   }
 
+  Future<List<NutirationModel>> getMealNutration(
+      {required BuildContext context, required String menuItemId}) async {
+    List<NutirationModel> tempList = [];
+    try {
+      Response response = await _dio.get(
+          "${API_URL}CaloriesItems/GetCaloriesItem?ItemID=$menuItemId",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ));
+
+      var loadedList = response.data as List;
+      // print(response.data);
+      for (var item in loadedList) {
+        tempList.add(NutirationModel.fromJson(item));
+      }
+      return tempList;
+    } on DioError catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getResturantsList({
+    required BuildContext context,
+    required int pageNumber,
+    required Map<String, dynamic> map,
+  }) async {
+    List<ResturantModel> tempList = [];
+    try {
+      Response response = await _dio.get("${API_URL}Restaurants",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ),);
+      // print("response${response.data}");
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        tempList.add(ResturantModel.fromJson(item, context));
+      }
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
+    } on DioError catch (e) {
+      print(e.toString());
+      return {"list": tempList, "isThereNextPage": false};
+    }
+  }
+
   Future<Map<String, dynamic>> getResturantReviews({
     required BuildContext context,
     required int pageNumber,
@@ -262,13 +325,15 @@ class ResturantProvider with ChangeNotifier {
   }
 
   Future<bool> addResturantReview({
-    required double goodTreatment,
-    required double requsetSpeed,
-    required double sanilation,
+    required int goodTreatment,
+    required int requsetSpeed,
+    required int sanilation,
     required String review,
     required String restId,
   }) async {
     try {
+      UserModel? userModel = await _helperMethods.getUser();
+      print(userModel!.userId.toString());
       Response response = await _dio.post("${API_URL}RestaurantReviews/create",
           options: Options(
             headers: {
@@ -279,7 +344,7 @@ class ResturantProvider with ChangeNotifier {
           ),
           data: {
             "resturantID": restId,
-            "userID": "admin",
+            "userID": userModel.userId,
             "review": review,
             "goodTreatment": goodTreatment,
             "requsetSpeed": requsetSpeed,

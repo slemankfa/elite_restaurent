@@ -10,7 +10,9 @@ class StarRatingParecntageItem extends StatelessWidget {
     required this.ratingItem,
   });
   final StarRatingParcentage ratingItem;
-
+  // percent: ratingItem.starPercentage.round() / 100,
+  //           leading: Text("${ratingItem.starRate} star"),
+  //           trailing: Text("${(ratingItem.starPercentage * 100).round() / 100.0}%")
   @override
   Widget build(BuildContext context) {
     // print(ratingItem.starPercentage.roundToDouble() / 100);
@@ -23,7 +25,8 @@ class StarRatingParecntageItem extends StatelessWidget {
             lineHeight: 10.0,
             percent: ratingItem.starPercentage.round() / 100,
             leading: Text("${ratingItem.starRate} star"),
-            trailing: Text("${(ratingItem.starPercentage * 100).round() / 100.0}%"),
+            trailing:
+                Text("${(ratingItem.starPercentage * 100).round() / 100.0}%"),
             // trailing: Text(
             //     "${(ratingItem.starPercentage.round() / 100) * 100}%"),
             // barRadius: Radius.circular(radius),

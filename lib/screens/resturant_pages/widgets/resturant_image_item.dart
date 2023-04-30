@@ -26,7 +26,7 @@ class ResturantImageItem extends StatelessWidget {
           // width: 64,
           width: double.infinity,
           height: double.infinity,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
           placeholder: (context, url) =>
               Image.asset("assets/images/image_place.png"),
           errorWidget: (context, url, error) => const Icon(Icons.error),

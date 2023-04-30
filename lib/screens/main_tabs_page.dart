@@ -2,7 +2,9 @@ import 'package:elite/core/styles.dart';
 import 'package:elite/screens/map_pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import 'profile_pages/profile_page.dart';
 
 class MainTabsPage extends StatefulWidget {
@@ -23,12 +25,24 @@ class _MainTabsPageState extends State<MainTabsPage> {
     });
   }
 
+  fetchUserProfile() async {
+    Provider.of<AuthProvider>(context, listen: false)
+        .getUserInformation(context);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    fetchUserProfile();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: [MapPage(), ProfilePage()],
+        children: const [MapPage(), ProfilePage()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[

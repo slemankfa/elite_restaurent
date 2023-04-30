@@ -1,8 +1,12 @@
 import 'package:elite/core/styles.dart';
+import 'package:elite/screens/map_pages/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+
+import '../../core/widgets/custom_outline_button.dart';
+import '../../models/filter_item_model.dart';
 
 class Data {
   Data({required this.x, required this.y});
@@ -52,22 +56,55 @@ class _FilterPgeState extends State<FilterPge> {
   int distance = 10;
   bool _showBars = true;
 
-  int? _selectedPeopleCountIndex = 0;
+  int? _selectedRatingIndex = 0;
 
-  List<String> resevedPeopleCountList = [
+  final List<String> _ratingsList = [
     "All",
+    "5 Stars",
     "4 Stars",
     "3 Stars",
     "2 Stars",
     "1 Stars",
-    "as,djasjdhha"
   ];
 
-  List<String> selectedReportList = [];
+  List<int> selectCusineList = [];
+
+  List<int> getRatingByIndex(int index) {
+    switch (index) {
+      case 0:
+        return [];
+      case 1:
+        return [5];
+      case 2:
+        return [4];
+      case 3:
+        return [3];
+      case 4:
+        return [2];
+      case 5:
+        return [6];
+
+      default:
+        return [];
+    }
+  }
+
+  final List<FilterItemModel> _cusineItems = [
+    FilterItemModel(id: 1, name: 'Mexican'),
+    FilterItemModel(id: 2, name: 'Italian')
+  ];
+
+  List<int> selectedCusineTypes = [];
+
+  clearAllFilters() {
+    selectedCusineTypes.clear();
+    _selectedRatingIndex = 0;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    final items = resevedPeopleCountList
+    final items = _ratingsList
         .map((animal) => MultiSelectItem<String>(animal, animal))
         .toList();
     return Scaffold(
@@ -225,7 +262,7 @@ class _FilterPgeState extends State<FilterPge> {
                     Expanded(
                       // flex: 10,
                       child: Text(
-                        "Remind me through SMS",
+                        "Show Bars and Pubs",
                         style: Styles.mainTextStyle
                             .copyWith(fontSize: 16, color: Styles.grayColor),
                       ),
@@ -287,19 +324,19 @@ class _FilterPgeState extends State<FilterPge> {
                 Wrap(
                   spacing: 5.0,
                   children: List<Widget>.generate(
-                    resevedPeopleCountList.length,
+                    _ratingsList.length,
                     (int index) {
                       return Container(
                         // width: 81,
                         child: ChoiceChip(
                           backgroundColor: Colors.white,
-                          selectedColor: _selectedPeopleCountIndex == index
+                          selectedColor: _selectedRatingIndex == index
                               ? Styles.listTileBorderColr
                               : Colors.white,
                           // selectedColor: ,
                           side: BorderSide(
-                            width: _selectedPeopleCountIndex == index ? 2 : 1,
-                            color: _selectedPeopleCountIndex == index
+                            width: _selectedRatingIndex == index ? 2 : 1,
+                            color: _selectedRatingIndex == index
                                 ? Styles.listTileBorderColr
                                 : Styles.midGrayColor,
                           ),
@@ -320,9 +357,9 @@ class _FilterPgeState extends State<FilterPge> {
                                   ),
                                 ),
                                 Text(
-                                  resevedPeopleCountList[index],
+                                  _ratingsList[index],
                                   style: Styles.mainTextStyle.copyWith(
-                                      color: _selectedPeopleCountIndex == index
+                                      color: _selectedRatingIndex == index
                                           ? Styles.resturentNameColor
                                           : Styles.grayColor,
                                       fontSize: 16,
@@ -332,11 +369,10 @@ class _FilterPgeState extends State<FilterPge> {
                               ],
                             ),
                           ),
-                          selected: _selectedPeopleCountIndex == index,
+                          selected: _selectedRatingIndex == index,
                           onSelected: (bool selected) {
                             setState(() {
-                              _selectedPeopleCountIndex =
-                                  selected ? index : null;
+                              _selectedRatingIndex = selected ? index : null;
                             });
                           },
                         ),
@@ -362,115 +398,67 @@ class _FilterPgeState extends State<FilterPge> {
                 const SizedBox(
                   height: 20,
                 ),
-                // MultiSelectChipField(
-                //   items: items,
-                //   scroll: false,
-                //   decoration: const BoxDecoration(),
-
-                //   showHeader: false,
-                //   icon: const Icon(Icons.check, color: Styles.mainColor,),
-                //   // onTap: (vall) {
-                //   //   // _selectedAnimals = values;
-                //   //   // print(values);
-                //   //   setState(() {});
-                //   // },
-                // ),
-
                 MultiSelectChip(
-                  resevedPeopleCountList,
+                  _cusineItems,
                   onSelectionChanged: (selectedList) {
                     setState(() {
-                      selectedReportList = selectedList;
+                      selectedCusineTypes = selectedList;
                     });
+                    // print(selectedCusineTypes.toString());
                   },
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Divider(
+                  height: 5,
+                  thickness: 1,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomOutlinedButton(
+                    label: "Show 14 Results",
+                    isIconVisible: false,
+                    backGroundColor: Styles.mainColor,
+                    onPressedButton: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => ResturanMenuPage(
+                      //             resturantDetails: _resturantDetails!,
+                      //             isFormAddOrderPage: false,
+                      //           )),
+                      // );
+                    },
+                    icon: Container(),
+                    borderSide: const BorderSide(color: Styles.mainColor),
+                    textStyle: Styles.mainTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold)),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomOutlinedButton(
+                    label: "Clear all",
+                    isIconVisible: false,
+                    backGroundColor: Styles.listTileBorderColr,
+                    onPressedButton: () {
+                      clearAllFilters();
+                    },
+                    icon: Container(),
+                    borderSide:
+                        const BorderSide(color: Styles.listTileBorderColr),
+                    textStyle: Styles.mainTextStyle.copyWith(
+                        color: Styles.mainColor,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold)),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class MultiSelectChip extends StatefulWidget {
-  final List<String> reportList;
-  final Function(List<String>) onSelectionChanged; // +added
-  const MultiSelectChip(this.reportList,
-      {super.key, required this.onSelectionChanged} // +added
-      );
-  @override
-  _MultiSelectChipState createState() => _MultiSelectChipState();
-}
-
-class _MultiSelectChipState extends State<MultiSelectChip> {
-  // String selectedChoice = "";
-  List<String> selectedChoices = [];
-  _buildChoiceList() {
-    List<Widget> choices = [];
-    for (var item in widget.reportList) {
-      choices.add(Container(
-        padding: const EdgeInsets.all(2.0),
-        child: ChoiceChip(
-          backgroundColor: Colors.white,
-          selectedColor: selectedChoices.contains(item)
-              ? Styles.listTileBorderColr
-              : Colors.white,
-          // selectedColor: ,
-          side: BorderSide(
-            width: selectedChoices.contains(item) ? 2 : 1,
-            color: selectedChoices.contains(item)
-                ? Styles.listTileBorderColr
-                : Styles.midGrayColor,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50.0),
-          ),
-          // padding: EdgeInsets.all(8),
-          label: SizedBox(
-            // width: 50,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Visibility(
-                  visible: selectedChoices.contains(item),
-                  child: const Icon(
-                    Icons.check,
-                    color: Styles.mainColor,
-                  ),
-                ),
-                Text(
-                  item,
-                  style: Styles.mainTextStyle.copyWith(
-                      color: selectedChoices.contains(item)
-                          ? Styles.resturentNameColor
-                          : Styles.grayColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          onSelected: (selected) {
-            setState(() {
-              selectedChoices.contains(item)
-                  ? selectedChoices.remove(item)
-                  : selectedChoices.add(item);
-              widget.onSelectionChanged(selectedChoices); // +added
-            });
-          },
-          selected: selectedChoices.contains(item),
-        ),
-      ));
-    }
-    return choices;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      children: _buildChoiceList(),
     );
   }
 }

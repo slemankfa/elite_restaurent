@@ -16,7 +16,7 @@ class MenuItemMealsListModel {
   final String? totalRating;
   final List<StarRatingParcentage> starRatingParcentageList;
   final List<SideMealDishes> sideDhshes;
-
+  final List<String> mealImages;
 
   Random random = Random();
 
@@ -24,6 +24,7 @@ class MenuItemMealsListModel {
     required this.mealId,
     required this.mealName,
     required this.mealImage,
+    required this.mealImages,
     required this.mealdescrpation,
     required this.sideDhshes,
     required this.averageRating,
@@ -34,7 +35,23 @@ class MenuItemMealsListModel {
   factory MenuItemMealsListModel.fromJson(
       Map<String, dynamic> map, BuildContext context) {
     List<StarRatingParcentage> tempStarRatingParcentageList = [];
+    List<String> tempImages = [];
+    final List<SideMealDishes> tempSideDhshes= [];
+    //
 
+    if (map["extras"] != null) {
+      List? loadedExtras = map["extras"] as List;
+      for (var extraMap in loadedExtras) {
+        tempSideDhshes.add(SideMealDishes.fromJson(extraMap));
+      }
+    }
+
+    if (map["images"] != null) {
+      List? loadedIamages = map["images"] as List;
+      for (var imageMap in loadedIamages) {
+        tempImages.add("$IMAGE_PATH_URL${imageMap["itemInages"]}");
+      }
+    }
     if (map["rating"] != null) {
       List? loadedratings = map["rating"] as List;
       for (var ratingItem in loadedratings) {
@@ -51,11 +68,9 @@ class MenuItemMealsListModel {
         mealName: context.locale.toString() == "en"
             ? map["itemNameE"]
             : map["itemNameA"],
+        mealImages: tempImages,
         mealImage: "$IMAGE_PATH_URL${map["mainImage"]}",
         mealdescrpation: map["itemComponents"].toString(),
-        sideDhshes: [
-          SideMealDishes(id: "1", name: "Potato Chips", price: 2),
-          SideMealDishes(id: "1", name: "Sauce", price: 1),
-        ]);
+        sideDhshes: tempSideDhshes);
   }
 }

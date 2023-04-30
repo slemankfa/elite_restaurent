@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/styles.dart';
+import '../../models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import 'my_resvation_list_page.dart';
 
@@ -23,7 +24,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final LuncherHelper _luncherHelper = LuncherHelper();
-
 
   Future logout(BuildContext context) async {
     try {
@@ -44,9 +44,12 @@ class _ProfilePageState extends State<ProfilePage> {
       print(e.toString());
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
+    UserModel? userModel = Provider.of<AuthProvider>(
+      context,
+    ).userInformation;
     return Scaffold(
       body: Stack(
         children: [
@@ -81,28 +84,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                       blurRadius: 1,
                                       spreadRadius: 5),
                                 ]),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: CachedNetworkImage(
-                                imageUrl:
-                                    "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                                height: 64,
-                                width: 64,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) =>
-                                    const FlutterLogo(
-                                  size: 64,
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
-                            ),
+                            child: userModel == null
+                                ? Container()
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: CachedNetworkImage(
+                                      imageUrl: userModel.userImage!,
+                                      // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                                      height: 64,
+                                      width: 64,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const FlutterLogo(
+                                        size: 64,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
                           ),
                           const SizedBox(
                             height: 20,
                           ),
                           Text(
-                            "Clinton Waelchi",
+                            userModel == null ? "" : userModel.userName,
                             style: Styles.mainTextStyle.copyWith(
                                 color: Styles.grayColor,
                                 fontSize: 16,
@@ -349,7 +354,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 17,
                           ),
                           InkWell(
-                            onTap: ()=>logout(context),
+                            onTap: () => logout(context),
                             child: Center(
                               child: Text("Logout",
                                   style: Styles.mainTextStyle.copyWith(

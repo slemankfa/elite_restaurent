@@ -1,4 +1,3 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elite/core/helper_methods.dart';
@@ -159,7 +158,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           age: _userBdTextController.text.trim(),
           cityId: _selectedCity!.id,
           areaId: _selectedRegionCity!.id,
-          userGender: selectedGenderValue == "Male" ? "1" : "2");
+          userPhone: _userPhoneTextController.text.trim(),
+          userGender: selectedGenderValue == "Male" ? "1" : "2",
+          userId: '');
       showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
       await Provider.of<AuthProvider>(context, listen: false)
           .signUp(
@@ -170,7 +171,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           .then((value) {
         showPopUpLoading();
         if (value) {
-            Navigator.pushAndRemoveUntil<dynamic>(
+          Navigator.pushAndRemoveUntil<dynamic>(
             context,
             MaterialPageRoute<dynamic>(
               builder: (BuildContext context) => const MainTabsPage(),
