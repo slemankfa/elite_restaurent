@@ -105,14 +105,14 @@ class _AddOrderPageState extends State<AddOrderPage> {
         showConfirmDilog(context: context);
       } else {}
     });
+    // Navigator.push(context, route)
     // Navigator.pushAndRemoveUntil<dynamic>(
-    //                 context,
-    //                 MaterialPageRoute<dynamic>(
-    //                   builder: (BuildContext context) => const MainTabsPage(),
-    //                 ),
-    //                 (route) =>
-    //                     false, //if you want to disable back feature set to false
-    //               );
+    //   context,
+    //   MaterialPageRoute<dynamic>(
+    //     builder: (BuildContext context) => const MainTabsPage(),
+    //   ),
+    //   (route) => false, //if you want to disable back feature set to false
+    // );
   }
 
   showConfirmDilog({required BuildContext context}) {
