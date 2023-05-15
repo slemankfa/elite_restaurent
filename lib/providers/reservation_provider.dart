@@ -88,7 +88,7 @@ class ReservationProvider with ChangeNotifier {
   }
 
   Future<bool> cancelResrvation(
-      {required BuildContext context, required int resvId}) async {
+      {required BuildContext context, required String resvId}) async {
     try {
       final token = await _helperMethods.getToken();
 
@@ -102,7 +102,8 @@ class ReservationProvider with ChangeNotifier {
             },
           ),
           data: {});
-
+      print(resvId);
+      print(resendResponse.data);
       return true;
     } on DioError {
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);

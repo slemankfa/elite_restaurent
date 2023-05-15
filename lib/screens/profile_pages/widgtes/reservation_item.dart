@@ -46,7 +46,8 @@ class ReservationItem extends StatelessWidget {
   cancelReservation(BuildContext context) async {
     try {
       Provider.of<ReservationProvider>(context, listen: false)
-          .cancelResrvation(context: context, resvId: 1)
+          .cancelResrvation(
+              context: context, resvId: reservationModel.reservationId)
           .then((status) {
         // Navigator.of(context).pop();
         updateUI();
