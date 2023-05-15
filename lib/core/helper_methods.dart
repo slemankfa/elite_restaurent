@@ -33,9 +33,13 @@ class HelperMethods {
   }
 
   Future<String> getToken() async {
-    var token = "";
+    String? token = "";
     final prefs = await SharedPreferences.getInstance();
     token = "Bearer ${prefs.getString('access_token')}";
+    // token = prefs.getString('access_token');
+    if (token == null) {
+      return "";
+    }
     return token;
   }
 

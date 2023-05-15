@@ -13,7 +13,7 @@ class SideMealDishes {
     return SideMealDishes(
       id: map["itemID"].toString(),
       name: map["itemNameA"],
-      price: map["price"],
+      price: map["price"]??0,
     );
   }
 }

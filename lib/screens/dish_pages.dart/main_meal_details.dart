@@ -75,7 +75,9 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            const DishDesciptionPage(),
+            DishDesciptionPage(
+              meal: widget.meal,
+            ),
             MealNatruationsPage(
               meal: widget.meal,
             ),

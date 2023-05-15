@@ -107,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 20,
                           ),
                           Text(
-                            userModel == null ? "" : userModel.userName,
+                            userModel == null ? "" : userModel.firstName,
                             style: Styles.mainTextStyle.copyWith(
                                 color: Styles.grayColor,
                                 fontSize: 16,

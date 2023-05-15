@@ -129,7 +129,7 @@ class _MapPageState extends State<MapPage> {
                                 Text(
                                   userModel == null
                                       ? ""
-                                      : "${userModel.userName.toString()}!",
+                                      : "${userModel.firstName.toString()}!",
                                   style: Styles.mainTextStyle.copyWith(
                                       color: Styles.userNameColor,
                                       fontSize: 20,

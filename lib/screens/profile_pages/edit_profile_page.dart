@@ -88,8 +88,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         Provider.of<AuthProvider>(context, listen: false).userInformation;
     if (userModel == null) return;
 
-    _userFirstnameTextController.text = userModel.userName;
-    _userLastnameTextController.text = userModel.userName;
+    _userFirstnameTextController.text = userModel.firstName;
+    _userLastnameTextController.text = userModel.firstName;
     _userEmailTextController.text = userModel.email;
     _userPhoneTextController.text = userModel.userPhone;
 

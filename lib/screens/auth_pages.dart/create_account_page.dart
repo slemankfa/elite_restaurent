@@ -116,6 +116,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         if (areasList.isNotEmpty) {
           _citiesRegionList = areasList;
           _selectedRegionCity = _citiesRegionList[0];
+        } else {
+          _citiesRegionList = areasList;
         }
         setState(() {
           _isLoading = false;
@@ -151,8 +153,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     }
     try {
       UserModel user = UserModel(
-          userName:
-              "${_userFirstnameTextController.text.trim()} ${_userLastnameTextController.text.trim()}",
+          firstName: _userFirstnameTextController.text.trim(),
+          lastName: _userLastnameTextController.text.trim(),
           email: _userEmailTextController.text,
           password: _userPasswordTextController.text.trim(),
           age: _userBdTextController.text.trim(),
@@ -704,9 +706,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                         if (pickedDate != null) {
                           print(
-                              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000  MMM dd yyyy
                           String formattedDate =
-                              DateFormat('MMM dd yyyy').format(pickedDate);
+                              DateFormat('M-dd-yyyy').format(pickedDate);
                           print(
                               formattedDate); //formatted date output using intl package =>  2021-03-16
                           setState(() {
@@ -786,9 +788,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     },
                     onChanged: (value) {
                       //Do something when changing the item if you want.
+                      selectedGenderValue = value.toString();
+                      print(selectedGenderValue);
                     },
                     onSaved: (value) {
                       selectedGenderValue = value.toString();
+                      print(selectedGenderValue);
                     },
                     buttonStyleData: const ButtonStyleData(
                       height: 60,

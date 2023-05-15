@@ -10,6 +10,7 @@ import '../core/helper_methods.dart';
 import '../models/meal_review_model.dart';
 import '../models/menu_item_meals_list_model.dart';
 import '../models/nutrations_model.dart';
+import '../models/order_model.dart';
 import '../models/resturant_review_model.dart';
 
 class ResturantProvider with ChangeNotifier {
@@ -23,7 +24,7 @@ class ResturantProvider with ChangeNotifier {
     try {
       // final token = await _helperMethods.getToken()
       Response response = await _dio.get(
-        "${API_URL}Restaurants/$ResturantId",
+        "${API_URL}Restaurant/$ResturantId",
         options: Options(
           headers: {
             "Accept": "application/json",
@@ -232,6 +233,27 @@ class ResturantProvider with ChangeNotifier {
     }
   }
 
+  Future<String?> getMealDescrption(
+      {required BuildContext context, required String menuItemId}) async {
+    try {
+      Response response =
+          await _dio.get("${API_URL}Items/Description?ItemID=$menuItemId",
+              options: Options(
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  // "Authorization": token
+                },
+              ));
+      // print("response" + response.data.toString());
+
+      return response.data.toString();
+    } on DioError catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future<List<NutirationModel>> getMealNutration(
       {required BuildContext context, required String menuItemId}) async {
     List<NutirationModel> tempList = [];
@@ -265,14 +287,16 @@ class ResturantProvider with ChangeNotifier {
   }) async {
     List<ResturantModel> tempList = [];
     try {
-      Response response = await _dio.get("${API_URL}Restaurants",
-          options: Options(
-            headers: {
-              "Accept": "application/json",
-              "content-type": "application/json",
-              // "Authorization": token
-            },
-          ),);
+      Response response = await _dio.get(
+        "${API_URL}Restaurant",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json",
+            // "Authorization": token
+          },
+        ),
+      );
       // print("response${response.data}");
 
       var loadedList = response.data as List;
@@ -356,6 +380,42 @@ class ResturantProvider with ChangeNotifier {
     } catch (e) {
       print(e.toString());
       return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> getMyOrders({
+    required BuildContext context,
+    required int pageNumber,
+    required int orderType,
+  }) async {
+    List<OrderModel> tempList = [];
+    try {
+      final token = await _helperMethods.getToken();
+
+      Response response =
+          await _dio.get("${API_URL}Order/MyOrders?UserID=3&IsIndoor=$orderType",
+              options: Options(
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": token
+                },
+              ));
+      // print("response" + response.data.toString());
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        tempList.add(OrderModel.fromJson(item));
+      }
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
+    } on DioError catch (e) {
+      print(e.toString());
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 }

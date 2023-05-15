@@ -1,7 +1,8 @@
 import '../core/constants.dart';
 
 class UserModel {
-  final String userName;
+  final String firstName;
+  final String lastName;
   final String email;
   final String? password;
   final String age;
@@ -13,7 +14,8 @@ class UserModel {
   final String userPhone;
 
   UserModel({
-    required this.userName,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.password,
     required this.age,
@@ -27,7 +29,8 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-        userName: map["userName"],
+        firstName: map["firstName"],
+        lastName: map["lastName"] ?? "",
         email: map["email"],
         password: "",
         age: map["age"],
@@ -41,7 +44,8 @@ class UserModel {
 
   factory UserModel.fromSavedJson(Map<String, dynamic> map) {
     return UserModel(
-        userName: map["userName"],
+        firstName: map["firstName"],
+        lastName: map["lastName"],
         email: map["email"],
         password: "",
         userPhone: map["phoneNo"],
@@ -54,7 +58,8 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() => {
-        "userName": userName,
+        "firstName": firstName,
+        "lastName": firstName,
         "email": email,
         "age": age,
         "cityID": cityId,
@@ -62,6 +67,6 @@ class UserModel {
         "areaID": areaId,
         "userImage": userImage.toString(),
         "userID": userId,
-        "phoneNo":userPhone
+        "phoneNo": userPhone
       };
 }

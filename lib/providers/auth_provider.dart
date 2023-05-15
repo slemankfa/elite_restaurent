@@ -44,7 +44,7 @@ class AuthProvider with ChangeNotifier {
       // return employees;
       final token = await _helperMethods.getToken();
       Response response = await _dio.get(
-        "${API_URL}City",
+        "${API_URL}City/get_all_cities",
         options: Options(
           headers: {
             "Accept": "application/json",
@@ -77,7 +77,7 @@ class AuthProvider with ChangeNotifier {
       // return employees;
       final token = await _helperMethods.getToken();
       Response response = await _dio.get(
-        "${API_URL}City/GetAreas?City=$cityIdenifier",
+        "${API_URL}Area/$cityIdenifier",
         options: Options(
           headers: {
             "Accept": "application/json",
@@ -94,7 +94,9 @@ class AuthProvider with ChangeNotifier {
       }
 
       return tempList;
-    } on DioError {
+    } catch (e) {
+      // print(e.toString());
+
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       return tempList;
     }
@@ -153,7 +155,7 @@ class AuthProvider with ChangeNotifier {
       required String password,
       required BuildContext context}) async {
     try {
-      Response loginResponse = await _dio.post("${API_URL}Users/Login",
+      Response loginResponse = await _dio.post("${API_URL}Login",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -166,13 +168,12 @@ class AuthProvider with ChangeNotifier {
           });
       // print(loginResponse.toString());
 
-      UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
+      // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
 
-      saveAccessTokenlocaly("asdsa", userModel);
-      // saveAccessTokenlocaly(loginResponse.data["token"], userModel);
+      saveAccessTokenlocaly(accessToken: loginResponse.data["token"]);
       return true;
-    } on DioError {
-      // print(e.toString());
+    } catch (e) {
+      print(e.toString());
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       // if (e.response != null) {
@@ -188,7 +189,7 @@ class AuthProvider with ChangeNotifier {
       BotToast.showText(
           text:
               "Something went Wrong! \n under development!"); //popup a text toast;
-      //   // cancel();
+      // //   // cancel();
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       return false;
     }
@@ -230,31 +231,37 @@ class AuthProvider with ChangeNotifier {
       required CityRegionModel selectedRegionCity,
       required BuildContext context}) async {
     try {
-      Response loginResponse = await _dio.post("${API_URL}Users/Login",
+      Response loginResponse = await _dio.post("${API_URL}Login/create",
           options: Options(
             headers: {
               "Accept": "application/json",
-              "content-type": "application/json",
+              // "content-type": "application/json",
+              "contentType": "application/x-www-form-urlencoded",
             },
           ),
           data: {
             'RoleID': "1",
-            'UserName': user.userName,
+            'FirstName': user.firstName,
+            "LastName": user.lastName,
             'Email': user.email,
+            "PhoneNo": user.userPhone,
             'Password': user.password,
-            'Age': "18",
-            'Image': user.userImage,
+            'Age': user.age,
             "SexID": user.userGender,
             "CityID": selectedCity.id,
             "AreaID": selectedRegionCity.id,
+            "IsApprove": "True",
+            "Image": null
           });
       print(loginResponse.toString());
-      // saveAccessTokenlocaly(loginResponse.data["token"]);
-      UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
+      saveAccessTokenlocaly(accessToken: loginResponse.data["value"]["token"]);
+      // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
       // saveAccessTokenlocaly("asdasd", );
       return true;
     } on DioError catch (e) {
-      print(e.toString());
+      print(e..toString());
+      print(e.requestOptions.data.toString());
+
       BotToast.showText(text: "Something went Wrong! \n under development!");
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -275,14 +282,22 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future saveAccessTokenlocaly(
-    String accessToken,
-    UserModel userModel,
-  ) async {
+  Future saveAccessTokenlocaly({
+    required String accessToken,
+    UserModel? userModel,
+  }) async {
     final pref = await SharedPreferences.getInstance();
     pref.setString("access_token", accessToken);
     pref.setBool("is_guest", false);
-    pref.setString("userData", json.encode(userModel.toJson()));
+    // pref.setString("userData", json.encode(userModel.toJson()));
+  }
+
+  Future saveUserDatalocaly({
+    required UserModel? userModel,
+  }) async {
+    final pref = await SharedPreferences.getInstance();
+
+    pref.setString("userData", json.encode(userModel!.toJson()));
   }
 
   Future<void> getUserInformation(BuildContext context) async {
@@ -290,8 +305,9 @@ class AuthProvider with ChangeNotifier {
       // final token = await _helperMethods.getToken();
       UserModel? userModel = await _helperMethods.getUser();
       // print(userModel!.toJson().toString());
-      if(userModel == null) return ;
-      Response response = await _dio.get("${API_URL}Users/${userModel.userId}",
+      if (userModel == null) return;
+      Response response = await _dio.get(
+          "${API_URL}Users/Get_UserID?UserID=${userModel.userId}",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -300,8 +316,8 @@ class AuthProvider with ChangeNotifier {
             },
           ));
 
-      _userInformation = UserModel.fromJson(response.data[0]);
-
+      _userInformation = UserModel.fromJson(response.data);
+      await saveUserDatalocaly(userModel: _userInformation);
       notifyListeners();
     } on DioError catch (e) {
       print(e.toString());

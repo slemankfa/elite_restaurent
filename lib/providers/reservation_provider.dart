@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
 import '../core/helper_methods.dart';
+import '../models/reservation_model.dart';
 
 class ReservationProvider with ChangeNotifier {
   final Dio _dio = Dio();
@@ -42,6 +43,42 @@ class ReservationProvider with ChangeNotifier {
       return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError {
       // print(e.toString());
+      return {"list": tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchMyReservation({
+    required BuildContext context,
+    required int pageNumber,
+    required int status,
+  }) async {
+    List<ReservationModel> tempList = [];
+    try {
+      final token = await _helperMethods.getToken();
+
+      Response response = await _dio.get(
+          "${API_URL}Reservations/MyReservations?UserID=1&Stauts=$status",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              "Authorization": token
+            },
+          ));
+      // print("response" + response.data.toString());
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        tempList.add(ReservationModel.fromJson(item));
+      }
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
+    } on DioError catch (e) {
+      print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
     }
   }

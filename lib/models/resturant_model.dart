@@ -64,7 +64,7 @@ class ResturantModel {
       openStatus: "OPEN",
       starRatingParcentageList: tempStarRatingParcentageList.reversed.toList(),
       resturantsImages: tempImages,
-      cousineType: map["restaurantTypeID"].toString(),
+      cousineType: map["cuisine"].toString(),
     );
   }
 }
