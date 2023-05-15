@@ -1,15 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
+import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/models/cart_item_model.dart';
+import 'package:elite/models/user_model.dart';
+import 'package:elite/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
 import '../../models/meal_size_model.dart';
+import '../../models/order_address_model.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/cart_provider.dart';
-import '../main_tabs_page.dart';
+import '../profile_pages/widgtes/profile_custom_form_field.dart';
 import '../resturant_pages/resturant_menu_page.dart';
 
 class AddOrderPage extends StatefulWidget {
@@ -23,17 +27,167 @@ class AddOrderPage extends StatefulWidget {
 class _AddOrderPageState extends State<AddOrderPage> {
   List<MealSizeModel> list = [];
   final HelperMethods _helperMethods = HelperMethods();
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
-    // TODO: implement initState
-    list.add(MealSizeModel(id: "1", name: "S", price: 2));
-    list.add(MealSizeModel(id: "2", name: "M", price: 4));
-    list.add(MealSizeModel(id: "3", name: "L", price: 6));
-    // list.add(MealSizeModel(id: "3", name: "L", price: 6));
-    // list.add(MealSizeModel(id: "3", name: "L", price: 6));
-    // list.add(MealSizeModel(id: "3", name: "L", price: 6));
-    // list.add(MealSizeModel(id: "3", name: "L", price: 6));
+    checkUserStatus();
     super.initState();
+  }
+
+  OrderAddressModel? orderAddress;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _optaionalAddressController =
+      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final ValidationHelper _validationHelper = ValidationHelper();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _nameController.dispose();
+    _addressController.dispose();
+    _optaionalAddressController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+  }
+
+  checkUserStatus() async {
+    bool isUserGuest = await _helperMethods.checkIsGuest() ?? false;
+    final cart = Provider.of<CartProvider>(context, listen: false);
+
+    if (cart.OrderAddressInformation != null) {
+      _nameController.text = cart.OrderAddressInformation!.username;
+      _emailController.text = cart.OrderAddressInformation!.email;
+      _phoneController.text = cart.OrderAddressInformation!.phone;
+      _addressController.text = cart.OrderAddressInformation!.address;
+      _optaionalAddressController.text =
+          cart.OrderAddressInformation!.optaionalAddress!;
+    } else {
+      if (!isUserGuest) {
+        UserModel? userModel =
+            Provider.of<AuthProvider>(context, listen: false).userInformation;
+
+        if (userModel == null) return;
+
+        _nameController.text = "${userModel.firstName}  ${userModel.lastName}";
+        _emailController.text = userModel.email;
+        _phoneController.text = userModel.userPhone;
+      }
+    }
+  }
+
+  addNewOrder() async {
+    if (!_formKey.currentState!.validate()) {
+      // If the form is valid, display a snackbar. In the real world,
+      // you'd often call a server or save the information in a database.
+      return;
+    }
+
+    OrderAddressModel orderAddressModel = OrderAddressModel(
+        username: _nameController.text,
+        address: _addressController.text,
+        email: _emailController.text,
+        optaionalAddress: _optaionalAddressController.text,
+        phone: _phoneController.text);
+
+    Provider.of<CartProvider>(context, listen: false)
+        .CreateNewOrderOrder(
+            addressinformation: orderAddressModel,
+            resturantDetails: widget.resturantDetails)
+        .then((status) {
+      if (status) {
+        showConfirmDilog(context: context);
+      } else {}
+    });
+    // Navigator.pushAndRemoveUntil<dynamic>(
+    //                 context,
+    //                 MaterialPageRoute<dynamic>(
+    //                   builder: (BuildContext context) => const MainTabsPage(),
+    //                 ),
+    //                 (route) =>
+    //                     false, //if you want to disable back feature set to false
+    //               );
+  }
+
+  showConfirmDilog({required BuildContext context}) {
+    showDialog(
+        context: context,
+        builder: (ctx) => SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: AlertDialog(
+                scrollable: true,
+                contentPadding: const EdgeInsets.all(8),
+                insetPadding: const EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                title: Center(
+                  child: Text(
+                    "Confirmed",
+                    style: Styles.mainTextStyle.copyWith(
+                        color: Styles.grayColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    // SizedBox(
+                    //   height: 15,
+                    // ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        width: double.infinity,
+                        child: Text(
+                          "your order on the way, to track your order go to orders into your profile.",
+                          style: Styles.mainTextStyle
+                              .copyWith(color: Styles.grayColor, fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      // margin: EdgeInsets.symmetric(horizontal: 50),
+                      width: 150,
+                      child: CustomOutlinedButton(
+                          label: "View Order",
+                          isIconVisible: false,
+                          onPressedButton: () {
+                            Navigator.of(context).pop();
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => ResturanMenuPage()),
+                            // );
+                          },
+                          rectangleBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          icon: Container(),
+                          borderSide: const BorderSide(color: Styles.mainColor),
+                          textStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.mainColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              ),
+            ));
   }
 
   @override
@@ -86,6 +240,15 @@ class _AddOrderPageState extends State<AddOrderPage> {
                     ),
                     InkWell(
                       onTap: () {
+                        OrderAddressModel orderAddressModel = OrderAddressModel(
+                            username: _nameController.text,
+                            address: _addressController.text,
+                            email: _emailController.text,
+                            optaionalAddress: _optaionalAddressController.text,
+                            phone: _phoneController.text);
+
+                        cart.updateOrderAddressInformation(orderAddressModel);
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -285,6 +448,170 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Divider(),
+              // address
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Styles.listTileBorderColr)),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Shipping Address",
+                        style: Styles.mainTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Styles.grayColor),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ProfileCustomFormField(
+                          controller: _nameController,
+                          formatter: const [],
+                          action: TextInputAction.done,
+                          hintText: "Name",
+                          isPrefixeIconAvalibel: false,
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.mainColor),
+                          hintStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                          vladationFunction: _validationHelper.validateField,
+                          textInputType: TextInputType.emailAddress,
+                          isSuffixIconAvalibel: false,
+                          suffixWidget: null,
+                          readOnly: false,
+                          onTapFuncation: () async {},
+                          textAlign: TextAlign.start,
+                          label: "",
+                          labelTextStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.unslectedItemColor, fontSize: 16),
+                          formFillColor: Colors.white),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ProfileCustomFormField(
+                          controller: _addressController,
+                          formatter: const [],
+                          action: TextInputAction.done,
+                          hintText: "Address",
+                          isPrefixeIconAvalibel: false,
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.mainColor),
+                          hintStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                          vladationFunction: _validationHelper.validateField,
+                          textInputType: TextInputType.emailAddress,
+                          isSuffixIconAvalibel: false,
+                          suffixWidget: null,
+                          readOnly: false,
+                          onTapFuncation: () async {},
+                          textAlign: TextAlign.start,
+                          label: "",
+                          labelTextStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.unslectedItemColor, fontSize: 16),
+                          formFillColor: Colors.white),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ProfileCustomFormField(
+                          controller: _optaionalAddressController,
+                          formatter: const [],
+                          action: TextInputAction.done,
+                          hintText: "Address line 2 (optional)",
+                          isPrefixeIconAvalibel: false,
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.mainColor),
+                          hintStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                          vladationFunction:
+                              _validationHelper.optionalEmailValdation,
+                          textInputType: TextInputType.emailAddress,
+                          isSuffixIconAvalibel: false,
+                          suffixWidget: null,
+                          readOnly: false,
+                          onTapFuncation: () async {},
+                          textAlign: TextAlign.start,
+                          label: "",
+                          labelTextStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.unslectedItemColor, fontSize: 16),
+                          formFillColor: Colors.white),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Text(
+                        "Contact Information",
+                        style: Styles.mainTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Styles.grayColor),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ProfileCustomFormField(
+                          controller: _emailController,
+                          formatter: const [],
+                          action: TextInputAction.done,
+                          hintText: "email",
+                          isPrefixeIconAvalibel: true,
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.mainColor),
+                          hintStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                          vladationFunction:
+                              _validationHelper.optionalEmailValdation,
+                          textInputType: TextInputType.emailAddress,
+                          isSuffixIconAvalibel: false,
+                          prefixWidget: const Icon(Icons.email_outlined),
+                          suffixWidget: null,
+                          readOnly: false,
+                          onTapFuncation: () async {},
+                          textAlign: TextAlign.start,
+                          label: "",
+                          labelTextStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.unslectedItemColor, fontSize: 16),
+                          formFillColor: Colors.white),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      ProfileCustomFormField(
+                          controller: _phoneController,
+                          formatter: const [],
+                          action: TextInputAction.done,
+                          hintText: "phone number",
+                          isPrefixeIconAvalibel: true,
+                          textStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.mainColor),
+                          hintStyle: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                          vladationFunction: _validationHelper.validateField,
+                          textInputType: TextInputType.emailAddress,
+                          isSuffixIconAvalibel: false,
+                          prefixWidget: const Icon(Icons.phone),
+                          suffixWidget: null,
+                          readOnly: false,
+                          onTapFuncation: () async {},
+                          textAlign: TextAlign.start,
+                          label: "",
+                          labelTextStyle: Styles.mainTextStyle.copyWith(
+                              color: Styles.unslectedItemColor, fontSize: 16),
+                          formFillColor: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               const Divider(),
               const SizedBox(
                 height: 20,
@@ -299,14 +626,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   icon: Container(),
                   isIconVisible: false,
                   onPressedButton: () {
-                    Navigator.pushAndRemoveUntil<dynamic>(
-                      context,
-                      MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) => const MainTabsPage(),
-                      ),
-                      (route) =>
-                          false, //if you want to disable back feature set to false
-                    );
+                    addNewOrder();
                   },
                   backGroundColor: Styles.mainColor,
                   // backGroundColor: Styles.mainColor,

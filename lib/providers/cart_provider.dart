@@ -1,11 +1,41 @@
+import 'package:dio/dio.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/models/cart_item_model.dart';
+import 'package:elite/models/order_address_model.dart';
 import 'package:flutter/material.dart';
 
+import '../core/constants.dart';
 import '../models/meal_size_model.dart';
+import '../models/resturant_model.dart';
 import '../models/side_dishes.dart';
+import '../models/user_model.dart';
 
 class CartProvider with ChangeNotifier {
+  final Dio _dio = Dio();
+  final HelperMethods _helperMethods = HelperMethods();
   final Map<String, CartItemModel> _items = {};
+
+  String _isIndoor = "1";
+
+// order from inside resturn or outside resturan
+/* 
+Indoor 1
+Outdoor 2 */
+  updateIsIndoorStatus(String status) {
+    _isIndoor = status;
+    notifyListeners();
+  }
+
+  OrderAddressModel? _orderAddressModel;
+
+  OrderAddressModel? get OrderAddressInformation {
+    return _orderAddressModel;
+  }
+
+  updateOrderAddressInformation(OrderAddressModel orderAddressModel) {
+    _orderAddressModel = orderAddressModel;
+    notifyListeners();
+  }
 
   Map<String, CartItemModel> get items {
     return {..._items};
@@ -142,5 +172,64 @@ class CartProvider with ChangeNotifier {
     _items.clear();
     notifyListeners();
     print("clear cart");
+  }
+
+  Future<bool> CreateNewOrderOrder(
+      {required OrderAddressModel addressinformation,
+      required ResturantModel resturantDetails}) async {
+    List<Map<String, dynamic>> mealsDetails = [];
+    try {
+      _items.forEach((key, cartItem) {
+        mealsDetails.add({
+          "itemID": cartItem.mealId,
+          "qty": cartItem.quantity,
+          "price": cartItem.price,
+          "sizeID": cartItem.mealSize.id,
+          "note": "",
+          "ExtrasItemID": cartItem.sideDishes.first.id,
+          "ExtrasPrice": cartItem.sideDishes.first.price,
+          "ExtrasQty": 1,
+        });
+      });
+
+      // print(mealsDetails.toString());
+      final token = await _helperMethods.getToken();
+      final UserModel? tempUser = await _helperMethods.getUser();
+      if (tempUser == null) {
+        return false;
+      }
+      Response response = await _dio.post("${API_URL}Order",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ),
+          data: {
+            "resturantID": resturantDetails.id,
+            "userID": tempUser.userId,
+            "requestDate": "2023-05-30",
+            "reservationID": 0,
+            "tableID": 0,
+            "note": "",
+            "orderTotal": totalAmount,
+            "discount": 0,
+            "taxAmount": 0,
+            "additionalAmount": 0,
+            "statusID": 0,
+            "isPayment": true,
+            "GuestName": addressinformation.username,
+            "Email": addressinformation.email,
+            "PhoneNo": addressinformation.phone,
+            "Address": addressinformation.address,
+            "IsIndoor": _isIndoor,
+            "details": mealsDetails
+          });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
   }
 }

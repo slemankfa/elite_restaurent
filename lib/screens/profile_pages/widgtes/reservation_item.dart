@@ -1,17 +1,24 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/models/reservation_model.dart';
+import 'package:elite/providers/reservation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 class ReservationItem extends StatelessWidget {
-  const ReservationItem({
+  ReservationItem({
     super.key,
     required this.reservationModel,
+    required this.updateUI,
   });
 
   final ReservationModel reservationModel;
+  final Function updateUI;
 
+  final HelperMethods _helperMethods = HelperMethods();
   convertDate(String? date) {
     if (date == null) return "";
     // "2023-03-18T07:19:23.64"
@@ -33,6 +40,23 @@ class ReservationItem extends StatelessWidget {
         return "Upcoming";
       default:
         return "";
+    }
+  }
+
+  cancelReservation(BuildContext context) async {
+    try {
+      Provider.of<ReservationProvider>(context, listen: false)
+          .cancelResrvation(context: context, resvId: 1)
+          .then((status) {
+        // Navigator.of(context).pop();
+        updateUI();
+        if (status) {
+        } else {
+          BotToast.showText(text: "Something went wrong!");
+        }
+      });
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -63,7 +87,15 @@ class ReservationItem extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _helperMethods.showAlertDilog(
+                        message:
+                            "Are you sure to cancel the reservation table ${reservationModel.status}?",
+                        context: context,
+                        function: () {
+                          cancelReservation(context);
+                        });
+                  },
                   child: Container(
                     width: 40,
                     height: 40,

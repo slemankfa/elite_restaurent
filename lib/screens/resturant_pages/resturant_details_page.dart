@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/models/resturant_model.dart';
+import 'package:elite/providers/cart_provider.dart';
 import 'package:elite/providers/resturant_provider.dart';
 import 'package:elite/screens/reservation_pages%20/reservation_avalible_tables_page.dart';
 import 'package:elite/screens/reservation_pages%20/reservation_policy_page.dart';
@@ -248,7 +249,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                   left: 16,
                                   child: SafeArea(
                                     child: InkWell(
-                                      onTap: (){
+                                      onTap: () {
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(
@@ -389,6 +390,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     label: "menu",
                                     isIconVisible: true,
                                     onPressedButton: () {
+                                      Provider.of<CartProvider>(context,
+                                              listen: false)
+                                          .updateIsIndoorStatus("1");
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -428,29 +432,36 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(13),
-                                      border: Border.all(
-                                        color: Styles.listTileBorderColr,
-                                      )),
-                                  child: ListTile(
-                                    title: Text(
-                                      "I'm Outside",
-                                      style: Styles.mainTextStyle.copyWith(
-                                          fontSize: 18,
-                                          color: Styles.grayColor),
-                                    ),
-                                    subtitle: Text(
-                                      "Click here if you outside the resturant and needs to view our menu to order a meal",
-                                      style: Styles.mainTextStyle.copyWith(
-                                          fontSize: 14,
+                                InkWell(
+                                  onTap: () {
+                                    // Provider.of<CartProvider>(context,
+                                    //         listen: false)
+                                    //     .updateIsIndoorStatus("2");
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(13),
+                                        border: Border.all(
+                                          color: Styles.listTileBorderColr,
+                                        )),
+                                    child: ListTile(
+                                      title: Text(
+                                        "I'm Outside",
+                                        style: Styles.mainTextStyle.copyWith(
+                                            fontSize: 18,
+                                            color: Styles.grayColor),
+                                      ),
+                                      subtitle: Text(
+                                        "Click here if you outside the resturant and needs to view our menu to order a meal",
+                                        style: Styles.mainTextStyle.copyWith(
+                                            fontSize: 14,
+                                            color: Styles.midGrayColor),
+                                      ),
+                                      trailing: const Icon(
+                                          Icons.arrow_forward_ios,
                                           color: Styles.midGrayColor),
                                     ),
-                                    trailing: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Styles.midGrayColor),
                                   ),
                                 ),
                                 const SizedBox(

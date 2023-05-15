@@ -174,7 +174,7 @@ class ResturantProvider with ChangeNotifier {
       required String mealId}) async {
     try {
       UserModel? userModel = await _helperMethods.getUser();
-      print(userModel!.userId.toString());
+      if (userModel == null) return false;
       Response response = await _dio.post("${API_URL}ItemReviews",
           options: Options(
             headers: {
@@ -189,7 +189,7 @@ class ResturantProvider with ChangeNotifier {
             "userID": userModel.userId,
             "review": review,
             "yourRate": rating,
-            "date": "2023-03-27T17:30:11.693Z"
+            "date": "2023-03-22T17:30:11.693Z"
           });
 
       return true;
@@ -207,7 +207,7 @@ class ResturantProvider with ChangeNotifier {
     List<MealReviewModel> tempList = [];
     try {
       Response response = await _dio.get(
-          "${API_URL}ItemReviews/GetItemReview?ItemID=$menuItemId&ResturantID=$restId",
+          "${API_URL}itemReviews/GetItemReview?ItemID=$menuItemId&ResturantID=$restId",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -248,8 +248,8 @@ class ResturantProvider with ChangeNotifier {
       // print("response" + response.data.toString());
 
       return response.data.toString();
-    } on DioError catch (e) {
-      print(e.toString());
+    } on DioError {
+      // print(e.toString());
       return null;
     }
   }
@@ -357,7 +357,9 @@ class ResturantProvider with ChangeNotifier {
   }) async {
     try {
       UserModel? userModel = await _helperMethods.getUser();
-      print(userModel!.userId.toString());
+      if (userModel == null) {
+        return false;
+      }
       Response response = await _dio.post("${API_URL}RestaurantReviews/create",
           options: Options(
             headers: {
@@ -373,7 +375,7 @@ class ResturantProvider with ChangeNotifier {
             "goodTreatment": goodTreatment,
             "requsetSpeed": requsetSpeed,
             "sanilation": sanilation,
-            "date": "2023-03-26T12:21:16.541Z"
+            "date": "2023-03-22T12:21:16.541Z"
           });
 
       return true;
@@ -391,16 +393,19 @@ class ResturantProvider with ChangeNotifier {
     List<OrderModel> tempList = [];
     try {
       final token = await _helperMethods.getToken();
-
-      Response response =
-          await _dio.get("${API_URL}Order/MyOrders?UserID=3&IsIndoor=$orderType",
-              options: Options(
-                headers: {
-                  "Accept": "application/json",
-                  "content-type": "application/json",
-                  "Authorization": token
-                },
-              ));
+      final UserModel? tempUser = await _helperMethods.getUser();
+      if (tempUser == null) {
+        return {"list": tempList, "isThereNextPage": false};
+      }
+      Response response = await _dio.get(
+          "${API_URL}Order/MyOrders?UserID=${tempUser.userId}&IsIndoor=$orderType",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              "Authorization": token
+            },
+          ));
       // print("response" + response.data.toString());
 
       var loadedList = response.data as List;
@@ -416,6 +421,31 @@ class ResturantProvider with ChangeNotifier {
     } on DioError catch (e) {
       print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<bool> cancelOrder(
+      {required BuildContext context, required String orderId}) async {
+    try {
+      final token = await _helperMethods.getToken();
+
+      Response resendResponse =
+          await _dio.post("${API_URL}Order/CancelOrder?OrderID=$orderId",
+              options: Options(
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": token
+                },
+              ),
+              data: {});
+
+      return true;
+    } on DioError {
+      // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
+      // return false;
+
+      return false;
     }
   }
 }

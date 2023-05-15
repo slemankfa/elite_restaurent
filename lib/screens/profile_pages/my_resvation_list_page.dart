@@ -163,6 +163,7 @@ class _MyReservationListPageState extends State<MyReservationListPage> {
                           child: ListView.separated(
                             itemBuilder: (context, index) => ReservationItem(
                               reservationModel: _reservationList[index],
+                              updateUI: fetchReservations,
                             ),
                             separatorBuilder: (context, index) =>
                                 const SizedBox(

@@ -1,4 +1,3 @@
-
 class ValidationHelper {
   static final ValidationHelper _validationHelper =
       ValidationHelper._internal();
@@ -10,7 +9,7 @@ class ValidationHelper {
   }
 
   String? validatePassword(String value) {
-     return null;
+    return null;
     if (value.trim().isEmpty) {
       return "هذه الخانة مطلوبه! ";
     } else if (value.trim().length < 4) {
@@ -67,6 +66,20 @@ class ValidationHelper {
       }
     } else {
       return "هذه الخانة مطلوبه! ";
+    }
+  }
+
+  String? optionalEmailValdation(String value) {
+    if (value.isNotEmpty) {
+      final RegExp regex = RegExp(
+          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)| (\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+      if (!regex.hasMatch(value)) {
+        return " عنوان بريد إلكتروني غير صالح!";
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 }

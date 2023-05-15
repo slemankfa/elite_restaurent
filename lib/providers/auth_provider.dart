@@ -166,11 +166,13 @@ class AuthProvider with ChangeNotifier {
             'username': email,
             'password': password,
           });
-      // print(loginResponse.toString());
+      print(loginResponse.data.toString());
 
-      // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
+      UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
 
-      saveAccessTokenlocaly(accessToken: loginResponse.data["token"]);
+      await saveAccessTokenlocaly(
+          accessToken: loginResponse.data["tokenString"]);
+      await saveUserDatalocaly(userModel: userModel);
       return true;
     } catch (e) {
       print(e.toString());
@@ -302,7 +304,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> getUserInformation(BuildContext context) async {
     try {
-      // final token = await _helperMethods.getToken();
+      final token = await _helperMethods.getToken();
       UserModel? userModel = await _helperMethods.getUser();
       // print(userModel!.toJson().toString());
       if (userModel == null) return;
@@ -312,12 +314,12 @@ class AuthProvider with ChangeNotifier {
             headers: {
               "Accept": "application/json",
               "content-type": "application/json",
-              // "Authorization": token
+              "Authorization": token
             },
           ));
 
       _userInformation = UserModel.fromJson(response.data);
-      await saveUserDatalocaly(userModel: _userInformation);
+
       notifyListeners();
     } on DioError catch (e) {
       print(e.toString());

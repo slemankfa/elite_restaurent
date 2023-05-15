@@ -6,7 +6,6 @@ class MealReviewModel {
   final String review;
   final String image;
   final double rate;
-  
 
   MealReviewModel(
       {required this.name,
@@ -17,10 +16,10 @@ class MealReviewModel {
 
   factory MealReviewModel.fromJson(Map<String, dynamic> map) {
     return MealReviewModel(
-      name: map["userID"],
+      name: map["firstName"] ?? "",
       date: map["date"],
       review: map["review"],
-       image: "$IMAGE_PATH_URL${map["image"]}",
+      image: "$IMAGE_PATH_URL${map["image"]}",
       rate: double.parse(map["yourRate"].toString()),
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../core/constants.dart';
 import '../core/helper_methods.dart';
 import '../models/reservation_model.dart';
+import '../models/user_model.dart';
 
 class ReservationProvider with ChangeNotifier {
   final Dio _dio = Dio();
@@ -55,9 +56,12 @@ class ReservationProvider with ChangeNotifier {
     List<ReservationModel> tempList = [];
     try {
       final token = await _helperMethods.getToken();
-
+      final UserModel? tempUser = await _helperMethods.getUser();
+      if (tempUser == null) {
+        return {"list": tempList, "isThereNextPage": false};
+      }
       Response response = await _dio.get(
-          "${API_URL}Reservations/MyReservations?UserID=1&Stauts=$status",
+          "${API_URL}Reservations/MyReservations?UserID=${tempUser.userId}&Stauts=$status",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -80,6 +84,31 @@ class ReservationProvider with ChangeNotifier {
     } on DioError catch (e) {
       print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<bool> cancelResrvation(
+      {required BuildContext context, required int resvId}) async {
+    try {
+      final token = await _helperMethods.getToken();
+
+      Response resendResponse = await _dio.post(
+          "${API_URL}Reservations/ReservationCancel?ReservationID=$resvId",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              "Authorization": token
+            },
+          ),
+          data: {});
+
+      return true;
+    } on DioError {
+      // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
+      // return false;
+
+      return false;
     }
   }
 }

@@ -25,6 +25,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   late Function popUpProgressIndcator;
   List<OrderModel> _ordersList = [];
   bool _isLoading = false;
+ 
 
   @override
   void initState() {
@@ -161,6 +162,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                           child: ListView.separated(
                             itemBuilder: (context, index) => OrderItem(
                               orderModel: _ordersList[index],
+                              updateUI: fetchOrders,
                             ),
                             separatorBuilder: (context, index) =>
                                 const SizedBox(
