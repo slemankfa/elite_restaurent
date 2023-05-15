@@ -1,9 +1,11 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/models/cart_item_model.dart';
 import 'package:elite/models/user_model.dart';
 import 'package:elite/providers/auth_provider.dart';
+import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,15 +15,65 @@ import '../../models/meal_size_model.dart';
 import '../../models/order_address_model.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/cart_provider.dart';
+import '../main_tabs_page.dart';
 import '../profile_pages/widgtes/profile_custom_form_field.dart';
 import '../resturant_pages/resturant_menu_page.dart';
 
+class AddOrderNavgiator extends StatefulWidget {
+  const AddOrderNavgiator({super.key, required this.resturantDetails});
+
+  @override
+  State<AddOrderNavgiator> createState() => _AddOrderNavgiatorState();
+  final ResturantModel resturantDetails;
+}
+
+class _AddOrderNavgiatorState extends State<AddOrderNavgiator> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+        key: _navigatorKey,
+        initialRoute: AddOrderPage.routeName,
+        onGenerateRoute: _onGenerateRoute);
+  }
+
+  Route _onGenerateRoute(RouteSettings settings) {
+    late Widget page;
+    switch (settings.name) {
+      case AddOrderPage.routeName:
+        page = AddOrderPage(
+          resturantDetails: widget.resturantDetails,
+        );
+        break;
+      case ResturanMenuPage.routeName:
+        page = ResturanMenuPage(
+          resturantDetails: widget.resturantDetails,
+          isFormAddOrderPage: true,
+        );
+        break;
+    }
+
+    return MaterialPageRoute<dynamic>(
+      builder: (context) {
+        return page;
+      },
+      settings: settings,
+    );
+  }
+}
+
 class AddOrderPage extends StatefulWidget {
+  // static _AddOrderPageState of(BuildContext context) {
+  //   return context.findAncestorStateOfType<_AddOrderPageState>()!;
+  // }
+
   const AddOrderPage({super.key, required this.resturantDetails});
 
   @override
   State<AddOrderPage> createState() => _AddOrderPageState();
-  final ResturantModel resturantDetails;
+  final ResturantModel? resturantDetails;
+
+  static const routeName = "/add-order";
 }
 
 class _AddOrderPageState extends State<AddOrderPage> {
@@ -88,23 +140,31 @@ class _AddOrderPageState extends State<AddOrderPage> {
       // you'd often call a server or save the information in a database.
       return;
     }
+    Function showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
+    try {
+      OrderAddressModel orderAddressModel = OrderAddressModel(
+          username: _nameController.text,
+          address: _addressController.text,
+          email: _emailController.text,
+          optaionalAddress: _optaionalAddressController.text,
+          phone: _phoneController.text);
 
-    OrderAddressModel orderAddressModel = OrderAddressModel(
-        username: _nameController.text,
-        address: _addressController.text,
-        email: _emailController.text,
-        optaionalAddress: _optaionalAddressController.text,
-        phone: _phoneController.text);
+      Provider.of<CartProvider>(context, listen: false)
+          .CreateNewOrderOrder(
+              addressinformation: orderAddressModel,
+              resturantDetails: widget.resturantDetails!)
+          .then((status) {
+        showPopUpLoading.call();
+        if (status) {
+          showConfirmDilog(context: context);
+        } else {
+          BotToast.showText(text: "can't create this order!");
+        }
+      });
+    } catch (e) {
+      showPopUpLoading.call();
+    }
 
-    Provider.of<CartProvider>(context, listen: false)
-        .CreateNewOrderOrder(
-            addressinformation: orderAddressModel,
-            resturantDetails: widget.resturantDetails)
-        .then((status) {
-      if (status) {
-        showConfirmDilog(context: context);
-      } else {}
-    });
     // Navigator.push(context, route)
     // Navigator.pushAndRemoveUntil<dynamic>(
     //   context,
@@ -164,13 +224,27 @@ class _AddOrderPageState extends State<AddOrderPage> {
                       child: CustomOutlinedButton(
                           label: "View Order",
                           isIconVisible: false,
-                          onPressedButton: () {
-                            Navigator.of(context).pop();
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => ResturanMenuPage()),
-                            // );
+                          onPressedButton: () async {
+                            /* 
+                            after cheking the order we will go to the main page */
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MyOrdersPage(),
+                                // settings: const RouteSettings(
+                                //     name: ProfilePage.routeName),
+                              ),
+                            );
+
+                            Navigator.pushAndRemoveUntil<dynamic>(
+                              context,
+                              MaterialPageRoute<dynamic>(
+                                builder: (BuildContext context) =>
+                                    const MainTabsPage(),
+                              ),
+                              (route) =>
+                                  false, //if you want to disable back feature set to false
+                            );
                           },
                           rectangleBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
@@ -189,6 +263,11 @@ class _AddOrderPageState extends State<AddOrderPage> {
               ),
             ));
   }
+
+/////
+  ///
+  ///
+  ///
 
   @override
   Widget build(BuildContext context) {

@@ -141,8 +141,9 @@ class _MealPricesPageState extends State<MealPricesPage>
                     color: Colors.white,
                     margin: const EdgeInsets.all(8),
                     child: CustomOutlinedButton(
-                        label:
-                            widget.isFormAddOrderPage ? "Add This" : "Order Meal",
+                        label: widget.isFormAddOrderPage
+                            ? "Add This"
+                            : "Order Meal",
                         // borderSide: BorderSide(),
                         rectangleBorder: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -157,8 +158,8 @@ class _MealPricesPageState extends State<MealPricesPage>
                           if (!widget.isFormAddOrderPage) {
                             cart.clear();
                           }
-                
-                          print(widget.meal.sideDhshes.length);
+
+                          // print(widget.meal.sideDhshes.length);
                           cart.addItem(
                               mealId: widget.meal.mealId,
                               size: _mealSizedList[0],
@@ -167,13 +168,30 @@ class _MealPricesPageState extends State<MealPricesPage>
                               sideDishes: [...widget.meal.sideDhshes],
                               title: widget.meal.mealName,
                               mealSizeList: _mealSizedList);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddOrderPage(
-                                      resturantDetails: widget.resturantDetails,
-                                    )),
-                          );
+
+                          if (widget.isFormAddOrderPage) {
+                            Navigator.of(context).popUntil((route) =>
+                                route.settings.name == AddOrderPage.routeName);
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddOrderPage(
+                                        resturantDetails:
+                                            widget.resturantDetails,
+                                      ),
+                                  settings: const RouteSettings(
+                                      name: AddOrderPage.routeName)),
+                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => AddOrderPage(
+                            //       resturantDetails: widget.resturantDetails,
+                            //     ),
+                            //   ),
+                            // );
+                          }
                         },
                         backGroundColor: Styles.mainColor,
                         // backGroundColor: Styles.mainColor,

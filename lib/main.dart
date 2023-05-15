@@ -18,11 +18,13 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/auth_pages.dart/create_account_page.dart';
 import 'screens/auth_pages.dart/login_page.dart';
+import 'screens/orders_pages/add_order_page.dart';
 import 'screens/profile_pages/my_resvation_list_page.dart';
 import 'screens/profile_pages/points_page.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'screens/profile_pages/profile_page.dart';
 import 'screens/profile_pages/support_chat_page.dart';
 
 void main() async {
@@ -132,6 +134,12 @@ class MyApp extends StatelessWidget {
           LoginPage.routeName: (ctx) => const LoginPage(),
           CreateAccountPage.routeName: (ctx) => const CreateAccountPage(),
           MainTabsPage.routeName: (ctx) => const MainTabsPage(),
+          ProfilePage.routeName: (ctx) => const ProfilePage(),
+          AddOrderPage.routeName: (ctx) => const AddOrderPage(
+                resturantDetails: null,
+              ),
+          // ResturanMenuPage.routeName: (context) => const ResturanMenuPage(
+          //     resturantDetails: null, isFormAddOrderPage: null)
         },
       ),
     );

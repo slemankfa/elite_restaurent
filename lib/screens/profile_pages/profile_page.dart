@@ -20,6 +20,8 @@ class ProfilePage extends StatefulWidget {
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
+
+  static const routeName = "/profile-page" ;
 }
 
 class _ProfilePageState extends State<ProfilePage> {

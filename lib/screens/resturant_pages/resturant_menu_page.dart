@@ -9,12 +9,16 @@ import '../../models/resturant_menu_item.dart';
 import 'widgets/resturant_menu_Item.dart';
 
 class ResturanMenuPage extends StatefulWidget {
-  const ResturanMenuPage({super.key, required this.resturantDetails, required this.isFormAddOrderPage});
+  const ResturanMenuPage(
+      {super.key,
+      required this.resturantDetails,
+      required this.isFormAddOrderPage});
 
   @override
   State<ResturanMenuPage> createState() => _ResturanMenuPageState();
-  final ResturantModel resturantDetails;
-  final bool isFormAddOrderPage ;
+  final ResturantModel? resturantDetails;
+  final bool? isFormAddOrderPage;
+  static const routeName = "ResturanMenuPage" ;
 }
 
 class _ResturanMenuPageState extends State<ResturanMenuPage> {
@@ -54,7 +58,7 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
           .getResturantMenu(
               context: context,
               pageNumber: _pageNumber,
-              restId: widget.resturantDetails.id) //3
+              restId: widget.resturantDetails!.id) //3
           .then((informationMap) {
         if (_pageNumber == 1) {
           _menusList = informationMap["list"];
@@ -100,8 +104,8 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
                     itemBuilder: (context, index) {
                       return ResturantMenuItem(
                         menusItem: _menusList[index],
-                        resturantDetails: widget.resturantDetails,
-                        isFormAddOrderPage: widget.isFormAddOrderPage,
+                        resturantDetails: widget.resturantDetails!,
+                        isFormAddOrderPage: widget.isFormAddOrderPage!,
                       );
                     }),
               ),

@@ -274,8 +274,8 @@ class ResturantProvider with ChangeNotifier {
         tempList.add(NutirationModel.fromJson(item));
       }
       return tempList;
-    } on DioError catch (e) {
-      print(e.toString());
+    } on DioError {
+      // print(e.toString());
       return [];
     }
   }
