@@ -1,30 +1,55 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:elite/core/helper_methods.dart';
+import 'package:elite/models/table_model.dart';
+import 'package:elite/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../../models/resturant_model.dart';
+import '../../models/user_model.dart';
+import '../../providers/reservation_provider.dart';
+import '../main_tabs_page.dart';
 
 class ReservationDetailsPage extends StatefulWidget {
-  const ReservationDetailsPage({super.key});
+  const ReservationDetailsPage(
+      {super.key,
+      required this.tableModel,
+      required this.time,
+      required this.date,
+      required this.resturantDetails});
 
   @override
   State<ReservationDetailsPage> createState() => _ReservationDetailsPageState();
+  final TableModel tableModel;
+  final String time;
+  final String date;
+  final ResturantModel resturantDetails;
 }
 
+//  required String restId,
+//     required String time,
+//     required String date,
+//     required String note,
+//     required bool remindSms,
+//     required TableModel table,
 class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
   bool _reminedMeSms = false;
+  final TextEditingController _noteController = TextEditingController();
+  final HelperMethods _helperMethods = HelperMethods();
+  late Function showPopUpLoading;
 
   showConfirmDilog({required BuildContext context}) {
     showDialog(
         context: context,
-        builder: (ctx) => Container(
+        builder: (ctx) => SizedBox(
               width: MediaQuery.of(context).size.width,
               child: AlertDialog(
                 scrollable: true,
-                contentPadding: EdgeInsets.all(8),
-                insetPadding: EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.all(8),
+                insetPadding: const EdgeInsets.all(10),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 title: Center(
@@ -56,17 +81,26 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    Container(
+                    SizedBox(
                       // margin: EdgeInsets.symmetric(horizontal: 50),
                       width: 150,
                       child: CustomOutlinedButton(
                           label: "OK",
-                           isIconVisible: false,
+                          isIconVisible: false,
                           onPressedButton: () {
-                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil<dynamic>(
+                              context,
+                              MaterialPageRoute<dynamic>(
+                                builder: (BuildContext context) =>
+                                    const MainTabsPage(),
+                              ),
+                              (route) =>
+                                  false, //if you want to disable back feature set to false
+                            );
+                            // Navigator.of(context).pop();
                             // Navigator.push(
                             //   context,
                             //   MaterialPageRoute(
@@ -76,13 +110,13 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                           rectangleBorder: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
                           icon: Container(),
-                          borderSide: BorderSide(color: Styles.mainColor),
+                          borderSide: const BorderSide(color: Styles.mainColor),
                           textStyle: Styles.mainTextStyle.copyWith(
                               color: Styles.mainColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold)),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                   ],
@@ -92,21 +126,91 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  convertFromDate(String? date) {
+    if (date == null) return "";
+    // "2023-03-18T07:19:23.64"
+    DateTime tempDate = DateFormat("hh:mm", 'en_US').parse(date);
+    return DateFormat("HH:mm:ss a").format(tempDate);
+  }
+
+  convertToDate(String? date) {
+    if (date == null) return "";
+    // "2023-03-18T07:19:23.64"
+    DateTime tempDate = DateFormat("hh:mm", 'en_US').parse(date);
+    DateTime toTime =
+        DateTime(DateTime.now().year, 1, 1, tempDate.hour + 1, tempDate.minute);
+    // tempDate.add(const Duration(hours: 1));
+    return DateFormat("HH:mm:ss a").format(toTime);
+  }
+
+  convertFromDateWithOutStand(String? date) {
+    if (date == null) return "";
+    // "2023-03-18T07:19:23.64"
+    DateTime tempDate = DateFormat("hh:mm", 'en_US').parse(date);
+    return DateFormat("HH:mm:ss").format(tempDate);
+  }
+
+  convertToDateWithOutStand(String? date) {
+    if (date == null) return "";
+    // "2023-03-18T07:19:23.64"
+    DateTime tempDate = DateFormat("HH:mm", 'en_US').parse(date);
+    DateTime toTime =
+        DateTime(DateTime.now().year, 1, 1, tempDate.hour + 1, tempDate.minute);
+    // tempDate.add(const Duration(hours: 1));
+    return DateFormat("HH:mm:ss").format(toTime);
+  }
+
+  Future addNewReservation() async {
+    try {
+      // showPopUpLoading
+      showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
+      Provider.of<ReservationProvider>(context, listen: false)
+          .createNewReservation(
+        restId: widget.resturantDetails.id,
+        time: convertFromDateWithOutStand(widget.time),
+        date: widget.date,
+        toTime: convertToDateWithOutStand(widget.time),
+        note: _noteController.text,
+        remindSms: _reminedMeSms,
+        table: widget.tableModel,
+      )
+          .then((status) {
+        showPopUpLoading.call();
+        if (status) {
+          showConfirmDilog(context: context);
+        } else {}
+      });
+    } catch (e) {
+      showPopUpLoading.call();
+      print(e.toString());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // showPopUpLoading.call();
+    UserModel? userInformation =
+        Provider.of<AuthProvider>(context).userInformation;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Reservation Details",
             style: Styles.appBarTextStyle,
           ),
         ),
         body: Container(
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +221,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                     children: [
                       Expanded(
                         child: Text(
-                          "Table 2",
+                          widget.tableModel.name,
                           style: Styles.mainTextStyle.copyWith(
                               fontSize: 19,
                               fontWeight: FontWeight.bold,
@@ -127,7 +231,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                       Chip(
                           backgroundColor: Styles.listTileBorderColr,
                           label: Text(
-                            "Corner Table",
+                            widget.tableModel.descreption,
                             style: Styles.mainTextStyle.copyWith(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -140,54 +244,62 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  "Personal details",
-                  style: Styles.mainTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Styles.grayColor),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Miss Sarah Koss",
-                  style: Styles.mainTextStyle.copyWith(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.resturentNameColor),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: [
-                    SvgPicture.asset("assets/icons/mail.svg"),
-                    const SizedBox(
-                      width: 6,
-                    ),
-                    Expanded(
-                        child: Text(
-                      "Blaze_Windler11@gmail.com",
-                      style: Styles.mainTextStyle.copyWith(
-                        color: Styles.midGrayColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                userInformation == null
+                    ? Container()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Personal details",
+                            style: Styles.mainTextStyle.copyWith(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Styles.grayColor),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "${userInformation.firstName} ${userInformation.lastName}"
+                                .toString(),
+                            style: Styles.mainTextStyle.copyWith(
+                                fontSize: 19,
+                                fontWeight: FontWeight.bold,
+                                color: Styles.resturentNameColor),
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/mail.svg"),
+                              const SizedBox(
+                                width: 6,
+                              ),
+                              Expanded(
+                                  child: Text(
+                                userInformation.email.toString(),
+                                style: Styles.mainTextStyle.copyWith(
+                                  color: Styles.midGrayColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ))
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Text(
+                            userInformation.userPhone.toString(),
+                            style: Styles.mainTextStyle.copyWith(
+                              color: Styles.midGrayColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ))
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  "415-599-9453",
-                  style: Styles.mainTextStyle.copyWith(
-                    color: Styles.midGrayColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 const SizedBox(
                   height: 12,
                 ),
@@ -213,7 +325,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                     ),
                     Expanded(
                         child: Text(
-                      "1 hour . 3:00 PM TO 4:00PM",
+                      "1 hour . ${convertFromDate(widget.time)} TO ${convertToDate(widget.time)}",
                       style: Styles.mainTextStyle.copyWith(
                         color: Styles.midGrayColor,
                         fontSize: 16,
@@ -291,7 +403,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                   height: 12,
                 ),
                 TextFormField(
-                  // controller: _shipmentDescrpationController,
+                  controller: _noteController,
                   // validator: ((value) => _validationHelper.validateField(value!)),
                   textInputAction: TextInputAction.newline,
                   keyboardType: TextInputType.multiline,
@@ -301,19 +413,19 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Styles.mainColor,
                         width: 1.0,
                       ),
                     ),
                     focusColor: Colors.black,
-                    focusedErrorBorder: OutlineInputBorder(
+                    focusedErrorBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.red,
                       ),
@@ -326,10 +438,10 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
                 ),
                 CustomOutlinedButton(
                     label: "Confirm",
-                     isIconVisible: false,
+                    isIconVisible: false,
                     icon: Container(),
-                    onPressedButton: () => showConfirmDilog(context: context),
-                    borderSide: BorderSide(
+                    onPressedButton: () => addNewReservation(),
+                    borderSide: const BorderSide(
                       color: Styles.mainColor,
                     ),
                     backGroundColor: Styles.mainColor,

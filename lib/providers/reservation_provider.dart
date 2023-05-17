@@ -16,11 +16,14 @@ class ReservationProvider with ChangeNotifier {
       required int pageNumber,
       required String restId,
       required String date,
-      required String Seats}) async {
+      required String time,
+      required String seats}) async {
     List<TableModel> tempList = [];
     try {
+      String structerdDate = "$date $time";
+
       Response response = await _dio.get(
-          "${API_URL}Tables/FindTable?ResturentID=$restId&NoOfSeat=$Seats&dateTime=$date",
+          "${API_URL}Tables/FindTable?ResturentID=$restId&NoOfSeat=$seats&dateTime=$structerdDate",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -42,7 +45,7 @@ class ReservationProvider with ChangeNotifier {
         ));
       }
       return {"list": tempList, "isThereNextPage": loadedNextPage};
-    } on DioError {
+    } catch (e) {
       // print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
     }
@@ -109,6 +112,50 @@ class ReservationProvider with ChangeNotifier {
       // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       // return false;
 
+      return false;
+    }
+  }
+
+  Future<bool> createNewReservation({
+    required String restId,
+    required String time,
+    required String toTime,
+    required String date,
+    required String note,
+    required bool remindSms,
+    required TableModel table,
+  }) async {
+    try {
+      // print(mealsDetails.toString());
+      final token = await _helperMethods.getToken();
+      final UserModel? tempUser = await _helperMethods.getUser();
+      if (tempUser == null) {
+        return false;
+      }
+      Response response = await _dio.post("${API_URL}Reservations",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ),
+          data: {
+            "resturantID": restId,
+            "userID": tempUser.userId,
+            "reservationDate": "${date}T$time",
+            "tableID": table.id,
+            "reservationTime": time,
+            "toTime": toTime,
+            "isRemindSMS": remindSms,
+            "anySpecialNote": note,
+            "isConfirm": true,
+            "isCancel": true,
+            "isClose": true,
+          });
+      return true;
+    } catch (e) {
+      print(e.toString());
       return false;
     }
   }

@@ -76,29 +76,34 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
         BotToast.showText(text: "You must select a date");
         return;
       }
-      Navigator.push(
+      //  Navigator.of(context).pop();
+      await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ReservationAvalibleTabelsPage(
                   date: pickedDate,
                   resturantDetails: _resturantDetails!,
-                  time: "",
+                  time: pickedTime,
                   numberOfSeats:
                       resevedPeopleCountList[_selectedPeopleCountIndex!]
                           .toString(),
                 )),
       ).then((value) {
+        Navigator.of(context).pop();
         print("removedate");
         pickedDate = "";
+        // pickedTime = "";
+        _selectedPeopleCountIndex = 0;
       });
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
   }
 
   int? _selectedPeopleCountIndex = 0;
   List<int> resevedPeopleCountList = [2, 4, 6, 8];
   String pickedDate = "";
+  String pickedTime = "";
   int _sliding = 0;
   final TimePickerSpinnerController _timePickerSpinnerController =
       TimePickerSpinnerController();
@@ -679,6 +684,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     } else {
       _sliding = 0;
     }
+    pickedTime = "${DateTime.now().hour}:${DateTime.now().minute}";
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -821,7 +827,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         //     new DateFormat("yyyy-MM-dd hh:mm:ss", 'en_US')
                         //         .parse(selectedDate.value.toString());
                         pickedDate =
-                            DateFormat("yyyy-M-d").format(selectedDate.value);
+                            DateFormat("yyyy-MM-d").format(selectedDate.value);
                         print(pickedDate.toString());
                       },
                     ),
@@ -851,14 +857,18 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         barrierColor:
                             Colors.black12, //Barrier Color when pop up show
                         onChange: (dateTime) {
-                          print(dateTime.hour);
-                          print(dateTime.minute);
+                          // print(dateTime.hour);
+                          // print(dateTime.minute);
+
                           if (dateTime.hour >= 12) {
                             _sliding = 1;
                           } else {
                             _sliding = 0;
                           }
-                          setState(() {});
+                          setState(() {
+                            pickedTime = "${dateTime.hour}:${dateTime.minute}";
+                          });
+                          print(pickedTime);
                           // Implement your logic with select dateTime
                         },
                         // Customize your time widget

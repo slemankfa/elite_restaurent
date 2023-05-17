@@ -2,15 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/providers/reservation_provider.dart';
 import 'package:elite/screens/reservation_pages%20/reservation_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/helper_methods.dart';
 import '../../core/styles.dart';
 import '../../models/resturant_model.dart';
 import '../../models/table_model.dart';
-import '../../providers/resturant_provider.dart';
 
 class ReservationAvalibleTabelsPage extends StatefulWidget {
   const ReservationAvalibleTabelsPage(
@@ -70,10 +67,11 @@ class _ReservationAvalibleTabelsPageState
       await Provider.of<ReservationProvider>(context, listen: false)
           .getResturantAvalibleTabels(
               context: context,
+              time: widget.time,
               pageNumber: _pageNumber,
               restId: widget.resturantDetails.id,
               date: widget.date,
-              Seats: widget.numberOfSeats) //3
+              seats: widget.numberOfSeats) //3
           .then((informationMap) {
         if (_pageNumber == 1) {
           _tablesList = informationMap["list"];
@@ -92,7 +90,7 @@ class _ReservationAvalibleTabelsPageState
       setState(() {
         _isLoading = true;
       });
-      print(e.toString());
+      // print(e.toString());
     }
   }
 
@@ -128,6 +126,8 @@ class _ReservationAvalibleTabelsPageState
                         itemBuilder: (context, index) {
                           return TableItem(
                             table: _tablesList[index],
+                            time: widget.time,
+                            date: widget.date,
                             resturantDetails: widget.resturantDetails,
                           );
                         }),
@@ -142,9 +142,13 @@ class TableItem extends StatelessWidget {
     super.key,
     required this.resturantDetails,
     required this.table,
+    required this.time,
+    required this.date,
   });
   final ResturantModel resturantDetails;
   final TableModel table;
+  final String time;
+  final String date;
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +156,12 @@ class TableItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ReservationDetailsPage()),
+          MaterialPageRoute(
+              builder: (context) => ReservationDetailsPage(
+                  tableModel: table,
+                  time: time,
+                  date: date,
+                  resturantDetails: resturantDetails)),
         );
       },
       child: Container(
