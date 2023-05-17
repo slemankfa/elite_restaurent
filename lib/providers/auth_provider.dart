@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/helper_methods.dart';
 import '../models/city_area_model.dart';
 import '../models/city_model.dart';
+import '../models/notification_model.dart';
 
 class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
@@ -237,8 +238,8 @@ class AuthProvider with ChangeNotifier {
           options: Options(
             headers: {
               "Accept": "application/json",
-              // "content-type": "application/json",
-              "contentType": "application/x-www-form-urlencoded",
+              "content-type": "application/json",
+              // "contentType": "application/x-www-form-urlencoded",
             },
           ),
           data: {
@@ -255,14 +256,19 @@ class AuthProvider with ChangeNotifier {
             "IsApprove": "True",
             "Image": null
           });
-      print(loginResponse.toString());
-      saveAccessTokenlocaly(accessToken: loginResponse.data["value"]["token"]);
+      // print(loginResponse.toString());
+      UserModel userModel = UserModel.fromJson(loginResponse.data["userID"]);
+      await saveAccessTokenlocaly(
+          accessToken: loginResponse.data["tokenString"]);
+      await saveUserDatalocaly(userModel: userModel);
       // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
       // saveAccessTokenlocaly("asdasd", );
       return true;
     } on DioError catch (e) {
-      print(e..toString());
+      // print(e.toString());
       print(e.requestOptions.data.toString());
+      print(e.error);
+      print(e.response);
 
       BotToast.showText(text: "Something went Wrong! \n under development!");
       // The request was made and the server responded with a status code
@@ -318,11 +324,49 @@ class AuthProvider with ChangeNotifier {
             },
           ));
 
-      _userInformation = UserModel.fromJson(response.data);
+      _userInformation = UserModel.fromGetUserIdJson(response.data[0]);
 
       notifyListeners();
     } on DioError catch (e) {
       print(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserNotification({
+    required BuildContext context,
+    required int pageNumber,
+  }) async {
+    List<NotificationModel> tempList = [];
+    try {
+      UserModel? userModel = await _helperMethods.getUser();
+      // print(userModel!.toJson().toString());
+      if (userModel == null) {
+        return {"list": tempList, "isThereNextPage": false};
+      }
+      Response response =
+          await _dio.get("${API_URL}Notification?UserID=${userModel.userId}",
+              options: Options(
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  // "Authorization": token
+                },
+              ));
+      // print("response" + response.data.toString());
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        tempList.add(NotificationModel.fromJson(item));
+      }
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
+    } on DioError catch (e) {
+      print(e.response.toString());
+      return {"list": tempList, "isThereNextPage": false};
     }
   }
 }

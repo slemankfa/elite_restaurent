@@ -12,6 +12,8 @@ class UserModel {
   final String userGender;
   final String userId;
   final String userPhone;
+  final int? myOrdersCount;
+  final int? myReservationCount;
 
   UserModel({
     required this.firstName,
@@ -25,6 +27,8 @@ class UserModel {
     required this.userId,
     required this.userPhone,
     this.userImage,
+    this.myOrdersCount,
+    this.myReservationCount,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
@@ -40,6 +44,23 @@ class UserModel {
         areaId: map["areaID"].toString(),
         userImage: "$IMAGE_PATH_URL${map["userImage"]}",
         userId: map["userID"].toString());
+  }
+
+  factory UserModel.fromGetUserIdJson(Map<String, dynamic> map) {
+    return UserModel(
+        firstName: map["user"]["firstName"],
+        lastName: map["user"]["lastName"] ?? "",
+        email: map["user"]["email"],
+        password: "",
+        age: map["user"]["age"],
+        userPhone: map["user"]["phoneNo"],
+        cityId: map["user"]["cityID"].toString(),
+        userGender: map["user"]["sexID"].toString(),
+        myOrdersCount: map["myOrders"] ?? 0,
+        myReservationCount: map["myReservations"] ?? 0,
+        areaId: map["user"]["areaID"].toString(),
+        userImage: "$IMAGE_PATH_URL${map["user"]["userImage"]}",
+        userId: map["user"]["userID"].toString());
   }
 
   factory UserModel.fromSavedJson(Map<String, dynamic> map) {

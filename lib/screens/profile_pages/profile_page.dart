@@ -21,7 +21,7 @@ class ProfilePage extends StatefulWidget {
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 
-  static const routeName = "/profile-page" ;
+  static const routeName = "/profile-page";
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -141,7 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   // flex: 1,
                                   child: Text(
-                                    "3",
+                                    userModel == null
+                                        ? ""
+                                        : userModel.myOrdersCount.toString(),
                                     textAlign: TextAlign.end,
                                     style: Styles.mainTextStyle.copyWith(
                                         fontSize: 16,
@@ -223,7 +225,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Expanded(
                                   // flex: 1,
                                   child: Text(
-                                    "3",
+                                    userModel == null
+                                        ? ""
+                                        : userModel.myReservationCount
+                                            .toString(),
                                     textAlign: TextAlign.end,
                                     style: Styles.mainTextStyle.copyWith(
                                         fontSize: 16,
