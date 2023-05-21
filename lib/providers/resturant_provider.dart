@@ -309,8 +309,8 @@ class ResturantProvider with ChangeNotifier {
         tempList.add(ResturantModel.fromJson(item, context));
       }
       return {"list": tempList, "isThereNextPage": loadedNextPage};
-    } on DioError catch (e) {
-      print(e.toString());
+    } on DioError {
+      // print(e.toString());
       return {"list": tempList, "isThereNextPage": false};
     }
   }

@@ -13,6 +13,8 @@ import '../core/helper_methods.dart';
 import '../models/city_area_model.dart';
 import '../models/city_model.dart';
 import '../models/notification_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
@@ -234,36 +236,93 @@ class AuthProvider with ChangeNotifier {
       required CityRegionModel selectedRegionCity,
       required BuildContext context}) async {
     try {
-      Response loginResponse = await _dio.post("${API_URL}Login/create",
-          options: Options(
-            headers: {
-              "Accept": "application/json",
-              "content-type": "application/json",
-              // "contentType": "application/x-www-form-urlencoded",
-            },
-          ),
-          data: {
-            'RoleID': "1",
-            'FirstName': user.firstName,
-            "LastName": user.lastName,
-            'Email': user.email,
-            "PhoneNo": user.userPhone,
-            'Password': user.password,
-            'Age': user.age,
-            "SexID": user.userGender,
-            "CityID": selectedCity.id,
-            "AreaID": selectedRegionCity.id,
-            "IsApprove": "True",
-            "Image": null
-          });
+      // Await the http get response, then decode the json-formatted response.
+      var response =
+          await http.post(Uri.parse('${API_URL}Login/create'), body: {
+        'RoleID': "1",
+        'FirstName': user.firstName,
+        "LastName": user.lastName,
+        'Email': user.email,
+        "PhoneNo": user.userPhone,
+        'Password': user.password!,
+        'Age': user.age,
+        "SexID": user.userGender,
+        "CityID": selectedCity.id,
+        "AreaID": selectedRegionCity.id,
+        "IsApprove": "True",
+        "Image": ""
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse =
+            convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+        // print('Number of books about http: $jsonResponse.');
+        UserModel userModel = UserModel.fromJson(jsonResponse["userID"]);
+        await saveAccessTokenlocaly(accessToken: jsonResponse["tokenString"]);
+        await saveUserDatalocaly(userModel: userModel);
+        return true;
+      } else {
+        print('Request failed with status: ${response.statusCode}.');
+        return false;
+      }
+      // var request =
+      //     http.MultipartRequest('POST', Uri.parse('$API_URL/Login/create'));
+      // request.fields.addAll({
+      //   'RoleID': "1",
+      //   'FirstName': user.firstName,
+      //   "LastName": user.lastName,
+      //   'Email': user.email,
+      //   "PhoneNo": user.userPhone,
+      //   'Password': user.password!,
+      //   'Age': user.age,
+      //   "SexID": user.userGender,
+      //   "CityID": selectedCity.id,
+      //   "AreaID": selectedRegionCity.id,
+      //   "IsApprove": "True",
+      //   "Image": ""
+      // });
+      // // request.files.add(await http.MultipartFile.fromPath('Image', null));
+
+      // http.StreamedResponse response = await request.send();
+      // print(response.stream..toString());
+      // print(response.statusCode);
+      // if (response.statusCode == 200) {
+      //   print(await response.stream.bytesToString());
+      //   // var jsonResponse =
+      //   //     convert.jsonDecode(response.stream.bytesToString()) as Map<String, dynamic>;
+      // } else {
+      //   print(response.reasonPhrase);
+      // }
+
+      // Response loginResponse = await _dio.post("${API_URL}Login/create",
+      //     options: Options(
+      //       headers: {
+      //         "Accept": "application/json",
+      //         "Content-Type": "application/json",
+      //         // "contentType": "application/x-www-form-urlencoded",
+      //       },
+      //     ),
+      //     data: {
+      //       'RoleID': 1,
+      //       'FirstName': user.firstName,
+      //       "LastName": user.lastName,
+      //       'Email': user.email,
+      //       "PhoneNo": user.userPhone,
+      //       'Password': user.password,
+      //       'Age': user.age,
+      //       "SexID": user.userGender,
+      //       "CityID": selectedCity.id,
+      //       "AreaID": selectedRegionCity.id,
+      //       "IsApprove": "True",
+      //       "Image": ""
+      //     });
       // print(loginResponse.toString());
-      UserModel userModel = UserModel.fromJson(loginResponse.data["userID"]);
-      await saveAccessTokenlocaly(
-          accessToken: loginResponse.data["tokenString"]);
-      await saveUserDatalocaly(userModel: userModel);
+      // UserModel userModel = UserModel.fromJson(loginResponse.data["userID"]);
+      // await saveAccessTokenlocaly(
+      //     accessToken: loginResponse.data["tokenString"]);
+      // await saveUserDatalocaly(userModel: userModel);
       // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
       // saveAccessTokenlocaly("asdasd", );
-      return true;
     } on DioError catch (e) {
       // print(e.toString());
       print(e.requestOptions.data.toString());

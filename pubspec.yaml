@@ -64,6 +64,7 @@ dependencies:
   multi_select_flutter: ^4.1.2
   google_sign_in: ^6.1.0
   firebase_auth: ^4.4.2
+  http: ^0.13.6
   
 
   # flutter_firebase_chat_core: ^1.6.4

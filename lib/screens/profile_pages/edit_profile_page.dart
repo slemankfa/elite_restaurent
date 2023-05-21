@@ -89,7 +89,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (userModel == null) return;
 
     _userFirstnameTextController.text = userModel.firstName;
-    _userLastnameTextController.text = userModel.firstName;
+    _userLastnameTextController.text = userModel.lastName;
     _userEmailTextController.text = userModel.email;
     _userPhoneTextController.text = userModel.userPhone;
 
