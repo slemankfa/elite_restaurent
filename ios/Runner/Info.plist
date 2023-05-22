@@ -78,5 +78,7 @@
 	<string>get user location to be able to find near resturants</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>get user location to be able to find near resturants</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>get user location to be able to find near resturants</string>
 </dict>
 </plist>
