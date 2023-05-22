@@ -283,20 +283,31 @@ class ResturantProvider with ChangeNotifier {
   Future<Map<String, dynamic>> getResturantsList({
     required BuildContext context,
     required int pageNumber,
-    required Map<String, dynamic> map,
+    required int maximumDistance,
+    required double latitude,
+    required double longitude,
+    List<int> ratings = const [],
+    List<int> cousine = const [],
+    bool isBars = false,
   }) async {
     List<ResturantModel> tempList = [];
     try {
-      Response response = await _dio.get(
-        "${API_URL}Restaurant",
-        options: Options(
-          headers: {
-            "Accept": "application/json",
-            "content-type": "application/json",
-            // "Authorization": token
-          },
-        ),
-      );
+      Response response = await _dio.post("${API_URL}Restaurant/Filters",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ),
+          data: {
+            "MaximumDistance": maximumDistance,
+            "Latitude": latitude,
+            "Longitude": longitude,
+            "rating": ratings,
+            "cuisine": cousine,
+            "IsBars": isBars,
+          });
       // print("response${response.data}");
 
       var loadedList = response.data as List;

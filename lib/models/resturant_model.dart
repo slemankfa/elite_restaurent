@@ -16,6 +16,8 @@ class ResturantModel {
   ResurantWorkingDaysModel? resurantWorkingDaysModel;
   final List<String> resturantsImages;
   final List<StarRatingParcentage> starRatingParcentageList;
+  final double? latitude;
+  final double? longitude;
 
   ResturantModel(
       {required this.name,
@@ -29,12 +31,14 @@ class ResturantModel {
       this.starRatingParcentageList = const [],
       this.averageRating,
       this.resurantWorkingDaysModel,
+      this.latitude,
+      this.longitude,
       this.totalRating});
 
   factory ResturantModel.fromJson(
       Map<String, dynamic> map, BuildContext context) {
     List<String> tempImages = [];
-     List<StarRatingParcentage> tempStarRatingParcentageList = [];
+    List<StarRatingParcentage> tempStarRatingParcentageList = [];
     //
     if (map["imagess"] != null) {
       List? loadedIamages = map["imagess"] as List;
@@ -43,29 +47,36 @@ class ResturantModel {
       }
     }
 
-     if (map["rating"] != null) {
+    if (map["rating"] != null) {
       List? loadedratings = map["rating"] as List;
       for (var ratingItem in loadedratings) {
-        tempStarRatingParcentageList.add(StarRatingParcentage.fromJson(ratingItem));
+        tempStarRatingParcentageList
+            .add(StarRatingParcentage.fromJson(ratingItem));
       }
     }
 
     return ResturantModel(
-      name: context.locale.toString() == "en"
-          ? map["resturantNameE"]
-          : map["resturantNameA"],
-      id: map["resturantID"].toString(),
-      averageRating: map["agvRating"].toString(),
-      totalRating: map["maxRating"].toString(),
-      logo: "$IMAGE_PATH_URL${map["resturantLogo"]}",
-      backGroundImage: "$IMAGE_PATH_URL${map["backgroundImage"]}",
-      // "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-      traficStatus: map["status"] ==null || map["status"].isEmpty ?"Empty"  : map["status"][0]["crowded"] == true ? "Crowded" : "Empty",
-      openStatus: "OPEN",
-      starRatingParcentageList: tempStarRatingParcentageList.reversed.toList(),
-      resturantsImages: tempImages,
-      cousineType: map["cuisine"].toString(),
-    );
+        name: context.locale.toString() == "en"
+            ? map["resturantNameE"]
+            : map["resturantNameA"],
+        id: map["resturantID"].toString(),
+        averageRating: map["agvRating"].toString(),
+        totalRating: map["maxRating"].toString(),
+        logo: "$IMAGE_PATH_URL${map["resturantLogo"]}",
+        backGroundImage: "$IMAGE_PATH_URL${map["backgroundImage"]}",
+        // "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+        traficStatus: map["status"] == null || map["status"].isEmpty
+            ? "Empty"
+            : map["status"][0]["crowded"] == true
+                ? "Crowded"
+                : "Empty",
+        openStatus: "OPEN",
+        starRatingParcentageList:
+            tempStarRatingParcentageList.reversed.toList(),
+        resturantsImages: tempImages,
+        cousineType: map["cuisine"].toString(),
+        latitude: map["latitude"],
+        longitude: map["longitude"]);
   }
 }
 

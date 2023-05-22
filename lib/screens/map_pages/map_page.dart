@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/helper_methods.dart';
+import 'package:elite/core/location_helper.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/models/resturant_model.dart';
 import 'package:elite/screens/map_pages/filter_page.dart';
-import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/map_pages/widgets/multi_select_chip.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -28,16 +32,20 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final HelperMethods _helperMethods = HelperMethods();
+  final LocationHelper _locationHelper = LocationHelper();
 
   int _pageNumber = 1;
   final ScrollController _resturantsListController = ScrollController();
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   List<ResturantModel> _resturantsList = [];
+  final List<Marker> _loadedMarkers = [];
   bool _isLoading = false;
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   @override
   void initState() {
+    addCustomIcon();
     _resturantsListController.addListener(() {
       if (_resturantsListController.position.pixels ==
           _resturantsListController.position.maxScrollExtent) {
@@ -58,27 +66,53 @@ class _MapPageState extends State<MapPage> {
     fetchRestursantsList();
   }
 
+  /* 
+  Map section
+   */
+
+  void addCustomIcon() {
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), "assets/images/cust_marker.png.png")
+        .then(
+      (icon) {
+        setState(() {
+          markerIcon = icon;
+        });
+      },
+    );
+  }
+
   Future fetchRestursantsList() async {
     // popUpProgressIndcator = _helperMethods.showPopUpProgressIndcator();
-    setState(() {
-      _isLoading = true;
-    });
     try {
+      LocationData? locationData = await _locationHelper.getDeviceLocation();
+      print(locationData.toString());
+      if (locationData == null) {
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
+      // ignore: use_build_context_synchronously
       await Provider.of<ResturantProvider>(context, listen: false)
           .getResturantsList(
-              context: context, pageNumber: _pageNumber, map: {}) //3
-          .then((informationMap) {
+        context: context,
+        pageNumber: _pageNumber,
+        latitude: locationData.latitude!,
+        longitude: locationData.longitude!,
+        maximumDistance: 10,
+      ) //3
+          .then((informationMap) async {
         if (_pageNumber == 1) {
           _resturantsList = informationMap["list"];
         } else {
           _resturantsList.addAll(informationMap["list"]);
         }
-        setState(() {
-          _isThereNextPage = informationMap["isThereNextPage"] ?? false;
-          _pageNumber++;
-          popUpProgressIndcator.call();
-        });
 
+        _isThereNextPage = informationMap["isThereNextPage"] ?? false;
+        _pageNumber++;
+        popUpProgressIndcator.call();
         setState(() {
           _isLoading = false;
         });
@@ -90,6 +124,59 @@ class _MapPageState extends State<MapPage> {
       });
       print(e.toString());
     }
+
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      handlMapMarkersList();
+    });
+  }
+
+  handlMapMarkersList() {
+    for (var i = 0; i < _resturantsList.length; i++) {
+      if (_resturantsList[i].latitude != null) {
+        Marker tempMarker = Marker(
+          markerId: MarkerId(_resturantsList[i].id),
+          position: LatLng(
+              _resturantsList[i].latitude!, _resturantsList[i].longitude!),
+          draggable: false,
+          icon: markerIcon,
+          onTap: () {
+            print(i);
+          },
+          onDragEnd: (value) {
+            // print(value.toString());
+            // value is the new position
+          },
+          // To do: custom marker icon
+        );
+        _loadedMarkers.add(tempMarker);
+      }
+    }
+    setState(() {});
+    print("handlMapMarkersList");
+  }
+
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+
+  static const CameraPosition _ammanInitalLocation = CameraPosition(
+    target: LatLng(31.8356836, 36.087714),
+    zoom: 12,
+  );
+
+  Future<void> moveToMyLocation() async {
+    LocationData? locationData = await _locationHelper.getDeviceLocation();
+
+    if (locationData == null) {
+      return;
+    }
+    CameraPosition myCurrentPostion = const CameraPosition(
+      // target: LatLng(locationData.latitude!, locationData.longitude!),
+      target: LatLng(31.9297911, 35.962773),
+      zoom: 12,
+    );
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(myCurrentPostion));
   }
 
   @override
@@ -98,9 +185,27 @@ class _MapPageState extends State<MapPage> {
       context,
     ).userInformation;
     return Scaffold(
-      backgroundColor: Colors.amber,
+      // backgroundColor: Colors.amber,
       body: Stack(
         children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: _ammanInitalLocation,
+            myLocationButtonEnabled: false,
+            markers: _loadedMarkers.toSet(),
+            myLocationEnabled: true,
+            onTap: (latlang) {
+              print(latlang.latitude);
+              print(latlang.longitude);
+            },
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+              // if(_resturantsList.isNotEmpty){
+              //   handlMapMarkersList();
+              // }
+              // moveToMyLocation();
+            },
+          ),
           // headers
           Positioned(
               top: 16,
@@ -148,8 +253,9 @@ class _MapPageState extends State<MapPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(NotificationPage.routeName),
+                          // onTap: () => Navigator.of(context)
+                          //     .pushNamed(NotificationPage.routeName),
+                          onTap: handlMapMarkersList,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             // margin: ,
@@ -214,297 +320,165 @@ class _MapPageState extends State<MapPage> {
             left: 16,
             right: 16,
             height: MediaQuery.of(context).size.height * 0.25,
-            child: ListView.separated(
-              separatorBuilder: (context,index)=>const SizedBox(width: 12,),
-                scrollDirection: Axis.horizontal,
-                itemCount: _resturantsList.length,
-                // physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResturentDetailPage(
-                                  resturantId: _resturantsList[index].id,
-                                )),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      // height: 200,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            width: 3,
-                            color: Styles.mainColor,
-                          )),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: _resturantsList[index].logo,
-                              // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                              height: 64,
-                              width: 64,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => const FlutterLogo(
-                                size: 64,
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            _resturantsList[index].name,
-                            style: Styles.mainTextStyle.copyWith(
-                                color: Styles.resturentNameColor,
-                                fontSize: 19,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Flexible(
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'Accepting orders and booking until ',
-                                style: Styles.mainTextStyle
-                                    .copyWith(fontSize: 16, color: Colors.grey),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: '8:30',
-                                    style: Styles.mainTextStyle.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Styles.timeTextColor),
-                                  ),
-                                  const TextSpan(text: ' PM'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Row(
+            child: _isLoading
+                ? Center(
+                    child: _helperMethods.progressIndcator(),
+                  )
+                : ListView.separated(
+                    separatorBuilder: (context, index) => const SizedBox(
+                          width: 12,
+                        ),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _resturantsList.length,
+                    // physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ResturentDetailPage(
+                                      resturantId: _resturantsList[index].id,
+                                    )),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          // height: 200,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                width: 3,
+                                color: Styles.mainColor,
+                              )),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _resturantsList[index]
-                                          .averageRating
-                                          .toString(),
-                                      style: Styles.mainTextStyle.copyWith(
-                                          color: Styles.mainColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    SvgPicture.asset("assets/icons/star.svg"),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        "(${_resturantsList[index].totalRating})",
-                                        style: Styles.mainTextStyle.copyWith(
-                                          color: Styles.midGrayColor,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: _resturantsList[index].logo,
+                                  // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                                  height: 64,
+                                  width: 64,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const FlutterLogo(
+                                    size: 64,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                _resturantsList[index].name,
+                                style: Styles.mainTextStyle.copyWith(
+                                    color: Styles.resturentNameColor,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 8,
                               ),
                               Flexible(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset("assets/icons/clock.svg"),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        "3 min walk",
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Accepting orders and booking until ',
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontSize: 16, color: Colors.grey),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: '8:30',
                                         style: Styles.mainTextStyle.copyWith(
-                                          color: Styles.midGrayColor,
-                                          fontSize: 16,
-                                        ),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Styles.timeTextColor),
                                       ),
-                                    ),
-                                  ],
+                                      const TextSpan(text: ' PM'),
+                                    ],
+                                  ),
                                 ),
                               ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _resturantsList[index]
+                                              .averageRating
+                                              .toString(),
+                                          style: Styles.mainTextStyle.copyWith(
+                                              color: Styles.mainColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          width: 6,
+                                        ),
+                                        SvgPicture.asset(
+                                            "assets/icons/star.svg"),
+                                        const SizedBox(
+                                          width: 6,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            "(${_resturantsList[index].totalRating})",
+                                            style:
+                                                Styles.mainTextStyle.copyWith(
+                                              color: Styles.midGrayColor,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                            "assets/icons/clock.svg"),
+                                        const SizedBox(
+                                          width: 6,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            "3 min walk",
+                                            style:
+                                                Styles.mainTextStyle.copyWith(
+                                              color: Styles.midGrayColor,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                }),
+                          ),
+                        ),
+                      );
+                    }),
           ),
-          // Wrap(
-          //   direction: Axis.horizontal,
-          //   children: _resturantsList
-          //       .map((restruant) => InkWell(
-          //             onTap: () {
-          //               Navigator.push(
-          //                 context,
-          //                 MaterialPageRoute(
-          //                     builder: (context) => ResturentDetailPage(
-          //                           resturantId: restruant.id,
-          //                         )),
-          //               );
-          //             },
-          //             child: Container(
-          //               padding: const EdgeInsets.all(10),
-          //               width: MediaQuery.of(context).size.width * 0.8,
-          //               decoration: BoxDecoration(
-          //                   color: Colors.white,
-          //                   borderRadius: BorderRadius.circular(16),
-          //                   border: Border.all(
-          //                     width: 3,
-          //                     color: Styles.mainColor,
-          //                   )),
-          //               child: Column(
-          //                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                 children: [
-          //                   ClipRRect(
-          //                     borderRadius: BorderRadius.circular(8),
-          //                     child: CachedNetworkImage(
-          //                       imageUrl: restruant.logo,
-          //                       // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-          //                       height: 64,
-          //                       width: 64,
-          //                       fit: BoxFit.cover,
-          //                       placeholder: (context, url) =>
-          //                           const FlutterLogo(
-          //                         size: 64,
-          //                       ),
-          //                       errorWidget: (context, url, error) =>
-          //                           const Icon(Icons.error),
-          //                     ),
-          //                   ),
-          //                   const SizedBox(
-          //                     height: 20,
-          //                   ),
-          //                   Text(
-          //                     restruant.name,
-          //                     style: Styles.mainTextStyle.copyWith(
-          //                         color: Styles.resturentNameColor,
-          //                         fontSize: 19,
-          //                         fontWeight: FontWeight.bold),
-          //                   ),
-          //                   const SizedBox(
-          //                     height: 8,
-          //                   ),
-          //                   RichText(
-          //                     text: TextSpan(
-          //                       text: 'Accepting orders and booking until ',
-          //                       style: Styles.mainTextStyle.copyWith(
-          //                           fontSize: 16, color: Colors.grey),
-          //                       children: <TextSpan>[
-          //                         TextSpan(
-          //                           text: '8:30',
-          //                           style: Styles.mainTextStyle.copyWith(
-          //                               fontWeight: FontWeight.bold,
-          //                               fontSize: 16,
-          //                               color: Styles.timeTextColor),
-          //                         ),
-          //                         const TextSpan(text: ' PM'),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                   const SizedBox(
-          //                     height: 8,
-          //                   ),
-          //                   Row(
-          //                     children: [
-          //                       Expanded(
-          //                         child: Row(
-          //                           crossAxisAlignment:
-          //                               CrossAxisAlignment.center,
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.start,
-          //                           children: [
-          //                             Text(
-          //                               restruant.averageRating.toString(),
-          //                               style: Styles.mainTextStyle
-          //                                   .copyWith(
-          //                                       color: Styles.mainColor,
-          //                                       fontSize: 16,
-          //                                       fontWeight:
-          //                                           FontWeight.bold),
-          //                             ),
-          //                             const SizedBox(
-          //                               width: 6,
-          //                             ),
-          //                             SvgPicture.asset(
-          //                                 "assets/icons/star.svg"),
-          //                             const SizedBox(
-          //                               width: 6,
-          //                             ),
-          //                             Flexible(
-          //                               child: Text(
-          //                                 "(${restruant.totalRating})",
-          //                                 style:
-          //                                     Styles.mainTextStyle.copyWith(
-          //                                   color: Styles.midGrayColor,
-          //                                   fontSize: 16,
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ],
-          //                         ),
-          //                       ),
-          //                       Flexible(
-          //                         child: Row(
-          //                           crossAxisAlignment:
-          //                               CrossAxisAlignment.center,
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.center,
-          //                           children: [
-          //                             SvgPicture.asset(
-          //                                 "assets/icons/clock.svg"),
-          //                             const SizedBox(
-          //                               width: 6,
-          //                             ),
-          //                             Flexible(
-          //                               child: Text(
-          //                                 "3 min walk",
-          //                                 style:
-          //                                     Styles.mainTextStyle.copyWith(
-          //                                   color: Styles.midGrayColor,
-          //                                   fontSize: 16,
-          //                                 ),
-          //                               ),
-          //                             ),
-          //                           ],
-          //                         ),
-          //                       ),
-          //                     ],
-          //                   )
-          //                 ],
-          //               ),
-          //             ),
-          //           ))
-          //       .toList(),
-          // ))
         ],
       ),
     );
