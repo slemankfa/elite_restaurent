@@ -48,7 +48,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   final List<String> genderItems = [
     'Male',
-    'Female',
+    'Female', 
   ];
 
   String? selectedGenderValue;

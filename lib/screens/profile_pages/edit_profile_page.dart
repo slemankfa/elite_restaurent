@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/screens/profile_pages/widgtes/profile_custom_form_field.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +29,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // Pick an image
   XFile? _userImage;
   final _formKey = GlobalKey<FormState>();
+
+  late Function showPopUpLoading;
+  final HelperMethods _helperMethods = HelperMethods();
 
   final TextEditingController _userFirstnameTextController =
       TextEditingController();
@@ -60,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     'Female',
   ];
 
-  String? selectedValue;
+  String? selectedGenderValue;
 
   @override
   void initState() {
@@ -95,7 +98,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     DateTime tempDate =
         DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(userModel.age);
-    _userBdTextController.text = DateFormat("MMM dd yyyy").format(tempDate);
+    _userBdTextController.text = DateFormat('M-dd-yyyy').format(tempDate);
   }
 
   updateProfile() async {
@@ -104,7 +107,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
       // you'd often call a server or save the information in a database.
       return;
     }
-    BotToast.showText(text: "Under development");
+    // BotToast.showText(text: "Under development");
+
+    try {
+      UserModel? fetchedUserModel =
+          Provider.of<AuthProvider>(context, listen: false).userInformation;
+      if (fetchedUserModel == null) return;
+
+      UserModel user = UserModel(
+          firstName: _userFirstnameTextController.text.trim(),
+          lastName: _userLastnameTextController.text.trim(),
+          email: _userEmailTextController.text,
+          password: _userPasswordTextController.text.trim(),
+          age: _userBdTextController.text.trim(),
+          cityId: fetchedUserModel.cityId,
+          areaId: fetchedUserModel.areaId,
+          userPhone: _userPhoneTextController.text.trim(),
+          userGender: selectedGenderValue == "Male" ? "1" : "2",
+          userId: fetchedUserModel.userId);
+      showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
+      await Provider.of<AuthProvider>(context, listen: false)
+          .updateUserData(
+              user: user,
+              userImage: _userImage,
+              // selectedCity: CityModel(id: id, name: name),
+              // selectedRegionCity: _selectedRegionCity!,
+              context: context)
+          .then((value) {
+        showPopUpLoading();
+        if (value) {
+          Navigator.of(context).pop();
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+      showPopUpLoading();
+    }
   }
 
   @override
@@ -337,7 +375,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 12,
+                    height: 18,
                   ),
                   ProfileCustomFormField(
                       controller: _userBdTextController,
@@ -368,9 +406,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                         if (pickedDate != null) {
                           print(
-                              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                              pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000  MMM dd yyyy
                           String formattedDate =
-                              DateFormat('MMM dd yyyy').format(pickedDate);
+                              DateFormat('M-dd-yyyy').format(pickedDate);
                           print(
                               formattedDate); //formatted date output using intl package =>  2021-03-16
                           setState(() {
@@ -458,7 +496,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       });
                     },
                     onSaved: (value) {
-                      selectedValue = value.toString();
+                      selectedGenderValue = value.toString();
                       print("savedd");
                     },
                     buttonStyleData: const ButtonStyleData(
@@ -476,6 +514,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 55,),
 
                   // FormField<String>(
                   //   builder: (FormFieldState<String> state) {

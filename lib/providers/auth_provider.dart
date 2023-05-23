@@ -7,6 +7,7 @@ import 'package:elite/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/helper_methods.dart';
@@ -349,6 +350,61 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> updateUserData(
+      {required UserModel user,
+      XFile? userImage,
+      required BuildContext context}) async {
+    try {
+      // Await the http get response, then decode the json-formatted response.
+
+      Map<String, dynamic> dataMap = {
+        'RoleID': "1",
+        'FirstName': user.firstName,
+        "LastName": user.lastName,
+        'Email': user.email,
+        "PhoneNo": user.userPhone,
+        'Password': user.password!,
+        'Age': user.age,
+        "SexID": user.userGender,
+        "CityID": user.cityId,
+        "AreaID": user.areaId,
+        "UserID": user.userId,
+      };
+      if (userImage != null) {
+        dataMap["Image"] = await MultipartFile.fromFile(
+          userImage.path,
+          filename: userImage.name,
+        );
+        // await http.MultipartFile.fromPath("Image", userImage.path);
+        print("imagePath:${userImage.path}");
+      }
+
+      FormData formdata = FormData.fromMap(dataMap);
+      final token = await _helperMethods.getToken();
+      Response response = await _dio.post('${API_URL}Users/${user.userId}',
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              "Authorization": token
+            },
+          ),
+          data: formdata);
+      print(response.data);
+
+      return true;
+    } on DioError catch (e) {
+      // print(e.toString());
+      print(e.requestOptions.data.toString());
+      print(e.error);
+      print(e.response);
+
+      BotToast.showText(text: "Something went Wrong! \n under development!");
+
+      return false;
+    }
+  }
+
   Future saveAccessTokenlocaly({
     required String accessToken,
     UserModel? userModel,
@@ -384,6 +440,7 @@ class AuthProvider with ChangeNotifier {
           ));
 
       _userInformation = UserModel.fromGetUserIdJson(response.data[0]);
+      saveUserDatalocaly(userModel: _userInformation);
 
       notifyListeners();
     } on DioError catch (e) {
