@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:elite/models/cusine_model.dart';
 import 'package:elite/models/meal_size_model.dart';
 import 'package:elite/models/resturant_menu_item.dart';
 import 'package:elite/models/resturant_model.dart';
@@ -16,6 +17,9 @@ import '../models/resturant_review_model.dart';
 class ResturantProvider with ChangeNotifier {
   final Dio _dio = Dio();
   final HelperMethods _helperMethods = HelperMethods();
+
+  int resturantCount = 0;
+  bool isSearching = false;
 
   Future<ResturantModel?> getResturantDetails({
     required BuildContext context,
@@ -280,6 +284,42 @@ class ResturantProvider with ChangeNotifier {
     }
   }
 
+  filterSearching({
+    required int maximumDistance,
+    required double latitude,
+    required double longitude,
+    List<int> ratings = const [],
+    List<int> cousine = const [],
+    bool isBars = false,
+  }) async {
+    resturantCount = 0;
+    isSearching = true;
+    notifyListeners();
+    Response response = await _dio.post("${API_URL}Restaurant/Filters",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json",
+            // "Authorization": token
+          },
+        ),
+        data: {
+          "MaximumDistance": maximumDistance,
+          "Latitude": latitude,
+          "Longitude": longitude,
+          "rating": ratings,
+          "cuisine": cousine,
+          "IsBars": isBars,
+        });
+
+    var loadedList = response.data as List;
+    resturantCount = loadedList.length;
+    isSearching = false;
+    notifyListeners();
+
+    print("filterSearching");
+  }
+
   Future<Map<String, dynamic>> getResturantsList({
     required BuildContext context,
     required int pageNumber,
@@ -308,7 +348,7 @@ class ResturantProvider with ChangeNotifier {
             "cuisine": cousine,
             "IsBars": isBars,
           });
-      // print("response${response.data}");
+      print("response${response.data}");
 
       var loadedList = response.data as List;
 
@@ -318,6 +358,37 @@ class ResturantProvider with ChangeNotifier {
       //         : false;
       for (var item in loadedList) {
         tempList.add(ResturantModel.fromJson(item, context));
+      }
+      return {"list": tempList, "isThereNextPage": loadedNextPage};
+    } on DioError {
+      // print(e.toString());
+      return {"list": tempList, "isThereNextPage": false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getResturantsCusinesList() async {
+    List<CusineModel> tempList = [];
+    try {
+      Response response = await _dio.get(
+        "${API_URL}Cuisine",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json",
+            // "Authorization": token
+          },
+        ),
+      );
+      print("response${response.data}");
+
+      var loadedList = response.data as List;
+
+      var loadedNextPage = false;
+      //     response.data['data']["notifications"]["next_page_url"] != null
+      //         ? true
+      //         : false;
+      for (var item in loadedList) {
+        tempList.add(CusineModel.fromJson(item));
       }
       return {"list": tempList, "isThereNextPage": loadedNextPage};
     } on DioError {
