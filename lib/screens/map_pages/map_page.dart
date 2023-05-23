@@ -8,7 +8,6 @@ import 'package:elite/core/styles.dart';
 import 'package:elite/models/cusine_model.dart';
 import 'package:elite/models/resturant_model.dart';
 import 'package:elite/screens/map_pages/filter_page.dart';
-import 'package:elite/screens/map_pages/widgets/multi_select_chip.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -191,9 +190,20 @@ class _MapPageState extends State<MapPage> {
                           child: CustomOutlinedButton(
                               label: "Allow",
                               isIconVisible: false,
-                              onPressedButton: () {
-                                fetchRestursantsList();
-                                // Navigator.of(context).pop();
+                              onPressedButton: () async {
+                                await enableLocationFromSetting();
+                                // locationDenied = false;
+                                // Phoenix.rebirth(context);
+
+                                // RestartWidget.restartApp(context);
+                                // (context as Element).reassemble();
+                                Navigator.of(context).pop();
+                                Future.delayed(const Duration(seconds: 2))
+                                    .then((value) {
+                                  print("sdasdasd");
+                                  fetchRestursantsList();
+                                });
+
                                 // Navigator.push(
                                 //   context,
                                 //   MaterialPageRoute(
@@ -264,6 +274,12 @@ class _MapPageState extends State<MapPage> {
       },
     );
     setState(() {});
+  }
+
+  Future enableLocationFromSetting() async {
+    await _locationHelper.openAppSettingToEnable();
+
+    // await _locationHelper.getDeviceLocation();
   }
 
   Future fetchRestursantsList() async {
@@ -402,7 +418,7 @@ class _MapPageState extends State<MapPage> {
   }
 
 // end map section
-
+  List<FilterItemModel> cusineItems = [];
   Future fetchRestursantsCusineList() async {
     try {
       await Provider.of<ResturantProvider>(context, listen: false)
@@ -413,6 +429,12 @@ class _MapPageState extends State<MapPage> {
         } else {
           _cusinesList.addAll(informationMap["list"]);
         }
+
+        cusineItems = _cusinesList
+            .map(
+              (e) => FilterItemModel(id: e.id, name: e.name),
+            )
+            .toList();
       });
     } catch (e) {
       print(e.toString());
@@ -569,8 +591,9 @@ class _MapPageState extends State<MapPage> {
                         child: CustomOutlinedButton(
                             label: "Enable Location From Settings",
                             isIconVisible: false,
-                            onPressedButton: () {
-                              fetchRestursantsList();
+                            onPressedButton: () async {
+                              await showAllowLocationDilog(context: context);
+
                               // Navigator.of(context).pop();
                               // Navigator.push(
                               //   context,
@@ -823,15 +846,10 @@ class _MapPageState extends State<MapPage> {
       "1 Stars",
     ];
 
-    final List<FilterItemModel> cusineItems = _cusinesList
-        .map(
-          (e) => FilterItemModel(id: e.id, name: e.name),
-        )
-        .toList();
-
     clearAllFilters() {
       print("clear");
       selectedCusineTypes.clear();
+      cusineItems.clear();
       selectedRatingIndex = 0;
       distance = 10;
       showBars = false;
@@ -1136,16 +1154,69 @@ class _MapPageState extends State<MapPage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      MultiSelectChip(
-                        cusineItems,
-                        onSelectionChanged: (selectedList) {
-                          filterSetState(() {
-                            selectedCusineTypes = selectedList;
-                          });
-                          // print(selectedCusineTypes.toString());
-                          searchingResturants(provider);
-                        },
+                      Wrap(
+                        spacing: 5,
+                        direction: Axis.horizontal,
+                        children: List.generate(cusineItems.length, (index) {
+                          return InkWell(
+                            onTap: () {
+                              print("clicked");
+                              if (cusineItems[index].isselectd) {
+                                selectedCusineTypes
+                                    .remove(cusineItems[index].id);
+                              } else {
+                                selectedCusineTypes.add(cusineItems[index].id);
+                              }
+                              filterSetState(() {
+                                cusineItems[index].isselectd =
+                                    !cusineItems[index].isselectd;
+                              });
+                              searchingResturants(provider);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: cusineItems[index].isselectd
+                                    ? Styles.mainColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: cusineItems[index].isselectd
+                                    ? null
+                                    : Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (cusineItems[index].isselectd)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  Text(
+                                    cusineItems[index].name,
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: !cusineItems[index].isselectd
+                                            ? Styles.grayColor
+                                            : Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
                       ),
+
+                      // MultiSelectChip(
+                      //   cusineItems,
+                      //   onSelectionChanged: (selectedList) {
+                      //     filterSetState(() {
+                      //       selectedCusineTypes = selectedList;
+                      //     });
+                      //     // print(selectedCusineTypes.toString());
+                      //     searchingResturants(provider);
+                      //   },
+                      // ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -1165,7 +1236,6 @@ class _MapPageState extends State<MapPage> {
                               onPressedButton: () async {
                                 Navigator.of(context).pop();
                                 await refreshList();
-                                
                               },
                               icon: Container(),
                               borderSide:

@@ -1,5 +1,7 @@
 import 'package:location/location.dart';
 import 'package:location_permissions/location_permissions.dart' as locperm;
+import 'package:permission_handler/permission_handler.dart'
+    as permissionhandler;
 
 class LocationHelper {
   static final LocationHelper _helperMethods = LocationHelper._internal();
@@ -9,6 +11,13 @@ class LocationHelper {
   }
 
   LocationHelper._internal();
+
+  openAppSettingToEnable() async {
+    permissionhandler.openAppSettings();
+    // permissionhandler.PermissionStatus locStatus =
+    //     await permissionhandler.Permission.location.request();
+    // print("Location status : $locStatus");
+  }
 
   Future<LocationData?> getDeviceLocation() async {
     try {
