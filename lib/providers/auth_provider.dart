@@ -17,6 +17,8 @@ import '../models/notification_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import '../screens/auth_pages.dart/create_account_page.dart';
+
 class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
   final HelperMethods _helperMethods = HelperMethods();
@@ -106,7 +108,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> signInWithGoogle() async {
+  Future<bool> signInWithGoogle({required BuildContext context}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
     try {
@@ -133,25 +135,113 @@ class AuthProvider with ChangeNotifier {
           await auth.signInWithCredential(credential);
 
       user = userCredential.user;
+      if (user == null) {
+        return false;
+      }
+      Response checkResponse = await _dio.get(
+        "${API_URL}Login/Get_email?Email=${user.email.toString()}",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json",
+          },
+        ),
+      );
+      print(checkResponse.data);
+      print(checkResponse.statusCode);
+      if (checkResponse.statusCode == 200) {
+        Response googleResponse = await _dio.post(
+          "${API_URL}Login/GoogleSignin?Email=${user.email.toString()}",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+            },
+          ),
+        );
+        UserModel userModel = UserModel.fromJson(googleResponse.data["users1"]);
+        await saveAccessTokenlocaly(
+            accessToken: googleResponse.data["tokenString"]);
+        await saveUserDatalocaly(userModel: userModel);
 
-      print(user!.displayName.toString());
-      print(user.photoURL.toString());
-      print(user.uid.toString());
-      print(user.email.toString());
+        return true;
+      }
+
+      // print(user!.displayName.toString());
+      // print(user.photoURL.toString());
+      // print(user.uid.toString());
+      // print(user.email.toString());
       //  print(user..toString());
 
       return true;
-    } on FirebaseAuthException catch (e) {
-      print("Fireabse erorr  $e");
-      if (e.code == 'account-exists-with-different-credential') {
-        // handle the error here
-      } else if (e.code == 'invalid-credential') {
-        // handle the error here
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 404) {
+        _userInformation = UserModel(
+            firstName: user!.displayName.toString(),
+            lastName: "",
+            email: user.email.toString(),
+            password: "",
+            age: '',
+            cityId: "",
+            userGender: "",
+            areaId: "",
+            userId: "",
+            userPhone:
+                user.phoneNumber == null ? "" : user.phoneNumber.toString());
+        print("Account not exists");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreateAccountPage(
+                    userModel: _userInformation,
+                    fromGoogle: true,
+                  )),
+        );
       }
     } catch (e) {
       print(e.toString());
     }
     return false;
+  }
+
+  Future createGoogleAccount(
+      {required UserModel user,
+      required CityModel selectedCity,
+      required CityRegionModel selectedRegionCity,
+      required BuildContext context}) async {
+    try {
+      var response = await http.post(
+          Uri.parse('${API_URL}Login/GoogleSignin?Email=${user.email}'),
+          body: {
+            'RoleID': "1",
+            'FirstName': user.firstName,
+            "LastName": user.lastName,
+            'Email': user.email,
+            "PhoneNo": user.userPhone,
+            // 'Password': user.password!,
+            'Age': user.age,
+            "SexID": user.userGender,
+            "CityID": selectedCity.id,
+            "AreaID": selectedRegionCity.id,
+            "IsApprove": "True",
+            "Image": ""
+          });
+      if (response.statusCode == 200) {
+        var jsonResponse =
+            convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+        print('body : $jsonResponse.');
+        UserModel userModel = UserModel.fromJson(jsonResponse["userID"]);
+        await saveAccessTokenlocaly(accessToken: jsonResponse["tokenString"]);
+        await saveUserDatalocaly(userModel: userModel);
+        return true;
+      } else {
+        print('Request failed with status: ${response.statusCode}.');
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<bool> login(
@@ -391,6 +481,7 @@ class AuthProvider with ChangeNotifier {
           ),
           data: formdata);
       print(response.data);
+     await getUserInformation(context);
 
       return true;
     } on DioError catch (e) {

@@ -19,11 +19,14 @@ import '../../providers/auth_provider.dart';
 import '../main_tabs_page.dart';
 
 class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage({super.key});
+  const CreateAccountPage(
+      {super.key, this.userModel, required this.fromGoogle});
 
   @override
   State<CreateAccountPage> createState() => _CreateAccountPageState();
   static const routeName = "/create-account";
+  final UserModel? userModel;
+  final bool fromGoogle;
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
@@ -48,7 +51,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   final List<String> genderItems = [
     'Male',
-    'Female', 
+    'Female',
   ];
 
   String? selectedGenderValue;
@@ -66,6 +69,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     // TODO: implement initState
     // selectedGenderType = gendersList[0];
     fetchCities();
+    if (widget.userModel != null) {
+      _userFirstnameTextController.text = widget.userModel!.firstName;
+      _userEmailTextController.text = widget.userModel!.email;
+    }
     super.initState();
   }
 
@@ -164,24 +171,48 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           userGender: selectedGenderValue == "Male" ? "1" : "2",
           userId: '');
       showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
-      await Provider.of<AuthProvider>(context, listen: false)
-          .signUp(
-              user: user,
-              selectedCity: _selectedCity!,
-              selectedRegionCity: _selectedRegionCity!,
-              context: context)
-          .then((value) {
-        showPopUpLoading();
-        if (value) {
-          Navigator.pushAndRemoveUntil<dynamic>(
-            context,
-            MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) => const MainTabsPage(),
-            ),
-            (route) => false, //if you want to disable back feature set to false
-          );
-        }
-      });
+
+      if (widget.fromGoogle) {
+        await Provider.of<AuthProvider>(context, listen: false)
+            .createGoogleAccount(
+                user: user,
+                selectedCity: _selectedCity!,
+                selectedRegionCity: _selectedRegionCity!,
+                context: context)
+            .then((value) {
+          showPopUpLoading();
+          if (value) {
+            Navigator.pushAndRemoveUntil<dynamic>(
+              context,
+              MaterialPageRoute<dynamic>(
+                builder: (BuildContext context) => const MainTabsPage(),
+              ),
+              (route) =>
+                  false, //if you want to disable back feature set to false
+            );
+          }
+        });
+      } else {
+        await Provider.of<AuthProvider>(context, listen: false)
+            .signUp(
+                user: user,
+                selectedCity: _selectedCity!,
+                selectedRegionCity: _selectedRegionCity!,
+                context: context)
+            .then((value) {
+          showPopUpLoading();
+          if (value) {
+            Navigator.pushAndRemoveUntil<dynamic>(
+              context,
+              MaterialPageRoute<dynamic>(
+                builder: (BuildContext context) => const MainTabsPage(),
+              ),
+              (route) =>
+                  false, //if you want to disable back feature set to false
+            );
+          }
+        });
+      }
     } catch (e) {
       print(e.toString());
       showPopUpLoading();
@@ -198,7 +229,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
-            "Create account",
+            widget.fromGoogle ? "Google sign in" : "Create account",
             style: Styles.appBarTextStyle,
           ),
           actions: const [],
@@ -273,23 +304,25 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       labelTextStyle: Styles.mainTextStyle.copyWith(
                           color: Styles.unslectedItemColor, fontSize: 16),
                       formFillColor: Colors.white),
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  CustomFormField(
-                    controller: _userPasswordTextController,
-                    formatter: const [],
-                    textInputType: TextInputType.visiblePassword,
-                    vladationFunction: _validationHelper.validatePassword,
-                    action: TextInputAction.done,
-                    hintText: "",
-                    isSecureField: true,
-                    textStyle: Styles.mainTextStyle,
-                    hintStyle: const TextStyle(),
-                    labelTextStyle: Styles.mainTextStyle.copyWith(
-                        color: Styles.unslectedItemColor, fontSize: 16),
-                    label: "Password",
-                  ),
+                  if (!widget.fromGoogle)
+                    const SizedBox(
+                      height: 18,
+                    ),
+                  if (!widget.fromGoogle)
+                    CustomFormField(
+                      controller: _userPasswordTextController,
+                      formatter: const [],
+                      textInputType: TextInputType.visiblePassword,
+                      vladationFunction: _validationHelper.validatePassword,
+                      action: TextInputAction.done,
+                      hintText: "",
+                      isSecureField: true,
+                      textStyle: Styles.mainTextStyle,
+                      hintStyle: const TextStyle(),
+                      labelTextStyle: Styles.mainTextStyle.copyWith(
+                          color: Styles.unslectedItemColor, fontSize: 16),
+                      label: "Password",
+                    ),
                   const SizedBox(
                     height: 18,
                   ),
@@ -893,7 +926,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     height: 23,
                   ),
                   CustomOutlinedButton(
-                      label: "Join",
+                      label: widget.fromGoogle ? "Finish" : "Join",
                       onPressedButton: acceptTerms ? SignUp : null,
                       icon: Container(),
                       isIconVisible: false,

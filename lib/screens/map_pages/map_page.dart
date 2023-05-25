@@ -395,9 +395,9 @@ class _MapPageState extends State<MapPage> {
     if (locationData == null) {
       return;
     }
-    CameraPosition myCurrentPostion = const CameraPosition(
-      // target: LatLng(locationData.latitude!, locationData.longitude!),
-      target: LatLng(31.9297911, 35.962773),
+    CameraPosition myCurrentPostion = CameraPosition(
+      target: LatLng(locationData.latitude!, locationData.longitude!),
+      // target: LatLng(31.9297911, 35.962773),
       zoom: 15,
     );
 
@@ -496,7 +496,7 @@ class _MapPageState extends State<MapPage> {
                                 Text(
                                   userModel == null
                                       ? ""
-                                      : "${userModel.firstName.toString()}!",
+                                      : "${userModel.firstName.toString()} ${userModel.lastName.toString()}!",
                                   style: Styles.mainTextStyle.copyWith(
                                       color: Styles.userNameColor,
                                       fontSize: 20,

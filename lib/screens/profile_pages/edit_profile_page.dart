@@ -50,7 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   _pickUserImage() async {
     try {
-      _userImage = await _picker.pickImage(source: ImageSource.gallery);
+      _userImage = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
       if (_userImage == null) return;
       setState(() {});
     } catch (e) {
@@ -99,6 +99,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     DateTime tempDate =
         DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(userModel.age);
     _userBdTextController.text = DateFormat('M-dd-yyyy').format(tempDate);
+
+    selectedGenderValue =
+        userModel.userGender == "1" ? genderItems[0] : genderItems[1];
+
+    print(selectedGenderValue.toString());
   }
 
   updateProfile() async {
@@ -113,7 +118,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       UserModel? fetchedUserModel =
           Provider.of<AuthProvider>(context, listen: false).userInformation;
       if (fetchedUserModel == null) return;
-
+      print(selectedGenderValue.toString());
       UserModel user = UserModel(
           firstName: _userFirstnameTextController.text.trim(),
           lastName: _userLastnameTextController.text.trim(),
@@ -470,6 +475,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
                     ),
                     isExpanded: true,
+                    value: selectedGenderValue,
                     hint: Text("Select Gender",
                         style: Styles.mainTextStyle
                             .copyWith(color: Styles.grayColor, fontSize: 16)),
@@ -494,11 +500,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       setState(() {
                         _genderBorderColor = true;
                       });
-                    },
-                    onSaved: (value) {
                       selectedGenderValue = value.toString();
                       print("savedd");
                     },
+                    onSaved: (value) {},
                     buttonStyleData: const ButtonStyleData(
                       height: 60,
                       padding: EdgeInsets.only(left: 20, right: 10),
@@ -514,7 +519,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 55,),
+                  const SizedBox(
+                    height: 55,
+                  ),
 
                   // FormField<String>(
                   //   builder: (FormFieldState<String> state) {

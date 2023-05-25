@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 : ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: CachedNetworkImage(
-                                      imageUrl: userModel.userImage!,
+                                      imageUrl: userModel.userImage.toString(),
                                       // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
                                       height: 64,
                                       width: 64,
@@ -101,7 +101,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                         size: 64,
                                       ),
                                       errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                          const Icon(
+                                        Icons.error,
+                                        size: 64,
+                                      ),
                                     ),
                                   ),
                           ),
@@ -109,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 20,
                           ),
                           Text(
-                            userModel == null ? "" : userModel.firstName,
+                            userModel == null ? "" : "${userModel.firstName.toString()} ${userModel.lastName.toString()}",
                             style: Styles.mainTextStyle.copyWith(
                                 color: Styles.grayColor,
                                 fontSize: 16,

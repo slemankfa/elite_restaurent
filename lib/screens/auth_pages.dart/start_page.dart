@@ -1,4 +1,3 @@
-
 import 'package:elite/core/styles.dart';
 import 'package:elite/providers/auth_provider.dart';
 import 'package:elite/screens/auth_pages.dart/create_account_page.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
+import '../main_tabs_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -20,7 +20,20 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   signInWithGoogle() async {
     try {
-      Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
+      await Provider.of<AuthProvider>(context, listen: false)
+          .signInWithGoogle(context: context)
+          .then((value) {
+        print("valeu $value");
+        if (value) {
+          Navigator.pushAndRemoveUntil<dynamic>(
+            context,
+            MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const MainTabsPage(),
+            ),
+            (route) => false, //if you want to disable back feature set to false
+          );
+        }
+      });
     } catch (e) {
       print(e.toString());
     }

@@ -137,7 +137,9 @@ class MyApp extends StatelessWidget {
             SupportChatPage.RouteName: (context) => const SupportChatPage(),
             DeletePage.routeName: (ctx) => const DeletePage(),
             LoginPage.routeName: (ctx) => const LoginPage(),
-            CreateAccountPage.routeName: (ctx) => const CreateAccountPage(),
+            CreateAccountPage.routeName: (ctx) => const CreateAccountPage(
+                  fromGoogle: false,
+                ),
             MainTabsPage.routeName: (ctx) => const MainTabsPage(),
             ProfilePage.routeName: (ctx) => const ProfilePage(),
             AddOrderPage.routeName: (ctx) => const AddOrderPage(
