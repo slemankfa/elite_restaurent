@@ -7,7 +7,6 @@ import 'package:elite/core/location_helper.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/models/cusine_model.dart';
 import 'package:elite/models/resturant_model.dart';
-import 'package:elite/screens/map_pages/filter_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,7 +14,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
 import '../../models/filter_item_model.dart';
@@ -39,7 +37,6 @@ class _MapPageState extends State<MapPage> {
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   List<ResturantModel> _resturantsList = [];
-  List<CusineModel> _cusinesList = [];
   final Set<Marker> _loadedMarkers = {};
   bool _isLoading = false;
   BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
@@ -47,13 +44,6 @@ class _MapPageState extends State<MapPage> {
   int _selctedMarkerIndex = 0;
   final CarouselController _cursoerController = CarouselController();
   bool locationDenied = true;
-
-  /// filters
-  int distance = 10;
-  bool showBars = false;
-  int? selectedRatingIndex = 0;
-  List<int> selectCusineList = [];
-  List<int> selectedCusineTypes = [];
 
   ///
   @override
@@ -233,26 +223,6 @@ class _MapPageState extends State<MapPage> {
             ));
   }
 
-  List<int> getRatingByIndex(int index) {
-    switch (index) {
-      case 0:
-        return [];
-      case 1:
-        return [5];
-      case 2:
-        return [4];
-      case 3:
-        return [3];
-      case 4:
-        return [2];
-      case 5:
-        return [1];
-
-      default:
-        return [];
-    }
-  }
-
   /* 
   Map section
    */
@@ -309,9 +279,13 @@ class _MapPageState extends State<MapPage> {
         latitude: locationData.latitude!,
         longitude: locationData.longitude!,
         maximumDistance: distance,
-        cousine: selectedCusineTypes,
+        cousine: filterSelectedCusineTypes,
         ratings: getRatingByIndex(selectedRatingIndex!),
         isBars: showBars,
+        pricing: filterSelectedResturantsPricings,
+        periods: filterSelectedResturantsPeriod,
+        resturantTypes: filterSelectedResturantsType,
+        dietary: filterSelectedDiertyType,
       ) //3
           .then((informationMap) async {
         if (_pageNumber == 1) {
@@ -418,7 +392,46 @@ class _MapPageState extends State<MapPage> {
   }
 
 // end map section
-  List<FilterItemModel> cusineItems = [];
+
+//-----------------Filter sections--------------
+
+  /// filters
+  int distance = 10;
+  bool showBars = false;
+  int? selectedRatingIndex = 0;
+
+  List<int> filterSelectedCusineTypes = [];
+  List<int> filterSelectedResturantsPricings = [];
+  List<int> filterSelectedResturantsPeriod = [];
+  List<int> filterSelectedResturantsType = [];
+  List<int> filterSelectedDiertyType = [];
+  double globalFilterSpacedHeight = 10;
+
+  List<CusineModel> _cusinesList = [];
+  List<FilterItemModel> resturantsCusineItemsFilters = [];
+  List<FilterItemModel> resturantPricingItemsFilters = [
+    FilterItemModel(id: 1, name: "\$\$\$"),
+    FilterItemModel(id: 2, name: "\$\$"),
+    FilterItemModel(id: 3, name: "\$")
+  ];
+
+  List<FilterItemModel> resturantPeriodsFilter = [
+    FilterItemModel(id: 0, name: "Breakfast"),
+    FilterItemModel(id: 1, name: "Lunch"),
+    FilterItemModel(id: 2, name: "Dinner")
+  ];
+
+  List<FilterItemModel> resturantTypeFilter = [
+    FilterItemModel(id: 0, name: "Drinks"),
+    FilterItemModel(id: 1, name: "Desserts"),
+  ];
+
+  List<FilterItemModel> resturantDiertyFilter = [
+    FilterItemModel(id: 0, name: "Gluten Free"),
+    FilterItemModel(id: 1, name: "Dairy Free"),
+    FilterItemModel(id: 2, name: "Vegeterian"),
+  ];
+
   Future fetchRestursantsCusineList() async {
     try {
       await Provider.of<ResturantProvider>(context, listen: false)
@@ -430,7 +443,7 @@ class _MapPageState extends State<MapPage> {
           _cusinesList.addAll(informationMap["list"]);
         }
 
-        cusineItems = _cusinesList
+        resturantsCusineItemsFilters = _cusinesList
             .map(
               (e) => FilterItemModel(id: e.id, name: e.name),
             )
@@ -440,6 +453,34 @@ class _MapPageState extends State<MapPage> {
       print(e.toString());
     }
   }
+
+  List<int> getRatingByIndex(int index) {
+    switch (index) {
+      case 0:
+        return [];
+      case 1:
+        return [5];
+      case 2:
+        return [4];
+      case 3:
+        return [3];
+      case 4:
+        return [2];
+      case 5:
+        return [1];
+
+      default:
+        return [];
+    }
+  }
+
+  // handleAddedPricingToFiliters() {
+  //   pricingItems.add(FilterItemModel(id: 1, name: "\$\$\$"));
+  //   pricingItems.add(FilterItemModel(id: 2, name: "\$\$"));
+  //   pricingItems.add(FilterItemModel(id: 3, name: "\$"));
+  // }
+
+  //-----------------Filter sections--------------
 
   @override
   Widget build(BuildContext context) {
@@ -821,22 +862,6 @@ class _MapPageState extends State<MapPage> {
   void _showFilterBottomSheet() {
     // int resevedPeopleCount = 2;
 
-    const double min = 2.0;
-    const double max = 10.0;
-    const SfRangeValues values = SfRangeValues(4.0, 8.0);
-
-    final List<Data> chartData = <Data>[
-      Data(x: 2.0, y: 2.5),
-      Data(x: 3.0, y: 3.4),
-      Data(x: 4.0, y: 2.8),
-      Data(x: 5.0, y: 1.6),
-      Data(x: 6.0, y: 2.3),
-      Data(x: 7.0, y: 2.5),
-      Data(x: 8.0, y: 2.9),
-      Data(x: 9.0, y: 3.8),
-      Data(x: 10.0, y: 3.7),
-    ];
-
     final List<String> ratingsList = [
       "All",
       "5 Stars",
@@ -848,11 +873,20 @@ class _MapPageState extends State<MapPage> {
 
     clearAllFilters() {
       print("clear");
-      selectedCusineTypes.clear();
-      cusineItems.clear();
+      filterSelectedCusineTypes.clear();
+      filterSelectedResturantsPricings.clear();
+      filterSelectedResturantsPeriod.clear();
+      filterSelectedResturantsType.clear();
+      filterSelectedDiertyType.clear();
       selectedRatingIndex = 0;
       distance = 10;
       showBars = false;
+
+      resturantPricingItemsFilters.map((e) => e.isselectd = false).toList();
+      resturantPeriodsFilter.map((e) => e.isselectd = false).toList();
+      resturantTypeFilter.map((e) => e.isselectd = false).toList();
+      resturantsCusineItemsFilters.map((e) => e.isselectd = false).toList();
+      resturantDiertyFilter.map((e) => e.isselectd = false).toList();
       setState(() {});
 
       Navigator.of(context).pop();
@@ -871,8 +905,12 @@ class _MapPageState extends State<MapPage> {
           latitude: locationData.latitude!,
           longitude: locationData.longitude!,
           maximumDistance: distance,
-          cousine: selectedCusineTypes,
+          cousine: filterSelectedCusineTypes,
           ratings: getRatingByIndex(selectedRatingIndex!),
+          pricing: filterSelectedResturantsPricings,
+          periods: filterSelectedResturantsPeriod,
+          resturantTypes: filterSelectedResturantsType,
+          dietary: filterSelectedDiertyType,
           isBars: showBars,
         );
       } catch (e) {
@@ -942,8 +980,8 @@ class _MapPageState extends State<MapPage> {
                         height: 12,
                       ),
                       const Divider(),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Row(
                         children: [
@@ -1000,8 +1038,8 @@ class _MapPageState extends State<MapPage> {
                       //   height: 9,
                       // ),
                       // const Divider(),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Row(
                         children: [
@@ -1055,12 +1093,12 @@ class _MapPageState extends State<MapPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       const Divider(),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Text(
                         "Rating",
@@ -1070,8 +1108,8 @@ class _MapPageState extends State<MapPage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Wrap(
                         spacing: 5.0,
@@ -1136,67 +1174,159 @@ class _MapPageState extends State<MapPage> {
                           },
                         ).toList(),
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       const Divider(),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Text(
-                        "Cuisine",
+                        "Pricings",
                         style: Styles.mainTextStyle.copyWith(
                           color: Styles.grayColor,
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       Wrap(
                         spacing: 5,
                         direction: Axis.horizontal,
-                        children: List.generate(cusineItems.length, (index) {
+                        children: List.generate(
+                            resturantPricingItemsFilters.length, (index) {
                           return InkWell(
                             onTap: () {
                               print("clicked");
-                              if (cusineItems[index].isselectd) {
-                                selectedCusineTypes
-                                    .remove(cusineItems[index].id);
+                              if (resturantPricingItemsFilters[index]
+                                  .isselectd) {
+                                filterSelectedResturantsPricings.remove(
+                                    resturantPricingItemsFilters[index].id);
                               } else {
-                                selectedCusineTypes.add(cusineItems[index].id);
+                                filterSelectedResturantsPricings.add(
+                                    resturantPricingItemsFilters[index].id);
                               }
+
                               filterSetState(() {
-                                cusineItems[index].isselectd =
-                                    !cusineItems[index].isselectd;
+                                resturantPricingItemsFilters[index].isselectd =
+                                    !resturantPricingItemsFilters[index]
+                                        .isselectd;
                               });
+                              // print(filterSelectedResturantsPricings.length
+                              //     .toString());
                               searchingResturants(provider);
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
                               decoration: BoxDecoration(
-                                color: cusineItems[index].isselectd
+                                color: resturantPricingItemsFilters[index]
+                                        .isselectd
                                     ? Styles.mainColor
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(50),
-                                border: cusineItems[index].isselectd
+                                border: resturantPricingItemsFilters[index]
+                                        .isselectd
                                     ? null
                                     : Border.all(color: Colors.grey),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (cusineItems[index].isselectd)
+                                  if (resturantPricingItemsFilters[index]
+                                      .isselectd)
                                     const Icon(
                                       Icons.check,
                                       color: Colors.white,
                                     ),
                                   Text(
-                                    cusineItems[index].name,
+                                    resturantPricingItemsFilters[index].name,
                                     style: Styles.mainTextStyle.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: !cusineItems[index].isselectd
+                                        color:
+                                            !resturantPricingItemsFilters[index]
+                                                    .isselectd
+                                                ? Styles.grayColor
+                                                : Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      const Divider(),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Text(
+                        "Periods",
+                        style: Styles.mainTextStyle.copyWith(
+                          color: Styles.grayColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        direction: Axis.horizontal,
+                        children: List.generate(resturantPeriodsFilter.length,
+                            (index) {
+                          return InkWell(
+                            onTap: () {
+                              print("clicked");
+                              if (resturantPeriodsFilter[index].isselectd) {
+                                filterSelectedResturantsPeriod
+                                    .remove(resturantPeriodsFilter[index].id);
+                              } else {
+                                filterSelectedResturantsPeriod
+                                    .add(resturantPeriodsFilter[index].id);
+                              }
+
+                              filterSetState(() {
+                                resturantPeriodsFilter[index].isselectd =
+                                    !resturantPeriodsFilter[index].isselectd;
+                              });
+                              // print(filterSelectedResturantsPeriod.length
+                              //     .toString());
+                              searchingResturants(provider);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: resturantPeriodsFilter[index].isselectd
+                                    ? Styles.mainColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: resturantPeriodsFilter[index].isselectd
+                                    ? null
+                                    : Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (resturantPeriodsFilter[index].isselectd)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  Text(
+                                    resturantPeriodsFilter[index].name,
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: !resturantPeriodsFilter[index]
+                                                .isselectd
                                             ? Styles.grayColor
                                             : Colors.white),
                                   )
@@ -1206,7 +1336,165 @@ class _MapPageState extends State<MapPage> {
                           );
                         }),
                       ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      const Divider(),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Text(
+                        "Resturant type",
+                        style: Styles.mainTextStyle.copyWith(
+                          color: Styles.grayColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        direction: Axis.horizontal,
+                        children:
+                            List.generate(resturantTypeFilter.length, (index) {
+                          return InkWell(
+                            onTap: () {
+                              if (resturantTypeFilter[index].isselectd) {
+                                filterSelectedResturantsType
+                                    .remove(resturantTypeFilter[index].id);
+                              } else {
+                                filterSelectedResturantsType
+                                    .add(resturantTypeFilter[index].id);
+                              }
 
+                              filterSetState(() {
+                                resturantTypeFilter[index].isselectd =
+                                    !resturantTypeFilter[index].isselectd;
+                              });
+                              // print(filterSelectedResturantsType.length
+                              //     .toString());
+                              searchingResturants(provider);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: resturantTypeFilter[index].isselectd
+                                    ? Styles.mainColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: resturantTypeFilter[index].isselectd
+                                    ? null
+                                    : Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (resturantTypeFilter[index].isselectd)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  Text(
+                                    resturantTypeFilter[index].name,
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: !resturantTypeFilter[index]
+                                                .isselectd
+                                            ? Styles.grayColor
+                                            : Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      const Divider(),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Text(
+                        "Cuisine",
+                        style: Styles.mainTextStyle.copyWith(
+                          color: Styles.grayColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        direction: Axis.horizontal,
+                        children: List.generate(
+                            resturantsCusineItemsFilters.length, (index) {
+                          return InkWell(
+                            onTap: () {
+                              print("clicked");
+                              if (resturantsCusineItemsFilters[index]
+                                  .isselectd) {
+                                filterSelectedCusineTypes.remove(
+                                    resturantsCusineItemsFilters[index].id);
+                              } else {
+                                filterSelectedCusineTypes.add(
+                                    resturantsCusineItemsFilters[index].id);
+                              }
+                              filterSetState(() {
+                                resturantsCusineItemsFilters[index].isselectd =
+                                    !resturantsCusineItemsFilters[index]
+                                        .isselectd;
+                              });
+                              searchingResturants(provider);
+                            },
+                            child: Container(
+                              // padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: resturantsCusineItemsFilters[index]
+                                        .isselectd
+                                    ? Styles.mainColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: resturantsCusineItemsFilters[index]
+                                        .isselectd
+                                    ? null
+                                    : Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (resturantsCusineItemsFilters[index]
+                                      .isselectd)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  Text(
+                                    resturantsCusineItemsFilters[index].name,
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            !resturantsCusineItemsFilters[index]
+                                                    .isselectd
+                                                ? Styles.grayColor
+                                                : Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
                       // MultiSelectChip(
                       //   cusineItems,
                       //   onSelectionChanged: (selectedList) {
@@ -1217,15 +1505,91 @@ class _MapPageState extends State<MapPage> {
                       //     searchingResturants(provider);
                       //   },
                       // ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      const Divider(),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Text(
+                        "Dietry",
+                        style: Styles.mainTextStyle.copyWith(
+                          color: Styles.grayColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        direction: Axis.horizontal,
+                        children: List.generate(resturantDiertyFilter.length,
+                            (index) {
+                          return InkWell(
+                            onTap: () {
+                              if (resturantDiertyFilter[index].isselectd) {
+                                filterSelectedDiertyType
+                                    .remove(resturantDiertyFilter[index].id);
+                              } else {
+                                filterSelectedDiertyType
+                                    .add(resturantDiertyFilter[index].id);
+                              }
+
+                              filterSetState(() {
+                                resturantDiertyFilter[index].isselectd =
+                                    !resturantDiertyFilter[index].isselectd;
+                              });
+                              // print(filterSelectedDiertyType.length.toString());
+                              searchingResturants(provider);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: resturantDiertyFilter[index].isselectd
+                                    ? Styles.mainColor
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: resturantDiertyFilter[index].isselectd
+                                    ? null
+                                    : Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (resturantDiertyFilter[index].isselectd)
+                                    const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  Text(
+                                    resturantDiertyFilter[index].name,
+                                    style: Styles.mainTextStyle.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: !resturantDiertyFilter[index]
+                                                .isselectd
+                                            ? Styles.grayColor
+                                            : Colors.white),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       const Divider(
                         height: 5,
                         thickness: 1,
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: globalFilterSpacedHeight,
                       ),
                       provider.isSearching
                           ? _helperMethods.progressIndcator()

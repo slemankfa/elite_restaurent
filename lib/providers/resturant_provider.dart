@@ -290,6 +290,10 @@ class ResturantProvider with ChangeNotifier {
     required double longitude,
     List<int> ratings = const [],
     List<int> cousine = const [],
+    List<int> pricing = const [],
+    List<int> periods = const [],
+    List<int> resturantTypes = const [],
+    List<int> dietary = const [],
     bool isBars = false,
   }) async {
     resturantCount = 0;
@@ -310,6 +314,10 @@ class ResturantProvider with ChangeNotifier {
           "rating": ratings,
           "cuisine": cousine,
           "IsBars": isBars,
+          "Pricing": pricing,
+          "periods": periods,
+          "RestaurantType": resturantTypes,
+          "Dietary": dietary,
         });
 
     var loadedList = response.data as List;
@@ -328,6 +336,10 @@ class ResturantProvider with ChangeNotifier {
     required double longitude,
     List<int> ratings = const [],
     List<int> cousine = const [],
+    List<int> pricing = const [],
+    List<int> periods = const [],
+    List<int> resturantTypes = const [],
+    List<int> dietary = const [],
     bool isBars = false,
   }) async {
     List<ResturantModel> tempList = [];
@@ -347,6 +359,10 @@ class ResturantProvider with ChangeNotifier {
             "rating": ratings,
             "cuisine": cousine,
             "IsBars": isBars,
+            "Pricing": pricing,
+            "periods": periods,
+            "RestaurantType": resturantTypes,
+            "Dietary": dietary,
           });
       print("response${response.data}");
 

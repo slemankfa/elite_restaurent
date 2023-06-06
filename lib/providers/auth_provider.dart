@@ -481,7 +481,7 @@ class AuthProvider with ChangeNotifier {
           ),
           data: formdata);
       print(response.data);
-     await getUserInformation(context);
+      await getUserInformation(context);
 
       return true;
     } on DioError catch (e) {
