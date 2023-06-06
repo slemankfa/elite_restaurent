@@ -101,6 +101,7 @@ class _ProfileCustomFormFieldState extends State<ProfileCustomFormField> {
           validator: (value) => widget.vladationFunction(value),
           textInputAction: widget.action,
           style: widget.textStyle,
+          maxLines: widget.maxline,
           readOnly: widget.readOnly,
           onTap: () {
              widget.onTapFuncation();
@@ -131,7 +132,7 @@ class _ProfileCustomFormFieldState extends State<ProfileCustomFormField> {
                 : widget.prefixWidget,
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Styles.mainColor,
               ),
             ),

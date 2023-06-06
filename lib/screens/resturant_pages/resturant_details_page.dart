@@ -98,7 +98,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
         print("removedate");
         pickedDate = "";
         _peopleCountController.clear();
-        isIndoor = false ;
+        isIndoor = false;
         // pickedTime = "";
         _selectedPeopleCountIndex = 0;
       });
@@ -405,6 +405,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                       Provider.of<CartProvider>(context,
                                               listen: false)
                                           .updateIsIndoorStatus("1");
+                                      Provider.of<CartProvider>(context,
+                                              listen: false)
+                                          .isInsideResturant = true;
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -449,6 +452,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     // Provider.of<CartProvider>(context,
                                     //         listen: false)
                                     //     .updateIsIndoorStatus("2");
+                                    //  Provider.of<CartProvider>(context,
+                                    //           listen: false)
+                                    //       .isInsideResturant = false;
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4),

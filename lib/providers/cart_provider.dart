@@ -16,6 +16,7 @@ class CartProvider with ChangeNotifier {
   final Map<String, CartItemModel> _items = {};
 
   String _isIndoor = "1";
+  bool isInsideResturant = true;
 
 // order from inside resturn or outside resturan
 /* 
@@ -58,14 +59,15 @@ Outdoor 2 */
   }
 
   void updateItemSize({
-    required String mealId,
+    required String localMealId,
     required MealSizeModel currentMealSize,
   }) {
-    if (_items.containsKey(mealId)) {
+    if (_items.containsKey(localMealId)) {
       _items.update(
-          mealId,
+          localMealId,
           (existingCartItem) => CartItemModel(
-              mealId: mealId,
+              mealId: existingCartItem.mealId,
+              mealLocalId: localMealId,
               sideDishes: existingCartItem.sideDishes,
               mealName: existingCartItem.mealName,
               mealImage: existingCartItem.mealImage,
@@ -81,17 +83,19 @@ Outdoor 2 */
 
   void addItem(
       {required String mealId,
+      required String mealLocalId,
       required String mealImage,
       required MealSizeModel size,
       required double price,
       required String title,
       required List<SideMealDishes> sideDishes,
       required List<MealSizeModel> mealSizeList}) {
-    if (_items.containsKey(mealId)) {
+    if (_items.containsKey(mealLocalId)) {
       _items.update(
-          mealId,
+          mealLocalId,
           (existingCartItem) => CartItemModel(
               mealId: mealId,
+              mealLocalId: mealLocalId,
               mealName: title,
               mealImage: existingCartItem.mealImage,
               quantity: existingCartItem.quantity + 1,
@@ -102,10 +106,11 @@ Outdoor 2 */
               mealSizeList: existingCartItem.mealSizeList));
     } else {
       _items.putIfAbsent(
-          mealId,
+          mealLocalId,
           () => CartItemModel(
                 mealId: mealId,
                 mealName: title,
+                mealLocalId: mealLocalId,
                 quantity: 1,
                 sideDishes: sideDishes,
                 mealImage: mealImage,
@@ -145,15 +150,16 @@ Outdoor 2 */
     print(" removee side dish");
   }
 
-  removeSingleItem(String mealId) {
-    if (!_items.containsKey(mealId)) {
+  removeSingleItem(String mealLocalId) {
+    if (!_items.containsKey(mealLocalId)) {
       return;
     }
-    if (_items[mealId]!.quantity > 1) {
+    if (_items[mealLocalId]!.quantity > 1) {
       _items.update(
-          mealId,
+          mealLocalId,
           (existingCartItem) => CartItemModel(
               mealId: existingCartItem.mealId,
+              mealLocalId: mealLocalId,
               mealName: existingCartItem.mealName,
               mealImage: existingCartItem.mealImage,
               quantity: existingCartItem.quantity - 1,
@@ -163,7 +169,7 @@ Outdoor 2 */
               mealSizeList: existingCartItem.mealSizeList,
               mealSize: existingCartItem.mealSize));
     } else {
-      _items.remove(mealId);
+      _items.remove(mealLocalId);
     }
     notifyListeners();
   }
@@ -176,7 +182,8 @@ Outdoor 2 */
 
   Future<bool> CreateNewOrderOrder(
       {required OrderAddressModel addressinformation,
-      required ResturantModel resturantDetails}) async {
+      required ResturantModel resturantDetails,
+      String orderNote = ""}) async {
     List<Map<String, dynamic>> mealsDetails = [];
     try {
       _items.forEach((key, cartItem) {
@@ -212,7 +219,7 @@ Outdoor 2 */
             "requestDate": "2023-05-30",
             "reservationID": 0,
             "tableID": 0,
-            "note": "",
+            "note": orderNote,
             "orderTotal": totalAmount,
             "discount": 0,
             "taxAmount": 0,

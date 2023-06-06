@@ -98,6 +98,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
   final TextEditingController _phoneController = TextEditingController();
   final ValidationHelper _validationHelper = ValidationHelper();
 
+  final TextEditingController _orderNoteController = TextEditingController();
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -107,6 +109,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
     _optaionalAddressController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _orderNoteController.dispose();
   }
 
   checkUserStatus() async {
@@ -134,12 +137,15 @@ class _AddOrderPageState extends State<AddOrderPage> {
     }
   }
 
-  addNewOrder() async {
-    if (!_formKey.currentState!.validate()) {
-      // If the form is valid, display a snackbar. In the real world,
-      // you'd often call a server or save the information in a database.
-      return;
+  addNewOrder(isIndoor) async {
+    if (!isIndoor) {
+      if (!_formKey.currentState!.validate()) {
+        // If the form is valid, display a snackbar. In the real world,
+        // you'd often call a server or save the information in a database.
+        return;
+      }
     }
+
     Function showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
     try {
       OrderAddressModel orderAddressModel = OrderAddressModel(
@@ -152,6 +158,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
       Provider.of<CartProvider>(context, listen: false)
           .CreateNewOrderOrder(
               addressinformation: orderAddressModel,
+              orderNote: _orderNoteController.text,
               resturantDetails: widget.resturantDetails!)
           .then((status) {
         showPopUpLoading.call();
@@ -302,11 +309,12 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      "Table #2",
-                      style: Styles.mainTextStyle
-                          .copyWith(fontSize: 14, color: Styles.midGrayColor),
-                    ),
+                    if (cart.isInsideResturant)
+                      Text(
+                        "Table #2",
+                        style: Styles.mainTextStyle
+                            .copyWith(fontSize: 14, color: Styles.midGrayColor),
+                      ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -337,25 +345,32 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                   )),
                         );
                       },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              "Add Dish".toUpperCase(),
-                              style: Styles.mainTextStyle.copyWith(
-                                  fontSize: 14,
-                                  overflow: TextOverflow.ellipsis,
-                                  color: Styles.mainColor,
-                                  fontWeight: FontWeight.bold),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Styles.mainColor,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                "Add Dish".toUpperCase(),
+                                style: Styles.mainTextStyle.copyWith(
+                                    fontSize: 14,
+                                    overflow: TextOverflow.ellipsis,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          const Icon(
-                            Icons.add,
-                            color: Styles.mainColor,
-                          )
-                        ],
+                            const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
                       ),
                     )
                   ],
@@ -406,11 +421,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                                                       context,
                                                                   function: () {
                                                                     cart.removeSideDish(
-                                                                        mealId: cart
-                                                                            .items
-                                                                            .values
-                                                                            .first
-                                                                            .mealId,
+                                                                        mealId: cartMealItem
+                                                                            .mealLocalId,
                                                                         sideDishId:
                                                                             sideDish.id);
                                                                   });
@@ -530,164 +542,210 @@ class _AddOrderPageState extends State<AddOrderPage> {
               const SizedBox(
                 height: 20,
               ),
-              const Divider(),
-              // address
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Styles.listTileBorderColr)),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Shipping Address",
-                        style: Styles.mainTextStyle.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Styles.grayColor),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ProfileCustomFormField(
-                          controller: _nameController,
-                          formatter: const [],
-                          action: TextInputAction.done,
-                          hintText: "Name",
-                          isPrefixeIconAvalibel: false,
-                          textStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.mainColor),
-                          hintStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.grayColor),
-                          vladationFunction: _validationHelper.validateField,
-                          textInputType: TextInputType.emailAddress,
-                          isSuffixIconAvalibel: false,
-                          suffixWidget: null,
-                          readOnly: false,
-                          onTapFuncation: () async {},
-                          textAlign: TextAlign.start,
-                          label: "",
-                          labelTextStyle: Styles.mainTextStyle.copyWith(
-                              color: Styles.unslectedItemColor, fontSize: 16),
-                          formFillColor: Colors.white),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      ProfileCustomFormField(
-                          controller: _addressController,
-                          formatter: const [],
-                          action: TextInputAction.done,
-                          hintText: "Address",
-                          isPrefixeIconAvalibel: false,
-                          textStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.mainColor),
-                          hintStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.grayColor),
-                          vladationFunction: _validationHelper.validateField,
-                          textInputType: TextInputType.emailAddress,
-                          isSuffixIconAvalibel: false,
-                          suffixWidget: null,
-                          readOnly: false,
-                          onTapFuncation: () async {},
-                          textAlign: TextAlign.start,
-                          label: "",
-                          labelTextStyle: Styles.mainTextStyle.copyWith(
-                              color: Styles.unslectedItemColor, fontSize: 16),
-                          formFillColor: Colors.white),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      ProfileCustomFormField(
-                          controller: _optaionalAddressController,
-                          formatter: const [],
-                          action: TextInputAction.done,
-                          hintText: "Address line 2 (optional)",
-                          isPrefixeIconAvalibel: false,
-                          textStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.mainColor),
-                          hintStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.grayColor),
-                          vladationFunction:
-                              _validationHelper.optionalEmailValdation,
-                          textInputType: TextInputType.emailAddress,
-                          isSuffixIconAvalibel: false,
-                          suffixWidget: null,
-                          readOnly: false,
-                          onTapFuncation: () async {},
-                          textAlign: TextAlign.start,
-                          label: "",
-                          labelTextStyle: Styles.mainTextStyle.copyWith(
-                              color: Styles.unslectedItemColor, fontSize: 16),
-                          formFillColor: Colors.white),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        "Contact Information",
-                        style: Styles.mainTextStyle.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Styles.grayColor),
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      ProfileCustomFormField(
-                          controller: _emailController,
-                          formatter: const [],
-                          action: TextInputAction.done,
-                          hintText: "email",
-                          isPrefixeIconAvalibel: true,
-                          textStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.mainColor),
-                          hintStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.grayColor),
-                          vladationFunction:
-                              _validationHelper.optionalEmailValdation,
-                          textInputType: TextInputType.emailAddress,
-                          isSuffixIconAvalibel: false,
-                          prefixWidget: const Icon(Icons.email_outlined),
-                          suffixWidget: null,
-                          readOnly: false,
-                          onTapFuncation: () async {},
-                          textAlign: TextAlign.start,
-                          label: "",
-                          labelTextStyle: Styles.mainTextStyle.copyWith(
-                              color: Styles.unslectedItemColor, fontSize: 16),
-                          formFillColor: Colors.white),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      ProfileCustomFormField(
-                          controller: _phoneController,
-                          formatter: const [],
-                          action: TextInputAction.done,
-                          hintText: "phone number",
-                          isPrefixeIconAvalibel: true,
-                          textStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.mainColor),
-                          hintStyle: Styles.mainTextStyle
-                              .copyWith(fontSize: 16, color: Styles.grayColor),
-                          vladationFunction: _validationHelper.validateField,
-                          textInputType: TextInputType.emailAddress,
-                          isSuffixIconAvalibel: false,
-                          prefixWidget: const Icon(Icons.phone),
-                          suffixWidget: null,
-                          readOnly: false,
-                          onTapFuncation: () async {},
-                          textAlign: TextAlign.start,
-                          label: "",
-                          labelTextStyle: Styles.mainTextStyle.copyWith(
-                              color: Styles.unslectedItemColor, fontSize: 16),
-                          formFillColor: Colors.white),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Order notes",
+                      style: Styles.mainTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.grayColor),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    ProfileCustomFormField(
+                        controller: _orderNoteController,
+                        formatter: const [],
+                        action: TextInputAction.done,
+                        hintText: "Add more souce...",
+                        maxline: 5,
+                        // maxLength: ,
+                        isPrefixeIconAvalibel: false,
+                        textStyle: Styles.mainTextStyle
+                            .copyWith(fontSize: 16, color: Styles.mainColor),
+                        hintStyle: Styles.mainTextStyle
+                            .copyWith(fontSize: 14, color: Styles.grayColor),
+                        vladationFunction: _validationHelper.validateField,
+                        textInputType: TextInputType.emailAddress,
+                        isSuffixIconAvalibel: false,
+                        suffixWidget: null,
+                        readOnly: false,
+                        onTapFuncation: () async {},
+                        textAlign: TextAlign.start,
+                        label: "",
+                        labelTextStyle: Styles.mainTextStyle.copyWith(
+                            color: Styles.unslectedItemColor, fontSize: 16),
+                        formFillColor: Colors.white),
+                  ],
                 ),
               ),
+              if (!cart.isInsideResturant) const Divider(),
+              // address
+              if (!cart.isInsideResturant)
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Styles.listTileBorderColr)),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Shipping Address",
+                          style: Styles.mainTextStyle.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Styles.grayColor),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ProfileCustomFormField(
+                            controller: _nameController,
+                            formatter: const [],
+                            action: TextInputAction.done,
+                            hintText: "Name",
+                            isPrefixeIconAvalibel: false,
+                            textStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.mainColor),
+                            hintStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.grayColor),
+                            vladationFunction: _validationHelper.validateField,
+                            textInputType: TextInputType.emailAddress,
+                            isSuffixIconAvalibel: false,
+                            suffixWidget: null,
+                            readOnly: false,
+                            onTapFuncation: () async {},
+                            textAlign: TextAlign.start,
+                            label: "",
+                            labelTextStyle: Styles.mainTextStyle.copyWith(
+                                color: Styles.unslectedItemColor, fontSize: 16),
+                            formFillColor: Colors.white),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ProfileCustomFormField(
+                            controller: _addressController,
+                            formatter: const [],
+                            action: TextInputAction.done,
+                            hintText: "Address",
+                            isPrefixeIconAvalibel: false,
+                            textStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.mainColor),
+                            hintStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.grayColor),
+                            vladationFunction: _validationHelper.validateField,
+                            textInputType: TextInputType.emailAddress,
+                            isSuffixIconAvalibel: false,
+                            suffixWidget: null,
+                            readOnly: false,
+                            onTapFuncation: () async {},
+                            textAlign: TextAlign.start,
+                            label: "",
+                            labelTextStyle: Styles.mainTextStyle.copyWith(
+                                color: Styles.unslectedItemColor, fontSize: 16),
+                            formFillColor: Colors.white),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ProfileCustomFormField(
+                            controller: _optaionalAddressController,
+                            formatter: const [],
+                            action: TextInputAction.done,
+                            hintText: "Address line 2 (optional)",
+                            isPrefixeIconAvalibel: false,
+                            textStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.mainColor),
+                            hintStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.grayColor),
+                            vladationFunction:
+                                _validationHelper.optionalEmailValdation,
+                            textInputType: TextInputType.emailAddress,
+                            isSuffixIconAvalibel: false,
+                            suffixWidget: null,
+                            readOnly: false,
+                            onTapFuncation: () async {},
+                            textAlign: TextAlign.start,
+                            label: "",
+                            labelTextStyle: Styles.mainTextStyle.copyWith(
+                                color: Styles.unslectedItemColor, fontSize: 16),
+                            formFillColor: Colors.white),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          "Contact Information",
+                          style: Styles.mainTextStyle.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Styles.grayColor),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ProfileCustomFormField(
+                            controller: _emailController,
+                            formatter: const [],
+                            action: TextInputAction.done,
+                            hintText: "email",
+                            isPrefixeIconAvalibel: true,
+                            textStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.mainColor),
+                            hintStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.grayColor),
+                            vladationFunction:
+                                _validationHelper.optionalEmailValdation,
+                            textInputType: TextInputType.emailAddress,
+                            isSuffixIconAvalibel: false,
+                            prefixWidget: const Icon(Icons.email_outlined),
+                            suffixWidget: null,
+                            readOnly: false,
+                            onTapFuncation: () async {},
+                            textAlign: TextAlign.start,
+                            label: "",
+                            labelTextStyle: Styles.mainTextStyle.copyWith(
+                                color: Styles.unslectedItemColor, fontSize: 16),
+                            formFillColor: Colors.white),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ProfileCustomFormField(
+                            controller: _phoneController,
+                            formatter: const [],
+                            action: TextInputAction.done,
+                            hintText: "phone number",
+                            isPrefixeIconAvalibel: true,
+                            textStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.mainColor),
+                            hintStyle: Styles.mainTextStyle.copyWith(
+                                fontSize: 16, color: Styles.grayColor),
+                            vladationFunction: _validationHelper.validateField,
+                            textInputType: TextInputType.emailAddress,
+                            isSuffixIconAvalibel: false,
+                            prefixWidget: const Icon(Icons.phone),
+                            suffixWidget: null,
+                            readOnly: false,
+                            onTapFuncation: () async {},
+                            textAlign: TextAlign.start,
+                            label: "",
+                            labelTextStyle: Styles.mainTextStyle.copyWith(
+                                color: Styles.unslectedItemColor, fontSize: 16),
+                            formFillColor: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -705,7 +763,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   icon: Container(),
                   isIconVisible: false,
                   onPressedButton: () {
-                    addNewOrder();
+                    addNewOrder(cart.isInsideResturant);
                   },
                   backGroundColor: Styles.mainColor,
                   // backGroundColor: Styles.mainColor,
@@ -762,7 +820,7 @@ class MealOrderItem extends StatelessWidget {
           Transform(
             transform: Matrix4.translationValues(-15, 0, 0),
             child: ListTile(
-              trailing: cart.items.keys.first == cartItem.mealId
+              trailing: cart.items.keys.first == cartItem.mealLocalId
                   ? null
                   : InkWell(
                       onTap: () {
@@ -771,7 +829,7 @@ class MealOrderItem extends StatelessWidget {
                                 "Are you sure to remove ${cartItem.mealName} ?",
                             context: context,
                             function: () {
-                              cart.removeItem(cartItem.mealId);
+                              cart.removeItem(cartItem.mealLocalId);
                             });
                       },
                       child: Container(
@@ -807,7 +865,7 @@ class MealOrderItem extends StatelessWidget {
               ),
               subtitle: RichText(
                 text: TextSpan(
-                  text: '${cart.items[cartItem.mealId]!.price} ',
+                  text: '${cart.items[cartItem.mealLocalId]!.price} ',
                   style: Styles.mainTextStyle.copyWith(
                       color: Styles.mainColor,
                       fontSize: 16,
@@ -850,21 +908,24 @@ class MealOrderItem extends StatelessWidget {
                             .map((item) => InkWell(
                                   onTap: () {
                                     cart.updateItemSize(
-                                        mealId: cartItem.mealId,
+                                        localMealId: cartItem.mealLocalId,
                                         currentMealSize: item);
                                   },
                                   child: Container(
                                       padding: const EdgeInsets.all(10),
                                       width: item.id ==
-                                              cart.items[cartItem.mealId]!
+                                              cart.items[cartItem.mealLocalId]!
                                                   .mealSize.id
                                           ? 57
                                           : 44,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                           color: item.id ==
-                                                  cart.items[cartItem.mealId]!
-                                                      .mealSize.id
+                                                  cart
+                                                      .items[
+                                                          cartItem.mealLocalId]!
+                                                      .mealSize
+                                                      .id
                                               ? Styles
                                                   .selectedSizeOrderBackgrounColor
                                               : Styles.chipBackGroundColor,
@@ -882,8 +943,11 @@ class MealOrderItem extends StatelessWidget {
                                           Text(
                                             item.name[0],
                                             style: item.id !=
-                                                    cart.items[cartItem.mealId]!
-                                                        .mealSize.id
+                                                    cart
+                                                        .items[cartItem
+                                                            .mealLocalId]!
+                                                        .mealSize
+                                                        .id
                                                 ? Styles.mainTextStyle.copyWith(
                                                     color: Styles
                                                         .timeBackGroundColor,
@@ -898,8 +962,11 @@ class MealOrderItem extends StatelessWidget {
                                           ),
                                           Visibility(
                                             visible: item.id ==
-                                                cart.items[cartItem.mealId]!
-                                                    .mealSize.id,
+                                                cart
+                                                    .items[
+                                                        cartItem.mealLocalId]!
+                                                    .mealSize
+                                                    .id,
                                             child: const Flexible(
                                               child: Icon(
                                                 Icons.check,
@@ -936,6 +1003,7 @@ class MealOrderItem extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     cart.addItem(
+                        mealLocalId: cartItem.mealLocalId,
                         mealId: cartItem.mealId,
                         mealImage: cartItem.mealImage,
                         size: cartItem.mealSize,
@@ -970,7 +1038,7 @@ class MealOrderItem extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     if (cartItem.quantity == 1) return;
-                    cart.removeSingleItem(cartItem.mealId);
+                    cart.removeSingleItem(cartItem.mealLocalId);
                   },
                   child: Container(
                     width: 40,

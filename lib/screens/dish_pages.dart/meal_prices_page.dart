@@ -162,6 +162,9 @@ class _MealPricesPageState extends State<MealPricesPage>
                           // print(widget.meal.sideDhshes.length);
                           cart.addItem(
                               mealId: widget.meal.mealId,
+                              mealLocalId:
+                                  DateTime.now().millisecond.toString(),
+                              // mealId: DateTime.now().millisecond.toString(),
                               size: _mealSizedList[0],
                               price: _mealSizedList[0].price,
                               mealImage: widget.meal.mealImage,

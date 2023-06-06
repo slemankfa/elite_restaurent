@@ -4,6 +4,7 @@ import 'meal_size_model.dart';
 
 class CartItemModel {
   final String mealId;
+  final String mealLocalId;
   final String mealName;
   final String mealImage;
   final int quantity;
@@ -21,6 +22,7 @@ class CartItemModel {
       required this.mealImage,
       required this.maxQuntity,
       required this.sideDishes,
+      required this.mealLocalId,
       required this.mealSizeList,
       required this.mealSize});
 }
