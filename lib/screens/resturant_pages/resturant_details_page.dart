@@ -13,6 +13,7 @@ import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
 import 'package:elite/screens/resturant_pages/widgets/resturant_image_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -35,11 +36,13 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
     with TickerProviderStateMixin {
   final scrollDirection = Axis.vertical;
   double expandedHeight = 210;
+  bool isIndoor = false;
 
   final HelperMethods _helperMethods = HelperMethods();
 
   ResturantModel? _resturantDetails;
   bool _isLoading = false;
+  final TextEditingController _peopleCountController = TextEditingController();
 
   @override
   void initState() {
@@ -83,15 +86,19 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
             builder: (context) => ReservationAvalibleTabelsPage(
                   date: pickedDate,
                   resturantDetails: _resturantDetails!,
+                  isIndoor: isIndoor,
                   time: pickedTime,
-                  numberOfSeats:
-                      resevedPeopleCountList[_selectedPeopleCountIndex!]
+                  numberOfSeats: _peopleCountController.text.trim().isNotEmpty
+                      ? _peopleCountController.text
+                      : resevedPeopleCountList[_selectedPeopleCountIndex!]
                           .toString(),
                 )),
       ).then((value) {
         Navigator.of(context).pop();
         print("removedate");
         pickedDate = "";
+        _peopleCountController.clear();
+        isIndoor = false ;
         // pickedTime = "";
         _selectedPeopleCountIndex = 0;
       });
@@ -791,6 +798,129 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         );
                       },
                     ).toList(),
+                  ),
+                  Row(
+                    children: [
+                      const Expanded(
+                          child: Divider(
+                        color: Colors.black,
+                      )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Or",
+                        style: Styles.mainTextStyle.copyWith(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Expanded(
+                          child: Divider(
+                        color: Colors.black,
+                      )),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _peopleCountController,
+                    // validator:(value)=> _validationHelper.validatePhone(value!) ,
+                    keyboardType: TextInputType.phone,
+                    style: Styles.mainTextStyle
+                        .copyWith(fontSize: 16, color: Styles.mainColor),
+                    onChanged: (text) {},
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp("(\\d+[]?[\\d]*)")),
+                    ],
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Styles.formFieldBorderColor,
+                          width: 1.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Styles.formFieldBorderColor,
+                          width: 1.0,
+                        ),
+                      ),
+                      focusColor: Colors.black,
+                      focusedErrorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
+                      ),
+                      border: const OutlineInputBorder(),
+                      isDense: true,
+                      hintText: "Enter people number 10",
+                      hintStyle: Styles.mainTextStyle
+                          .copyWith(fontSize: 16, color: Styles.midGrayColor),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        // flex: 10,
+                        child: Text(
+                          "Indoor Table",
+                          style: Styles.mainTextStyle
+                              .copyWith(fontSize: 16, color: Styles.grayColor),
+                        ),
+                      ),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Styles.mainColor, width: 1),
+                        ),
+                        child: Theme(
+                          // color: Colors.white,
+                          data: ThemeData(unselectedWidgetColor: Colors.white),
+                          child: Checkbox(
+                            // shape:  CircleBorder(),
+                            value: isIndoor,
+
+                            checkColor: Styles.mainColor,
+                            // side: BorderSide(
+                            //   color: Styles.mainColor,
+                            // ),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.white),
+                            focusColor: Colors.white,
+                            tristate: false,
+                            // activeColor:Colors.white ,
+                            fillColor: MaterialStateProperty.all(Colors.white),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                isIndoor = value ?? false;
+                              });
+
+                              // searchingResturants(provider);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 17,

@@ -17,13 +17,14 @@ class ReservationProvider with ChangeNotifier {
       required String restId,
       required String date,
       required String time,
+      required bool isIndoor,
       required String seats}) async {
     List<TableModel> tempList = [];
     try {
       String structerdDate = "$date $time";
-
+      // print(isIndoor.toString());
       Response response = await _dio.get(
-          "${API_URL}Tables/FindTable?ResturentID=$restId&NoOfSeat=$seats&dateTime=$structerdDate",
+          "${API_URL}Tables/FindTable?ResturentID=$restId&NoOfSeat=$seats&dateTime=$structerdDate&IsIndoor=$isIndoor",
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -33,7 +34,9 @@ class ReservationProvider with ChangeNotifier {
           ));
       // print("response" + response.data.toString());
 
-      var loadedList = response.data as List;
+      var loadedList = response.data["message"].isEmpty
+          ? response.data["table"] as List
+          : response.data["allTables"] as List;
 
       var loadedNextPage = false;
       //     response.data['data']["notifications"]["next_page_url"] != null
@@ -44,10 +47,14 @@ class ReservationProvider with ChangeNotifier {
           item,
         ));
       }
-      return {"list": tempList, "isThereNextPage": loadedNextPage};
+      return {
+        "list": tempList,
+        "isThereNextPage": loadedNextPage,
+        "message": response.data["message"] ?? ""
+      };
     } catch (e) {
       // print(e.toString());
-      return {"list": tempList, "isThereNextPage": false};
+      return {"list": tempList, "isThereNextPage": false, "message": ""};
     }
   }
 

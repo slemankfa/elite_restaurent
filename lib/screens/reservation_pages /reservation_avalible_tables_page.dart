@@ -15,7 +15,8 @@ class ReservationAvalibleTabelsPage extends StatefulWidget {
       required this.resturantDetails,
       required this.date,
       required this.time,
-      required this.numberOfSeats});
+      required this.numberOfSeats,
+      required this.isIndoor});
 
   @override
   State<ReservationAvalibleTabelsPage> createState() =>
@@ -24,6 +25,7 @@ class ReservationAvalibleTabelsPage extends StatefulWidget {
   final String date;
   final String time;
   final String numberOfSeats;
+  final bool isIndoor;
 }
 
 class _ReservationAvalibleTabelsPageState
@@ -34,6 +36,7 @@ class _ReservationAvalibleTabelsPageState
   late Function popUpProgressIndcator;
   bool _isThereNextPage = false;
   bool _isLoading = false;
+  String _checkTableMessage = "";
   List<TableModel> _tablesList = [];
 
   @override
@@ -67,17 +70,20 @@ class _ReservationAvalibleTabelsPageState
       await Provider.of<ReservationProvider>(context, listen: false)
           .getResturantAvalibleTabels(
               context: context,
+              isIndoor: widget.isIndoor,
               time: widget.time,
               pageNumber: _pageNumber,
               restId: widget.resturantDetails.id,
               date: widget.date,
               seats: widget.numberOfSeats) //3
           .then((informationMap) {
+        // print(informationMap.toString());
         if (_pageNumber == 1) {
           _tablesList = informationMap["list"];
         } else {
           _tablesList.addAll(informationMap["list"]);
         }
+        _checkTableMessage = informationMap["message"] ?? "";
         setState(() {
           _isThereNextPage = informationMap["isThereNextPage"] ?? false;
           _pageNumber++;
@@ -119,18 +125,45 @@ class _ReservationAvalibleTabelsPageState
                       style: Styles.mainTextStyle,
                     ),
                   )
-                : RefreshIndicator(
-                    onRefresh: refreshList,
-                    child: ListView.builder(
-                        itemCount: _tablesList.length,
-                        itemBuilder: (context, index) {
-                          return TableItem(
-                            table: _tablesList[index],
-                            time: widget.time,
-                            date: widget.date,
-                            resturantDetails: widget.resturantDetails,
-                          );
-                        }),
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_checkTableMessage.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Styles.DividerColor),
+                          child: Text(
+                            _checkTableMessage,
+                            style: Styles.mainTextStyle.copyWith(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      if (_checkTableMessage.isNotEmpty)
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: refreshList,
+                          child: ListView.separated(
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                              itemCount: _tablesList.length,
+                              itemBuilder: (context, index) {
+                                return TableItem(
+                                  table: _tablesList[index],
+                                  time: widget.time,
+                                  date: widget.date,
+                                  resturantDetails: widget.resturantDetails,
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
                   ),
       ),
     );
