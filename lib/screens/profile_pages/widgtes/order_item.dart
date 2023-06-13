@@ -105,46 +105,46 @@ class OrderItem extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          Text(
-            "Cancel Order",
-            style: Styles.mainTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Styles.grayColor),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                    text: 'You have ',
-                    style: Styles.mainTextStyle.copyWith(
-                      fontSize: 16,
-                      color: Styles.userNameColor,
-                    )),
-                TextSpan(
-                  text: '00:14:59 minutes',
-                  style: Styles.mainTextStyle.copyWith(
-                      fontSize: 16,
-                      color: Styles.mainColor,
-                      fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text:
-                      ' to cancel your order, otherwise, your order will be confirmed by the restaurant automatically.',
-                  style: Styles.mainTextStyle.copyWith(
-                    fontSize: 16,
-                    color: Styles.userNameColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
+          // Text(
+          //   "Cancel Order",
+          //   style: Styles.mainTextStyle.copyWith(
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.bold,
+          //       color: Styles.grayColor),
+          // ),
+          // const SizedBox(
+          //   height: 12,
+          // ),
+          // Text.rich(
+          //   TextSpan(
+          //     children: [
+          //       TextSpan(
+          //           text: 'You have ',
+          //           style: Styles.mainTextStyle.copyWith(
+          //             fontSize: 16,
+          //             color: Styles.userNameColor,
+          //           )),
+          //       TextSpan(
+          //         text: '00:14:59 minutes',
+          //         style: Styles.mainTextStyle.copyWith(
+          //             fontSize: 16,
+          //             color: Styles.mainColor,
+          //             fontWeight: FontWeight.bold),
+          //       ),
+          //       TextSpan(
+          //         text:
+          //             ' to cancel your order, otherwise, your order will be confirmed by the restaurant automatically.',
+          //         style: Styles.mainTextStyle.copyWith(
+          //           fontSize: 16,
+          //           color: Styles.userNameColor,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 12,
+          // ),
           CustomOutlinedButton(
               label: "View Details",
               isIconVisible: true,
@@ -160,33 +160,30 @@ class OrderItem extends StatelessWidget {
           const SizedBox(
             height: 24,
           ),
-          orderModel.isCnacel!
-              ? Container()
-              : CustomOutlinedButton(
-                  label: "Cancel Order",
-                  isIconVisible: true,
-                  onPressedButton: () {
-                    _helperMethods.showAlertDilog(
-                        message:
-                            "Are you sure to cancel the order #${orderModel.orderId}?",
-                        context: context,
-                        function: () {
-                          cancelOrder(context);
-                        });
-                  },
-                  icon: Container(),
-                  backGroundColor: Styles.listTileBorderColr,
-                  rectangleBorder: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  borderSide:
-                      const BorderSide(color: Styles.listTileBorderColr),
-                  textStyle: Styles.mainTextStyle.copyWith(
-                      color: Styles.cancelREdColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
-          const SizedBox(
-            height: 16,
-          ),
+          // orderModel.isCnacel!
+          //     ? Container()
+          //     : CustomOutlinedButton(
+          //         label: "Cancel Order",
+          //         isIconVisible: true,
+          //         onPressedButton: () {
+          //           _helperMethods.showAlertDilog(
+          //               message:
+          //                   "Are you sure to cancel the order #${orderModel.orderId}?",
+          //               context: context,
+          //               function: () {
+          //                 cancelOrder(context);
+          //               });
+          //         },
+          //         icon: Container(),
+          //         backGroundColor: Styles.listTileBorderColr,
+          //         rectangleBorder: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(8)),
+          //         borderSide:
+          //             const BorderSide(color: Styles.listTileBorderColr),
+          //         textStyle: Styles.mainTextStyle.copyWith(
+          //             color: Styles.cancelREdColor,
+          //             fontSize: 16,
+          //             fontWeight: FontWeight.bold)),
         ],
       ),
     );

@@ -1,9 +1,11 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/core/valdtion_helper.dart';
+import 'package:elite/models/user_model.dart';
+import 'package:elite/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_form_field.dart';
 import '../../core/widgets/custom_outline_button.dart';
@@ -17,10 +19,33 @@ class DeletePage extends StatefulWidget {
 }
 
 class _DeletePageState extends State<DeletePage> {
-  ValidationHelper _validationHelper = ValidationHelper();
-  TextEditingController _passwordController = TextEditingController();
+  final ValidationHelper _validationHelper = ValidationHelper();
+  final TextEditingController _passwordController = TextEditingController();
+
+  deleteAccount() async {
+    try {
+      Provider.of<AuthProvider>(context, listen: false)
+          .deleteAccount(context: context)
+          .then((value) {
+        if (value) {
+          // Navigator.pushAndRemoveUntil<dynamic>(
+          //   context,
+          //   MaterialPageRoute<dynamic>(
+          //     builder: (BuildContext context) => const StartPage(),
+          //   ),
+          //   (route) => false, //if you want to disable back feature set to false
+          // );
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    UserModel? userModel = Provider.of<AuthProvider>(context).userInformation;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -41,7 +66,7 @@ class _DeletePageState extends State<DeletePage> {
                       onTap: () {
                         Navigator.of(context).pop();
                       },
-                      child: Icon(Icons.arrow_back_ios),
+                      child: const Icon(Icons.arrow_back_ios),
                     ),
                     const SizedBox(
                       width: 16,
@@ -54,152 +79,173 @@ class _DeletePageState extends State<DeletePage> {
                   ],
                 ),
               )),
-          Positioned(
-            top: 65,
-            left: 1,
-            right: 1,
-            bottom: 16,
-            child: SafeArea(
-              child: Container(
-                // color: Colors.white,
-                margin: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: Styles.RatingRivewBoxBorderColor)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Confirm this is your Account",
-                                style: Styles.mainTextStyle.copyWith(
-                                    color: Styles.grayColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                "Before your permanently delete your Account, please enter your pasword.",
-                                style: Styles.mainTextStyle.copyWith(
-                                    color: Styles.grayColor,
-                                    // fontWeight: FontWeight.bold,
-                                    fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text:
-                                      'Deleting your account is permanent. when you delete your account, you ',
+          if (userModel != null)
+            Positioned(
+              top: 65,
+              left: 1,
+              right: 1,
+              bottom: 16,
+              child: SafeArea(
+                child: Container(
+                  // color: Colors.white,
+                  margin: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Styles.RatingRivewBoxBorderColor)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Confirm this is your Account",
+                                  style: Styles.mainTextStyle.copyWith(
+                                      color: Styles.grayColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "Before your permanently delete your Account, please enter your pasword.",
                                   style: Styles.mainTextStyle.copyWith(
                                       color: Styles.grayColor,
                                       // fontWeight: FontWeight.bold,
                                       fontSize: 16),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text:
-                                          "won't be able to retrieve the content or information you've shared on our app,",
-                                      style: Styles.mainTextStyle.copyWith(
-                                          color: Styles.grayColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          ' your messages and all of your orders will also be deleted.',
-                                      style: Styles.mainTextStyle.copyWith(
-                                          color: Styles.grayColor,
-                                          // fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                  ],
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Transform(
-                                transform: Matrix4.translationValues(-14, 0, 0),
-                                child: ListTile(
-                                  leading: Container(
-                                    // padding: EdgeInsets.all(5),
-                                    width: 44,
-                                    height: 44,
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Styles.RatingRivewBoxBorderColor,
-                                      // shape: CircleBorder(),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/profile.svg",
-                                        width: 13,
-                                        height: 15,
-                                        color: Styles.midGrayColor,
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text:
+                                        'Deleting your account is permanent. when you delete your account, you ',
+                                    style: Styles.mainTextStyle.copyWith(
+                                        color: Styles.grayColor,
+                                        // fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text:
+                                            "won't be able to retrieve the content or information you've shared on our app,",
+                                        style: Styles.mainTextStyle.copyWith(
+                                            color: Styles.grayColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            ' your messages and all of your orders will also be deleted.',
+                                        style: Styles.mainTextStyle.copyWith(
+                                            color: Styles.grayColor,
+                                            // fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    Transform(
+                                      transform:
+                                          Matrix4.translationValues(-14, 0, 0),
+                                      child: ListTile(
+                                        leading: Container(
+                                          // padding: EdgeInsets.all(5),
+                                          width: 44,
+                                          height: 44,
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Styles
+                                                .RatingRivewBoxBorderColor,
+                                            // shape: CircleBorder(),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: SvgPicture.asset(
+                                              "assets/icons/profile.svg",
+                                              width: 13,
+                                              height: 15,
+                                              color: Styles.midGrayColor,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          "${userModel.firstName} ${userModel.lastName}",
+                                          style: Styles.mainTextStyle.copyWith(
+                                              color: Styles.userNameColor),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    "Clinton Waelchi",
-                                    style: Styles.mainTextStyle
-                                        .copyWith(color: Styles.userNameColor),
-                                  ),
+                                    // SizedBox(
+                                    //   height: 11,
+                                    // ),
+                                    if (userModel.loginType != 2)
+                                      CustomFormField(
+                                        controller: _passwordController,
+                                        formatter: const [],
+                                        textInputType:
+                                            TextInputType.visiblePassword,
+                                        vladationFunction:
+                                            _validationHelper.validatePassword,
+                                        action: TextInputAction.done,
+                                        hintText: "",
+                                        isSecureField: true,
+                                        textStyle: Styles.mainTextStyle,
+                                        hintStyle: const TextStyle(),
+                                        labelTextStyle: Styles.mainTextStyle
+                                            .copyWith(
+                                                color:
+                                                    Styles.unslectedItemColor,
+                                                fontSize: 16),
+                                        label: "",
+                                      ),
+                                  ],
                                 ),
-                              ),
-                              // SizedBox(
-                              //   height: 11,
-                              // ),
-                              CustomFormField(
-                                controller: _passwordController,
-                                formatter: [],
-                                textInputType: TextInputType.visiblePassword,
-                                vladationFunction:
-                                    _validationHelper.validatePassword,
-                                action: TextInputAction.done,
-                                hintText: "",
-                                isSecureField: true,
-                                textStyle: Styles.mainTextStyle,
-                                hintStyle: TextStyle(),
-                                labelTextStyle: Styles.mainTextStyle.copyWith(
-                                    color: Styles.unslectedItemColor,
-                                    fontSize: 16),
-                                label: "",
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    CustomOutlinedButton(
-                        label: "Delete Account",
-                        isIconVisible: true,
-                        onPressedButton: () {},
-                        icon: Container(),
-                        backGroundColor: Styles.cancelREdColor,
-                        rectangleBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        // borderSide: BorderSide(color: Styles.mainColor),
-                        textStyle: Styles.mainTextStyle.copyWith(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold)),
-                  ],
+                      CustomOutlinedButton(
+                          label: "Delete Account",
+                          isIconVisible: true,
+                          onPressedButton: () {
+                            if (userModel.loginType == 1) {
+                              if (_passwordController.text.trim().isEmpty) {
+                                BotToast.showText(text: "Enter password");
+                                return;
+                              }
+                            }
+                            deleteAccount();
+                          },
+                          icon: Container(),
+                          backGroundColor: Styles.cancelREdColor,
+                          rectangleBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          // borderSide: BorderSide(color: Styles.mainColor),
+                          textStyle: Styles.mainTextStyle.copyWith(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

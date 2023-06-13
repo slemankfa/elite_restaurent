@@ -155,7 +155,7 @@ class _MyReservationListPageState extends State<MyReservationListPage> {
                   _reservationList.isEmpty
                       ? Center(
                           child: Text(
-                            "No orders",
+                            "No reservations.",
                             style: Styles.mainTextStyle,
                           ),
                         )

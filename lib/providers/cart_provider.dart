@@ -230,6 +230,7 @@ Outdoor 2 */
             "Email": addressinformation.email,
             "PhoneNo": addressinformation.phone,
             "Address": addressinformation.address,
+            "SecondAddress": addressinformation.optaionalAddress,
             "IsIndoor": _isIndoor,
             "details": mealsDetails
           });

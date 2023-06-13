@@ -274,7 +274,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                               ),
                                           child: const Icon(
                                             Icons.arrow_back_ios,
-                                            color: Colors.white,
+                                            color: Colors.black,
                                           )
                                           //  SvgPicture.asset(
                                           //   "assets/icons/calendar.svg",

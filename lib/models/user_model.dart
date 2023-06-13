@@ -14,6 +14,7 @@ class UserModel {
   final String userPhone;
   final int? myOrdersCount;
   final int? myReservationCount;
+  final int? loginType;
 
   UserModel({
     required this.firstName,
@@ -26,6 +27,7 @@ class UserModel {
     required this.areaId,
     required this.userId,
     required this.userPhone,
+    required this.loginType,
     this.userImage,
     this.myOrdersCount,
     this.myReservationCount,
@@ -42,9 +44,11 @@ class UserModel {
         cityId: map["cityID"].toString(),
         userGender: map["sexID"].toString(),
         areaId: map["areaID"].toString(),
+        loginType: map["stauts"],
         userImage: "$IMAGE_PATH_URL${map["userImage"]}",
         userId: map["userID"].toString());
   }
+// Google = 2 ,platform=1
 
   factory UserModel.fromGetUserIdJson(Map<String, dynamic> map) {
     return UserModel(
@@ -52,6 +56,7 @@ class UserModel {
         lastName: map["user"]["lastName"] ?? "",
         email: map["user"]["email"],
         password: "",
+        loginType: map["stauts"],
         age: map["user"]["age"],
         userPhone: map["user"]["phoneNo"],
         cityId: map["user"]["cityID"].toString(),
@@ -71,6 +76,7 @@ class UserModel {
         password: "",
         userPhone: map["phoneNo"],
         age: map["age"],
+        loginType: map["stauts"],
         cityId: map["cityID"],
         userGender: map["sexID"],
         areaId: map["areaID"],
@@ -86,6 +92,7 @@ class UserModel {
         "cityID": cityId,
         "sexID": userGender,
         "areaID": areaId,
+        "stauts": loginType,
         "userImage": userImage.toString(),
         "userID": userId,
         "phoneNo": userPhone

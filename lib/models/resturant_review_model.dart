@@ -20,7 +20,7 @@ class ResturantReviewModel {
       date: map["date"],
       image: "$IMAGE_PATH_URL${map["image"]}",
       review: map["review"],
-      rate: double.parse(map["goodTreatment"].toString()),
+      rate: double.parse(map["agvRating"].toString()),
     );
   }
 }

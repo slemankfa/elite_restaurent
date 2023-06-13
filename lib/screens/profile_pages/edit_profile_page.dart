@@ -48,9 +48,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _phoneBorderColor = false;
   bool _genderBorderColor = false;
 
+  int loginType = 1;
+
   _pickUserImage() async {
     try {
-      _userImage = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+      _userImage = await _picker.pickImage(
+          source: ImageSource.gallery, imageQuality: 50);
       if (_userImage == null) return;
       setState(() {});
     } catch (e) {
@@ -103,7 +106,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     selectedGenderValue =
         userModel.userGender == "1" ? genderItems[0] : genderItems[1];
 
-    print(selectedGenderValue.toString());
+// Google = 2 ,platform=1
+
+    loginType = userModel.loginType ?? 1;
+
+    print(loginType.toString());
   }
 
   updateProfile() async {
@@ -127,6 +134,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           age: _userBdTextController.text.trim(),
           cityId: fetchedUserModel.cityId,
           areaId: fetchedUserModel.areaId,
+          loginType: null,
           userPhone: _userPhoneTextController.text.trim(),
           userGender: selectedGenderValue == "Male" ? "1" : "2",
           userId: fetchedUserModel.userId);
@@ -284,23 +292,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       labelTextStyle: Styles.mainTextStyle.copyWith(
                           color: Styles.unslectedItemColor, fontSize: 16),
                       formFillColor: Colors.white),
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  CustomFormField(
-                    controller: _userPasswordTextController,
-                    formatter: const [],
-                    textInputType: TextInputType.visiblePassword,
-                    vladationFunction: _validationHelper.validatePassword,
-                    action: TextInputAction.done,
-                    hintText: "",
-                    isSecureField: true,
-                    textStyle: Styles.mainTextStyle,
-                    hintStyle: const TextStyle(),
-                    labelTextStyle: Styles.mainTextStyle.copyWith(
-                        color: Styles.unslectedItemColor, fontSize: 16),
-                    label: "Password",
-                  ),
+                  if (loginType == 1)
+                    const SizedBox(
+                      height: 18,
+                    ),
+                  if (loginType == 1)
+                    CustomFormField(
+                      controller: _userPasswordTextController,
+                      formatter: const [],
+                      textInputType: TextInputType.visiblePassword,
+                      vladationFunction: _validationHelper.validatePassword,
+                      action: TextInputAction.done,
+                      hintText: "",
+                      isSecureField: true,
+                      textStyle: Styles.mainTextStyle,
+                      hintStyle: const TextStyle(),
+                      labelTextStyle: Styles.mainTextStyle.copyWith(
+                          color: Styles.unslectedItemColor, fontSize: 16),
+                      label: "Password",
+                    ),
                   const SizedBox(
                     height: 18,
                   ),

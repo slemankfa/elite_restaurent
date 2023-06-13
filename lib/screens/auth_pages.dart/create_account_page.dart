@@ -160,6 +160,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     }
     try {
       UserModel user = UserModel(
+          loginType: null,
           firstName: _userFirstnameTextController.text.trim(),
           lastName: _userLastnameTextController.text.trim(),
           email: _userEmailTextController.text,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
@@ -182,6 +183,7 @@ class AuthProvider with ChangeNotifier {
             email: user.email.toString(),
             password: "",
             age: '',
+            loginType: 2,
             cityId: "",
             userGender: "",
             areaId: "",
@@ -318,6 +320,35 @@ class AuthProvider with ChangeNotifier {
 
       notifyListeners();
       return true;
+    }
+  }
+
+  Future<bool> deleteAccount({required BuildContext context}) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final token = await _helperMethods.getToken();
+
+      Response deleteResponse = await _dio
+          .delete("${API_URL}Users/${_userInformation?.userId.toString()}",
+              options: Options(
+                headers: {
+                  "Accept": "application/json",
+                  "content-type": "application/json",
+                  "Authorization": token
+                },
+              ),
+              data: {});
+      log(deleteResponse.data.toString());
+      // prefs.remove("access_token");
+      // prefs.remove("is_guest");
+      // notifyListeners();
+
+      return true;
+    } catch (e) {
+      // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
+      // return false;
+      log(e.toString());
+      return false;
     }
   }
 
@@ -518,8 +549,9 @@ class AuthProvider with ChangeNotifier {
     try {
       final token = await _helperMethods.getToken();
       UserModel? userModel = await _helperMethods.getUser();
-      // print(userModel!.toJson().toString());
+
       if (userModel == null) return;
+      // print(token);
       Response response = await _dio.get(
           "${API_URL}Users/Get_UserID?UserID=${userModel.userId}",
           options: Options(

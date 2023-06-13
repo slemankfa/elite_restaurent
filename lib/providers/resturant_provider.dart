@@ -296,35 +296,36 @@ class ResturantProvider with ChangeNotifier {
     List<int> dietary = const [],
     bool isBars = false,
   }) async {
-    resturantCount = 0;
-    isSearching = true;
-    notifyListeners();
-    Response response = await _dio.post("${API_URL}Restaurant/Filters",
-        options: Options(
-          headers: {
-            "Accept": "application/json",
-            "content-type": "application/json",
-            // "Authorization": token
-          },
-        ),
-        data: {
-          "MaximumDistance": maximumDistance,
-          "Latitude": latitude,
-          "Longitude": longitude,
-          "rating": ratings,
-          "cuisine": cousine,
-          "IsBars": isBars,
-          "Pricing": pricing,
-          "periods": periods,
-          "RestaurantType": resturantTypes,
-          "Dietary": dietary,
-        });
+    try {
+      resturantCount = 0;
+      isSearching = true;
+      notifyListeners();
+      Response response = await _dio.post("${API_URL}Restaurant/Filters",
+          options: Options(
+            headers: {
+              "Accept": "application/json",
+              "content-type": "application/json",
+              // "Authorization": token
+            },
+          ),
+          data: {
+            "MaximumDistance": maximumDistance,
+            "Latitude": latitude,
+            "Longitude": longitude,
+            "rating": ratings,
+            "cuisine": cousine,
+            "IsBars": isBars,
+            "Pricing": pricing,
+            "periods": periods,
+            "RestaurantType": resturantTypes,
+            "Dietary": dietary,
+          });
 
-    var loadedList = response.data as List;
-    resturantCount = loadedList.length;
+      var loadedList = response.data as List;
+      resturantCount = loadedList.length;
+    } catch (e) {}
     isSearching = false;
     notifyListeners();
-
     print("filterSearching");
   }
 
@@ -418,7 +419,7 @@ class ResturantProvider with ChangeNotifier {
     required int pageNumber,
     required String restId,
   }) async {
-    List<ResturantReviewModel> tempList = [];
+    List<ResturantReviewModel> tempList = []; 
     try {
       Response response = await _dio.get("${API_URL}RestaurantReviews/$restId",
           options: Options(
