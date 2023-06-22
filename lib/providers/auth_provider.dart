@@ -136,6 +136,7 @@ class AuthProvider with ChangeNotifier {
           await auth.signInWithCredential(credential);
 
       user = userCredential.user;
+      log(user.toString());
       if (user == null) {
         return false;
       }
@@ -176,6 +177,7 @@ class AuthProvider with ChangeNotifier {
 
       return true;
     } on DioError catch (e) {
+      log(e.toString());
       if (e.response!.statusCode == 404) {
         _userInformation = UserModel(
             firstName: user!.displayName.toString(),

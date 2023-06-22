@@ -9,6 +9,7 @@ import 'package:elite/screens/reservation_pages%20/reservation_avalible_tables_p
 import 'package:elite/screens/reservation_pages%20/reservation_policy_page.dart';
 import 'package:elite/screens/resturant_pages/add_resturant_review_page.dart';
 import 'package:elite/screens/resturant_pages/resturant_menu_page.dart';
+import 'package:elite/screens/resturant_pages/resturant_qr_reader.dart';
 import 'package:elite/screens/resturant_pages/resturant_reviews_page.dart';
 import 'package:elite/screens/resturant_pages/widgets/resturant_image_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -264,24 +265,37 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                       onTap: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Container(
-                                          // width: 40,
-                                          // height: 40,
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: const BoxDecoration(
-                                              // shape: BoxShape.circle,
-                                              // color: Colors.white,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        elevation: 4,
+                                        child: Container(
+                                            alignment: Alignment.center,
+                                            // width: 40,
+                                            // height: 40,
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                            ),
+                                            child: Transform(
+                                              transform:
+                                                  Matrix4.translationValues(
+                                                      4, 0, 0),
+                                              child: const Icon(
+                                                Icons.arrow_back_ios,
+                                                color: Colors.black,
                                               ),
-                                          child: const Icon(
-                                            Icons.arrow_back_ios,
-                                            color: Colors.black,
-                                          )
-                                          //  SvgPicture.asset(
-                                          //   "assets/icons/calendar.svg",
-                                          //   width: 20,
-                                          //   height: 20,
-                                          // ),
-                                          ),
+                                            )
+                                            //  SvgPicture.asset(
+                                            //   "assets/icons/calendar.svg",
+                                            //   width: 20,
+                                            //   height: 20,
+                                            // ),
+                                            ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -402,9 +416,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     label: "menu",
                                     isIconVisible: true,
                                     onPressedButton: () {
-                                      Provider.of<CartProvider>(context,
-                                              listen: false)
-                                          .updateIsIndoorStatus("1");
+                                      // Provider.of<CartProvider>(context,
+                                      //         listen: false)
+                                      //     .updateIsIndoorStatus("1");
                                       Provider.of<CartProvider>(context,
                                               listen: false)
                                           .isInsideResturant = true;
@@ -412,7 +426,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ResturanMenuPage(
+                                                ResturantQrReader(
                                                   resturantDetails:
                                                       _resturantDetails!,
                                                   isFormAddOrderPage: false,
@@ -449,12 +463,19 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    // Provider.of<CartProvider>(context,
-                                    //         listen: false)
-                                    //     .updateIsIndoorStatus("2");
-                                    //  Provider.of<CartProvider>(context,
-                                    //           listen: false)
-                                    //       .isInsideResturant = false;
+                                    Provider.of<CartProvider>(context,
+                                            listen: false)
+                                        .isInsideResturant = false;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ResturanMenuPage(
+                                                resturantDetails:
+                                                    _resturantDetails,
+                                                isFormAddOrderPage: false,
+                                              )),
+                                    );
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(4),

@@ -69,7 +69,10 @@ dependencies:
   location: ^4.2.0
   permission_handler: ^10.2.0
   location_permissions: ^4.0.1
-  flutter_phoenix: "^1.0.0"
+  qr_code_scanner: ^1.0.1
+  # flutter_phoenix: "^1.0.0"
+  # flutter_camera_qrcode_scanner: ^2.0.0
+  # flutter_barcode_scanner: ^2.0.0
 
   # flutter_firebase_chat_core: ^1.6.4
   # google_maps_flutter: ^2.2.5

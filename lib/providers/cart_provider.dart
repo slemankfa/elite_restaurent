@@ -17,6 +17,7 @@ class CartProvider with ChangeNotifier {
 
   String _isIndoor = "1";
   bool isInsideResturant = true;
+  String tableIdFromQr = "";
 
 // order from inside resturn or outside resturan
 /* 

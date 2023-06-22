@@ -12,7 +12,6 @@ import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -37,21 +36,17 @@ void main() async {
   await ScreenUtil.ensureScreenSize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(
-      Phoenix(
-        child: EasyLocalization(
-            supportedLocales: const [Locale('en'), Locale('ar')],
-            path:
-                'assets/translations', // <-- change the path of the translation files
-            fallbackLocale: const Locale('en'),
-            child: ChangeNotifierProvider<AuthProvider>(
-              child: const MyApp(),
-              create: (BuildContext context) {
-                return AuthProvider();
-              },
-            )),
-      ),
-    );
+    runApp(EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('ar')],
+        path:
+            'assets/translations', // <-- change the path of the translation files
+        fallbackLocale: const Locale('en'),
+        child: ChangeNotifierProvider<AuthProvider>(
+          child: const MyApp(),
+          create: (BuildContext context) {
+            return AuthProvider();
+          },
+        )));
   });
 }
 

@@ -311,7 +311,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   children: [
                     if (cart.isInsideResturant)
                       Text(
-                        "Table #2",
+                        "Table #${cart.tableIdFromQr}",
                         style: Styles.mainTextStyle
                             .copyWith(fontSize: 14, color: Styles.midGrayColor),
                       ),
