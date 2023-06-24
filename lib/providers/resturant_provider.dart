@@ -365,7 +365,6 @@ class ResturantProvider with ChangeNotifier {
             "RestaurantType": resturantTypes,
             "Dietary": dietary,
           });
-      print("response${response.data}");
 
       var loadedList = response.data as List;
 
@@ -396,7 +395,7 @@ class ResturantProvider with ChangeNotifier {
           },
         ),
       );
-      print("response${response.data}");
+      // print("response${response.data}");
 
       var loadedList = response.data as List;
 
@@ -419,7 +418,7 @@ class ResturantProvider with ChangeNotifier {
     required int pageNumber,
     required String restId,
   }) async {
-    List<ResturantReviewModel> tempList = []; 
+    List<ResturantReviewModel> tempList = [];
     try {
       Response response = await _dio.get("${API_URL}RestaurantReviews/$restId",
           options: Options(

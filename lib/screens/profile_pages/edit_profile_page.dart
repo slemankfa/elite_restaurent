@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/valdtion_helper.dart';
@@ -160,6 +161,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel? userInformation = Provider.of<AuthProvider>(
+      context,
+    ).userInformation;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -207,14 +211,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         alignment: Alignment.center,
                         width: 128,
                         height: 128,
-                        child: _userImage == null
-                            ? Image.asset("assets/images/choose_image.png")
-                            : CircleAvatar(
-                                radius: 128.0,
-                                backgroundImage:
-                                    FileImage(File(_userImage!.path)),
-                                backgroundColor: Colors.transparent,
-                              ),
+                        child: (userInformation != null &&_userImage == null)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      userInformation.userImage.toString(),
+                                  height: 128,
+                                  width: 128,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const FlutterLogo(
+                                    size: 100,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                          "assets/images/choose_image.png"),
+                                ),
+                              )
+                            : _userImage == null
+                                ? Image.asset("assets/images/choose_image.png")
+                                : CircleAvatar(
+                                    radius: 128.0,
+                                    backgroundImage:
+                                        FileImage(File(_userImage!.path)),
+                                    backgroundColor: Colors.transparent,
+                                  ),
                         // ClipRRect(
                         //     borderRadius: BorderRadius.circular(40.0),
                         //     child: Image.file(
