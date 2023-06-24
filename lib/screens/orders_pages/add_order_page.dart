@@ -137,7 +137,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
     }
   }
 
-  addNewOrder(isIndoor) async {
+  addNewOrder(isIndoor, String tableID) async {
     if (!isIndoor) {
       if (!_formKey.currentState!.validate()) {
         // If the form is valid, display a snackbar. In the real world,
@@ -156,16 +156,17 @@ class _AddOrderPageState extends State<AddOrderPage> {
           phone: _phoneController.text);
 
       Provider.of<CartProvider>(context, listen: false)
-          .CreateNewOrderOrder(
+          .createNewOrderOrder(
               addressinformation: orderAddressModel,
               orderNote: _orderNoteController.text,
+              tableId: tableID,
               resturantDetails: widget.resturantDetails!)
           .then((status) {
         showPopUpLoading.call();
         if (status) {
           showConfirmDilog(context: context);
         } else {
-          BotToast.showText(text: "can't create this order!");
+          BotToast.showText(text: "Can't create this order!");
         }
       });
     } catch (e) {
@@ -573,8 +574,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
                             .copyWith(fontSize: 16, color: Styles.mainColor),
                         hintStyle: Styles.mainTextStyle
                             .copyWith(fontSize: 14, color: Styles.grayColor),
-                        vladationFunction: _validationHelper.validateField,
-                        textInputType: TextInputType.emailAddress,
+                        vladationFunction: _validationHelper.optionalField,
+                        textInputType: TextInputType.text,
                         isSuffixIconAvalibel: false,
                         suffixWidget: null,
                         readOnly: false,
@@ -622,7 +623,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                             hintStyle: Styles.mainTextStyle.copyWith(
                                 fontSize: 16, color: Styles.grayColor),
                             vladationFunction: _validationHelper.validateField,
-                            textInputType: TextInputType.emailAddress,
+                            textInputType: TextInputType.text,
                             isSuffixIconAvalibel: false,
                             suffixWidget: null,
                             readOnly: false,
@@ -646,7 +647,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                             hintStyle: Styles.mainTextStyle.copyWith(
                                 fontSize: 16, color: Styles.grayColor),
                             vladationFunction: _validationHelper.validateField,
-                            textInputType: TextInputType.emailAddress,
+                            textInputType: TextInputType.text,
                             isSuffixIconAvalibel: false,
                             suffixWidget: null,
                             readOnly: false,
@@ -669,9 +670,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                 fontSize: 16, color: Styles.mainColor),
                             hintStyle: Styles.mainTextStyle.copyWith(
                                 fontSize: 16, color: Styles.grayColor),
-                            vladationFunction:
-                                _validationHelper.optionalEmailValdation,
-                            textInputType: TextInputType.emailAddress,
+                            vladationFunction: _validationHelper.optionalField,
+                            textInputType: TextInputType.text,
                             isSuffixIconAvalibel: false,
                             suffixWidget: null,
                             readOnly: false,
@@ -731,7 +731,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                             hintStyle: Styles.mainTextStyle.copyWith(
                                 fontSize: 16, color: Styles.grayColor),
                             vladationFunction: _validationHelper.validateField,
-                            textInputType: TextInputType.emailAddress,
+                            textInputType: TextInputType.phone,
                             isSuffixIconAvalibel: false,
                             prefixWidget: const Icon(Icons.phone),
                             suffixWidget: null,
@@ -763,7 +763,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   icon: Container(),
                   isIconVisible: false,
                   onPressedButton: () {
-                    addNewOrder(cart.isInsideResturant);
+                    addNewOrder(cart.isInsideResturant,
+                        cart.isInsideResturant ? cart.tableIdFromQr : "");
                   },
                   backGroundColor: Styles.mainColor,
                   // backGroundColor: Styles.mainColor,

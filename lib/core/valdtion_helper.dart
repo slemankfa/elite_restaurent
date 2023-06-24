@@ -82,4 +82,8 @@ class ValidationHelper {
       return null;
     }
   }
+
+  String? optionalField(String value) {
+    return null;
+  }
 }

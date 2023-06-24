@@ -15,7 +15,7 @@ class CartProvider with ChangeNotifier {
   final HelperMethods _helperMethods = HelperMethods();
   final Map<String, CartItemModel> _items = {};
 
-  String _isIndoor = "1";
+  // String _isIndoor = "1";
   bool isInsideResturant = true;
   String tableIdFromQr = "";
 
@@ -23,10 +23,10 @@ class CartProvider with ChangeNotifier {
 /* 
 Indoor 1
 Outdoor 2 */
-  updateIsIndoorStatus(String status) {
-    _isIndoor = status;
-    notifyListeners();
-  }
+  // updateIsIndoorStatus(String status) {
+  //   _isIndoor = status;
+  //   notifyListeners();
+  // }
 
   OrderAddressModel? _orderAddressModel;
 
@@ -181,9 +181,10 @@ Outdoor 2 */
     print("clear cart");
   }
 
-  Future<bool> CreateNewOrderOrder(
+  Future<bool> createNewOrderOrder(
       {required OrderAddressModel addressinformation,
       required ResturantModel resturantDetails,
+      String? tableId,
       String orderNote = ""}) async {
     List<Map<String, dynamic>> mealsDetails = [];
     try {
@@ -211,15 +212,15 @@ Outdoor 2 */
             headers: {
               "Accept": "application/json",
               "content-type": "application/json",
-              // "Authorization": token
+              "Authorization": token
             },
           ),
           data: {
             "resturantID": resturantDetails.id,
             "userID": tempUser.userId,
-            "requestDate": "2023-05-30",
+            "requestDate": "2023-05-30", // it's usless will take it from server
             "reservationID": 0,
-            "tableID": 0,
+            "tableID": isInsideResturant ? tableId :0,
             "note": orderNote,
             "orderTotal": totalAmount,
             "discount": 0,
@@ -232,7 +233,7 @@ Outdoor 2 */
             "PhoneNo": addressinformation.phone,
             "Address": addressinformation.address,
             "SecondAddress": addressinformation.optaionalAddress,
-            "IsIndoor": _isIndoor,
+            "IsIndoor": isInsideResturant ? "1" : "2",
             "details": mealsDetails
           });
       return true;
