@@ -111,7 +111,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 20,
                           ),
                           Text(
-                            userModel == null ? "" : "${userModel.firstName.toString()} ${userModel.lastName.toString()}",
+                            userModel == null
+                                ? ""
+                                : "${userModel.firstName.toString()} ${userModel.lastName.toString()}",
                             style: Styles.mainTextStyle.copyWith(
                                 color: Styles.grayColor,
                                 fontSize: 16,
@@ -278,8 +280,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           const Divider(),
                           // chat
                           ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushNamed(SupportChatPage.RouteName),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SupportChatPage(
+                                          userInformation: userModel,
+                                        )),
+                              );
+                              // Navigator.of(context)
+                              //   .pushNamed(SupportChatPage.RouteName)
+                            },
                             trailing: const Icon(
                               Icons.arrow_forward_ios,
                               color: Styles.midGrayColor,

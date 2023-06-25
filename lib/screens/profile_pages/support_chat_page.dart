@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elite/core/firebase_chat_helper.dart';
 import 'package:elite/core/styles.dart';
+import 'package:elite/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -9,19 +13,20 @@ import '../../core/fire_store_constant.dart';
 import '../../models/chat_messages.dart';
 
 class SupportChatPage extends StatefulWidget {
-  const SupportChatPage({Key? key}) : super(key: key);
+  const SupportChatPage({Key? key, this.userInformation}) : super(key: key);
 
   @override
   State<SupportChatPage> createState() => _SupportChatPageState();
 
   static const RouteName = "/chat-support";
+  final UserModel? userInformation;
 }
 
 class _SupportChatPageState extends State<SupportChatPage> {
   late String currentUserId;
 
   List<QueryDocumentSnapshot> listMessages = [];
-  FirebaseChatHelpersMethods _firebaseChatHelpersMethods =
+  final FirebaseChatHelpersMethods _firebaseChatHelpersMethods =
       FirebaseChatHelpersMethods();
 
   int _limit = 20;
@@ -94,7 +99,10 @@ class _SupportChatPageState extends State<SupportChatPage> {
 
   void readLocal() {
     // the user id from API
-    currentUserId = "2";
+
+    if (widget.userInformation == null) return;
+    currentUserId = widget.userInformation!.userId;
+    log(currentUserId.toString());
     // create room ID
     groupChatId = '${FirestoreConstants.suppourtId} - $currentUserId';
 
@@ -123,7 +131,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Styles.grayColor),
+          iconTheme: const IconThemeData(color: Styles.grayColor),
           title: Text(
             "Live Support",
             style: Styles.appBarTextStyle,
@@ -131,7 +139,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
         ),
         body: SafeArea(
           child: Container(
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             child: Column(
               children: [
                 buildListMessage(),
@@ -150,8 +158,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
       if (chatMessages.idFrom == currentUserId) {
         // right side (my message)
         return Container(
-          margin: EdgeInsets.all(6),
-          padding: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Styles.chipBackGroundColor)),
@@ -166,7 +174,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    margin: EdgeInsets.all(6),
+                    margin: const EdgeInsets.all(6),
                     // padding: EdgeInsets.all(5),
                     child: Text(
                       "You",
@@ -208,22 +216,45 @@ class _SupportChatPageState extends State<SupportChatPage> {
                     ),
                   ),
                   isMessageSent(index)
-                      ? Container(
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(5),
-                          alignment: Alignment.topCenter,
-                          width: 30,
-                          height: 30,
-                          // clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Colors.black),
-                              color: Styles.listTileBorderColr),
-                          child: SvgPicture.asset(
-                            "assets/icons/profile.svg",
-                            color: Styles.mainColor,
-                          ),
-                        )
+                      ? widget.userInformation != null
+                          ? CachedNetworkImage(
+                              imageUrl:
+                                  widget.userInformation!.userImage.toString(),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                width: 30,
+                                height: 30,
+                                margin: const EdgeInsets.only(left: 5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            )
+                          : Container(
+                              margin: const EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
+                              alignment: Alignment.topCenter,
+                              width: 30,
+                              height: 30,
+                              // clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: Colors.black),
+                                  color: Styles.listTileBorderColr),
+                              // child:
+
+                              child: SvgPicture.asset(
+                                "assets/icons/profile.svg",
+                                color: Styles.mainColor,
+                              ))
                       : Container(
                           width: 35,
                         ),
@@ -234,8 +265,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
         );
       } else {
         return Container(
-          margin: EdgeInsets.all(6),
-          padding: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Styles.supportChatBBlMessageColor.withOpacity(0.8),
@@ -251,8 +282,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
                   isMessageReceived(index)
                       // left side (received message)
                       ? Container(
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(5),
+                          margin: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           alignment: Alignment.topCenter,
                           width: 30,
                           height: 30,
@@ -324,7 +355,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
       // padding: const EdgeInsets.all(8),
       margin: margin,
       // width: 200,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           // color: color,
           // borderRadius: BorderRadius.circular(8),
           ),
@@ -360,7 +391,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
                   } else {
                     return Column(
                       children: [
-                        WelcomingMessages(),
+                        welcomingMessages(),
                       ],
                     );
                   }
@@ -380,10 +411,11 @@ class _SupportChatPageState extends State<SupportChatPage> {
     );
   }
 
-  Widget WelcomingMessages() {
+  Widget welcomingMessages() {
+    if (widget.userInformation == null) return Container();
     return Container(
-      margin: EdgeInsets.all(6),
-      padding: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(6),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Styles.supportChatBBlMessageColor.withOpacity(0.8),
@@ -397,8 +429,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.all(5),
-                padding: EdgeInsets.all(5),
+                margin: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 alignment: Alignment.topCenter,
                 width: 30,
                 height: 30,
@@ -422,7 +454,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
                           .copyWith(color: Styles.mainColor, fontSize: 12),
                     ),
                     messageBubble(
-                      chatContent: "Hi Clinton 👋, How I can help you? ",
+                      chatContent:
+                          "Hi ${widget.userInformation!.firstName} ${widget.userInformation!.lastName} 👋, How I can help you? ",
                       color: Colors.white,
                       textColor: Colors.black,
                       margin: const EdgeInsets.only(right: 10),
@@ -453,7 +486,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
   Widget buildMessageInput() {
     return Container(
       width: double.infinity,
-      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      // height: 50,
       // margin: EdgeInsets.all(16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -469,7 +503,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
             controller: textEditingController,
-            decoration: InputDecoration(
+            maxLines: null,
+            decoration: const InputDecoration(
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
