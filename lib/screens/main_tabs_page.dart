@@ -1,4 +1,6 @@
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
+import 'package:elite/screens/auth_pages/start_page.dart';
 import 'package:elite/screens/map_pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,14 +20,24 @@ class MainTabsPage extends StatefulWidget {
 
 class _MainTabsPageState extends State<MainTabsPage> {
   int _selectedIndex = 0;
+  HelperMethods _helperMethods = HelperMethods();
+  bool _isGuestUser = false;
 
   void _onItemTapped(int index) {
+    if (_isGuestUser && index == 1) {
+      Navigator.of(context).pushNamed(StartPage.routeName);
+      return;
+    }
     setState(() {
       _selectedIndex = index;
     });
   }
 
   fetchUserProfile() async {
+    final checkIsGuest = await _helperMethods.checkIsGuest();
+    _isGuestUser = checkIsGuest;
+    if (checkIsGuest) return;
+
     Provider.of<AuthProvider>(context, listen: false)
         .getUserInformation(context);
   }

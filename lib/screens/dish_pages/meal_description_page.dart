@@ -7,15 +7,15 @@ import '../../core/helper_methods.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../providers/resturant_provider.dart';
 
-class DishDesciptionPage extends StatefulWidget {
-  const DishDesciptionPage({super.key, required this.meal});
+class DishDescrptionPage extends StatefulWidget {
+  const DishDescrptionPage({super.key, required this.meal});
 
   @override
-  State<DishDesciptionPage> createState() => _DishDesciptionPageState();
+  State<DishDescrptionPage> createState() => _DishDescrptionPageState();
   final MenuItemMealsListModel meal;
 }
 
-class _DishDesciptionPageState extends State<DishDesciptionPage>
+class _DishDescrptionPageState extends State<DishDescrptionPage>
     with AutomaticKeepAliveClientMixin {
   int _pageNumber = 1;
   final ScrollController _mealsReviewsListController = ScrollController();

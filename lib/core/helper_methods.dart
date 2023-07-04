@@ -59,9 +59,9 @@ class HelperMethods {
     }
   }
 
-  Future<bool?> checkIsGuest() async {
+  Future<bool> checkIsGuest() async {
     final prefs = await SharedPreferences.getInstance();
-    final status = prefs.getBool("is_guest");
+    final status = prefs.getBool("is_guest") ?? false;
     return status;
   }
 

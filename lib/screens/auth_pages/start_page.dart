@@ -1,7 +1,10 @@
+import 'dart:developer';
+
+import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/providers/auth_provider.dart';
-import 'package:elite/screens/auth_pages.dart/create_account_page.dart';
-import 'package:elite/screens/auth_pages.dart/login_page.dart';
+import 'package:elite/screens/auth_pages/create_account_page.dart';
+import 'package:elite/screens/auth_pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +35,34 @@ class _StartPageState extends State<StartPage> {
             ),
             (route) => false, //if you want to disable back feature set to false
           );
+        } else {
+          BotToast.showText(text: "something went wrong!");
         }
       });
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  signInAsGuest() async {
+    try {
+      Provider.of<AuthProvider>(context, listen: false)
+          .signInAsGuest()
+          .then((value) {
+        if (value) {
+          Navigator.pushAndRemoveUntil<dynamic>(
+            context,
+            MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const MainTabsPage(),
+            ),
+            (route) => false, //if you want to disable back feature set to false
+          );
+        } else {
+          BotToast.showText(text: "something went wrong!");
+        }
+      });
+    } catch (e) {
+      log(e.toString());
     }
   }
 
@@ -61,7 +88,10 @@ class _StartPageState extends State<StartPage> {
               // bottom: 1,
               left: 1,
               right: 1,
-              child: Image.asset("assets/images/start_bac.png"),
+              child: Image.asset(
+                "assets/images/start_bac.png",
+                fit: BoxFit.fill,
+              ),
             ),
             Positioned(
               top: 56,
@@ -78,8 +108,10 @@ class _StartPageState extends State<StartPage> {
                         const SizedBox(
                           height: 15,
                         ),
-                        const FlutterLogo(
-                          size: 120,
+                        Image.asset(
+                          "assets/images/app_logo.jpg",
+                          width: 120,
+                          height: 120,
                         ),
                         const SizedBox(
                           height: 60,
@@ -185,7 +217,7 @@ class _StartPageState extends State<StartPage> {
                             label: "Login as Guest",
                             icon: Container(),
                             isIconVisible: false,
-                            onPressedButton: () {},
+                            onPressedButton: signInAsGuest,
                             borderSide: const BorderSide(
                               color: Colors.white,
                             ),

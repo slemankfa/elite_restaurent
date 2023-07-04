@@ -20,6 +20,8 @@ import '../../models/filter_item_model.dart';
 import '../../models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/resturant_provider.dart';
+import '../auth_pages/start_page.dart';
+import 'notifcation_page.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -482,6 +484,15 @@ class _MapPageState extends State<MapPage> {
 
   //-----------------Filter sections--------------
 
+  convertToNotifcationPage() async {
+    final _isGuestUser = await _helperMethods.checkIsGuest();
+    if (_isGuestUser) {
+      Navigator.of(context).pushNamed(StartPage.routeName);
+      return;
+    }
+    Navigator.of(context).pushNamed(NotificationPage.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     UserModel? userModel = Provider.of<AuthProvider>(
@@ -556,9 +567,7 @@ class _MapPageState extends State<MapPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          // onTap: () => Navigator.of(context)
-                          //     .pushNamed(NotificationPage.routeName),
-                          onTap: handlMapMarkersList,
+                          onTap: convertToNotifcationPage,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             // margin: ,

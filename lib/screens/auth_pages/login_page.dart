@@ -19,8 +19,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _userEmailTextController = TextEditingController();
-  final TextEditingController _userPasswordTextController = TextEditingController();
+  final TextEditingController _userEmailTextController =
+      TextEditingController();
+  final TextEditingController _userPasswordTextController =
+      TextEditingController();
   final ValidationHelper _validationHelper = ValidationHelper();
   final _formKey = GlobalKey<FormState>();
   final HelperMethods _helperMethods = HelperMethods();
@@ -91,11 +93,24 @@ class _LoginPageState extends State<LoginPage> {
           key: _formKey,
           child: Container(
             margin: const EdgeInsets.all(16),
-            alignment: Alignment.center,
+            // alignment: Alignment.center,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Center(
+                    child: Image.asset(
+                      "assets/images/app_logo.jpg",
+                      width: 120,
+                      height: 120,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
                   ProfileCustomFormField(
                       controller: _userEmailTextController,
                       formatter: const [],

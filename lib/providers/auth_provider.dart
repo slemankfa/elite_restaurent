@@ -18,7 +18,7 @@ import '../models/notification_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-import '../screens/auth_pages.dart/create_account_page.dart';
+import '../screens/auth_pages/create_account_page.dart';
 
 class AuthProvider with ChangeNotifier {
   final Dio _dio = Dio();
@@ -537,6 +537,16 @@ class AuthProvider with ChangeNotifier {
     pref.setString("access_token", accessToken);
     pref.setBool("is_guest", false);
     // pref.setString("userData", json.encode(userModel.toJson()));
+  }
+
+  Future<bool> signInAsGuest() async {
+    try {
+      final pref = await SharedPreferences.getInstance();
+      pref.setBool("is_guest", true);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future saveUserDatalocaly({

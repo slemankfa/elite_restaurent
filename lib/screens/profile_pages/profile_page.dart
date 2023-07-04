@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:elite/core/lunchers_helper.dart';
-import 'package:elite/screens/auth_pages.dart/start_page.dart';
+import 'package:elite/screens/auth_pages/start_page.dart';
 import 'package:elite/screens/profile_pages/delete_page.dart';
 import 'package:elite/screens/profile_pages/edit_profile_page.dart';
 import 'package:elite/screens/profile_pages/my_orders_page.dart';

@@ -113,7 +113,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
   }
 
   checkUserStatus() async {
-    bool isUserGuest = await _helperMethods.checkIsGuest() ?? false;
+    bool isUserGuest = await _helperMethods.checkIsGuest();
     final cart = Provider.of<CartProvider>(context, listen: false);
 
     if (cart.OrderAddressInformation != null) {

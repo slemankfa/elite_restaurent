@@ -9,7 +9,7 @@ import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_menu_item.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/resturant_provider.dart';
-import '../dish_pages.dart/main_meal_details.dart';
+import '../dish_pages/main_meal_details.dart';
 
 class ResturantMenuItemMealsListPage extends StatefulWidget {
   const ResturantMenuItemMealsListPage(

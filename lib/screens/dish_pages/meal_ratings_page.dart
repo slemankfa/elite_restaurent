@@ -1,5 +1,3 @@
-import 'package:elite/screens/dish_pages.dart/add_meal_review_page.dart';
-import 'package:elite/screens/dish_pages.dart/meal_reviews_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/styles.dart';
@@ -7,6 +5,8 @@ import '../../core/widgets/custom_outline_button.dart';
 import '../../core/widgets/star_rating_parecntage_item.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
+import 'add_meal_review_page.dart';
+import 'meal_reviews_page.dart';
 
 class MealRatingsPage extends StatefulWidget {
   const MealRatingsPage(

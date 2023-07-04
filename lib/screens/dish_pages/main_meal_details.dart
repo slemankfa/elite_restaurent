@@ -1,12 +1,11 @@
 import 'package:elite/core/styles.dart';
-import 'package:elite/screens/dish_pages.dart/meal_description_page.dart';
-import 'package:elite/screens/dish_pages.dart/meal_nutrations_page.dart';
-import 'package:elite/screens/dish_pages.dart/meal_prices_page.dart';
-import 'package:elite/screens/dish_pages.dart/meal_ratings_page.dart';
+import 'package:elite/screens/dish_pages/meal_ratings_page.dart';
 import 'package:flutter/material.dart';
-
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
+import 'meal_description_page.dart';
+import 'meal_nutrations_page.dart';
+import 'meal_prices_page.dart';
 import 'widgets/dish_image_header.dart';
 
 class MaiMealDetailsPage extends StatefulWidget {
@@ -75,7 +74,7 @@ class _MaiMealDetailsPageState extends State<MaiMealDetailsPage>
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            DishDesciptionPage(
+            DishDescrptionPage(
               meal: widget.meal,
             ),
             MealNatruationsPage(

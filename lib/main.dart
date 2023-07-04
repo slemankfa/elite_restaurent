@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:elite/providers/cart_provider.dart';
 import 'package:elite/providers/reservation_provider.dart';
 import 'package:elite/providers/resturant_provider.dart';
-import 'package:elite/screens/auth_pages.dart/splash_screen.dart';
-import 'package:elite/screens/auth_pages.dart/start_page.dart';
+import 'package:elite/screens/auth_pages/splash_screen.dart';
+import 'package:elite/screens/auth_pages/start_page.dart';
 import 'package:elite/screens/main_tabs_page.dart';
 import 'package:elite/screens/map_pages/notifcation_page.dart';
 import 'package:elite/screens/profile_pages/delete_page.dart';
@@ -17,8 +17,8 @@ import 'package:provider/provider.dart';
 
 import 'core/widgets/dismiss_keyboard.dart';
 import 'providers/auth_provider.dart';
-import 'screens/auth_pages.dart/create_account_page.dart';
-import 'screens/auth_pages.dart/login_page.dart';
+import 'screens/auth_pages/create_account_page.dart';
+import 'screens/auth_pages/login_page.dart';
 import 'screens/orders_pages/add_order_page.dart';
 import 'screens/profile_pages/my_resvation_list_page.dart';
 import 'screens/profile_pages/points_page.dart';
@@ -134,6 +134,7 @@ class MyApp extends StatelessWidget {
               SupportChatPage.RouteName: (context) => const SupportChatPage(),
               DeletePage.routeName: (ctx) => const DeletePage(),
               LoginPage.routeName: (ctx) => const LoginPage(),
+              StartPage.routeName: (ctx) => const StartPage(),
               CreateAccountPage.routeName: (ctx) => const CreateAccountPage(
                     fromGoogle: false,
                   ),
