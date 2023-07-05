@@ -23,6 +23,7 @@ import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 import '../../core/styles.dart';
 import '../../core/widgets/custom_outline_button.dart';
 import '../../core/widgets/star_rating_parecntage_item.dart';
+import '../auth_pages/start_page.dart';
 
 class ResturentDetailPage extends StatefulWidget {
   const ResturentDetailPage({Key? key, required this.resturantId})
@@ -76,6 +77,11 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
 
   findTabels() async {
     try {
+      final _isGuestUser = await _helperMethods.checkIsGuest();
+      if (_isGuestUser) {
+        Navigator.of(context).pushNamed(StartPage.routeName);
+        return;
+      }
       if (pickedDate.isEmpty) {
         BotToast.showText(text: "You must select a date");
         return;
@@ -679,7 +685,14 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     label: "Write a review",
                                     isIconVisible: false,
                                     icon: Container(),
-                                    onPressedButton: () {
+                                    onPressedButton: () async {
+                                      final _isGuestUser =
+                                          await _helperMethods.checkIsGuest();
+                                      if (_isGuestUser) {
+                                        Navigator.of(context)
+                                            .pushNamed(StartPage.routeName);
+                                        return;
+                                      }
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

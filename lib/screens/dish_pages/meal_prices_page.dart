@@ -11,6 +11,7 @@ import '../../models/meal_size_model.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
 import '../../providers/resturant_provider.dart';
+import '../auth_pages/start_page.dart';
 import 'widgets/meal_size_list_item.dart';
 
 class MealPricesPage extends StatefulWidget {
@@ -150,7 +151,14 @@ class _MealPricesPageState extends State<MealPricesPage>
                         ),
                         icon: Container(),
                         isIconVisible: false,
-                        onPressedButton: () {
+                        onPressedButton: () async {
+                          final _isGuestUser =
+                              await _helperMethods.checkIsGuest();
+                          if (_isGuestUser) {
+                            Navigator.of(context)
+                                .pushNamed(StartPage.routeName);
+                            return;
+                          }
                           if (_mealSizedList.isEmpty) {
                             BotToast.showText(text: "There are no meal sizes");
                             return;

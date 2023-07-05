@@ -1,3 +1,4 @@
+import 'package:elite/core/helper_methods.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/styles.dart';
@@ -5,6 +6,7 @@ import '../../core/widgets/custom_outline_button.dart';
 import '../../core/widgets/star_rating_parecntage_item.dart';
 import '../../models/menu_item_meals_list_model.dart';
 import '../../models/resturant_model.dart';
+import '../auth_pages/start_page.dart';
 import 'add_meal_review_page.dart';
 import 'meal_reviews_page.dart';
 
@@ -21,6 +23,7 @@ class MealRatingsPage extends StatefulWidget {
 
 class _MealRatingsPageState extends State<MealRatingsPage>
     with AutomaticKeepAliveClientMixin {
+  HelperMethods _helperMethods = HelperMethods();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,83 +52,6 @@ class _MealRatingsPageState extends State<MealRatingsPage>
                             ratingItem: ratingItem,
                           ))
                       .toList()),
-              // Padding(
-              //   padding: EdgeInsets.all(0),
-              //   child: LinearPercentIndicator(
-              //     // width: double.infinity,
-              //     lineHeight: 10.0,
-              //     percent: 0.8,
-              //     leading: Text("5 star"),
-              //     trailing: Text("80%"),
-              //     // barRadius: Radius.circular(radius),
-              //     backgroundColor: Colors.grey.shade100,
-              //     progressColor: Styles.progressColor,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 14,
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.all(0),
-              //   child: LinearPercentIndicator(
-              //     // width: double.infinity,
-              //     lineHeight: 10.0,
-              //     percent: 0.9,
-              //     leading: Text("4 star"),
-              //     trailing: Text("90%"),
-              //     // barRadius: Radius.circular(radius),
-              //     backgroundColor: Colors.grey.shade100,
-              //     progressColor: Styles.progressColor,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 14,
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.all(0),
-              //   child: LinearPercentIndicator(
-              //     // width: double.infinity,
-              //     lineHeight: 10.0,
-              //     percent: 0.2,
-              //     leading: Text("3 star"),
-              //     trailing: Text("20%"),
-              //     // barRadius: Radius.circular(radius),
-              //     backgroundColor: Colors.grey.shade100,
-              //     progressColor: Styles.progressColor,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 14,
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.all(0),
-              //   child: LinearPercentIndicator(
-              //     // width: double.infinity,
-              //     lineHeight: 10.0,
-              //     percent: 0.05,
-              //     leading: Text("2 star"),
-              //     trailing: Text("5%"),
-              //     // barRadius: Radius.circular(radius),
-              //     backgroundColor: Colors.grey.shade100,
-              //     progressColor: Styles.progressColor,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 14,
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.all(0),
-              //   child: LinearPercentIndicator(
-              //     // width: double.infinity,
-              //     lineHeight: 10.0,
-              //     percent: 0.0,
-              //     leading: Text("1 star"),
-              //     trailing: Text("0%"),
-              //     // barRadius: Radius.circular(radius),
-              //     backgroundColor: Colors.grey.shade100,
-              //     progressColor: Styles.progressColor,
-              //   ),
-              // ),
               const SizedBox(
                 height: 20,
               ),
@@ -158,7 +84,12 @@ class _MealRatingsPageState extends State<MealRatingsPage>
                   label: "Write a review",
                   isIconVisible: false,
                   icon: Container(),
-                  onPressedButton: () {
+                  onPressedButton: () async {
+                    final _isGuestUser = await _helperMethods.checkIsGuest();
+                    if (_isGuestUser) {
+                      Navigator.of(context).pushNamed(StartPage.routeName);
+                      return;
+                    }
                     Navigator.push(
                       context,
                       MaterialPageRoute(

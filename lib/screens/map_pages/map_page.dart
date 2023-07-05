@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/location_helper.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/models/cusine_model.dart';
 import 'package:elite/models/resturant_model.dart';
+import 'package:elite/screens/map_pages/widgets/resturant_map_item.dart';
 import 'package:elite/screens/resturant_pages/resturant_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -508,16 +508,8 @@ class _MapPageState extends State<MapPage> {
             myLocationButtonEnabled: false,
             markers: _isLoading ? {} : _loadedMarkers,
             myLocationEnabled: true,
-            // onTap: (latlang) {
-            //   print(latlang.latitude);
-            //   print(latlang.longitude);
-            // },
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
-              // if(_resturantsList.isNotEmpty){
-              //   handlMapMarkersList();
-              // }
-              // moveToMyLocation();
             },
           ),
           // headers
@@ -585,17 +577,8 @@ class _MapPageState extends State<MapPage> {
                         ),
                         InkWell(
                           onTap: _showFilterBottomSheet,
-                          //  () {
-                          //   Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => const FilterPge(),
-                          //       ));
-                          //   // _helperMethods.showAlertDilog(message: "asdsd", context: context, function: (){});
-                          // },
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            // margin: ,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -643,13 +626,6 @@ class _MapPageState extends State<MapPage> {
                             isIconVisible: false,
                             onPressedButton: () async {
                               await showAllowLocationDilog(context: context);
-
-                              // Navigator.of(context).pop();
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => ResturanMenuPage()),
-                              // );
                             },
                             rectangleBorder: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
@@ -706,139 +682,8 @@ class _MapPageState extends State<MapPage> {
                                             ? Styles.mainColor
                                             : Colors.white,
                                       )),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: CachedNetworkImage(
-                                          imageUrl: _resturantsList[index].logo,
-                                          // "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                                          height: 64,
-                                          width: 64,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              const FlutterLogo(
-                                            size: 64,
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.error),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(
-                                        _resturantsList[index].name,
-                                        style: Styles.mainTextStyle.copyWith(
-                                            color: Styles.resturentNameColor,
-                                            fontSize: 19,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-                                      Flexible(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            text:
-                                                'Accepting orders and booking until ',
-                                            style: Styles.mainTextStyle
-                                                .copyWith(
-                                                    fontSize: 16,
-                                                    color: Colors.grey),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: '8:30',
-                                                style: Styles.mainTextStyle
-                                                    .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                        color: Styles
-                                                            .timeTextColor),
-                                              ),
-                                              const TextSpan(text: ' PM'),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  _resturantsList[index]
-                                                      .averageRating
-                                                      .toString(),
-                                                  style: Styles.mainTextStyle
-                                                      .copyWith(
-                                                          color:
-                                                              Styles.mainColor,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                ),
-                                                const SizedBox(
-                                                  width: 6,
-                                                ),
-                                                SvgPicture.asset(
-                                                    "assets/icons/star.svg"),
-                                                const SizedBox(
-                                                  width: 6,
-                                                ),
-                                                Flexible(
-                                                  child: Text(
-                                                    "(${_resturantsList[index].totalRating})",
-                                                    style: Styles.mainTextStyle
-                                                        .copyWith(
-                                                      color:
-                                                          Styles.midGrayColor,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Flexible(
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                    "assets/icons/clock.svg"),
-                                                const SizedBox(
-                                                  width: 6,
-                                                ),
-                                                Flexible(
-                                                  child: Text(
-                                                    "3 min walk",
-                                                    style: Styles.mainTextStyle
-                                                        .copyWith(
-                                                      color:
-                                                          Styles.midGrayColor,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                  child: ResturantMapItem(
+                                    resturantModel: _resturantsList[index],
                                   ),
                                 ),
                               );
