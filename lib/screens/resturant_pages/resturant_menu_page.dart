@@ -93,7 +93,7 @@ class _ResturanMenuPageState extends State<ResturanMenuPage> {
         child: _menusList.isEmpty
             ? Center(
                 child: Text(
-                  "لا يوجد قائمة",
+                  "No list.",
                   style: Styles.mainTextStyle,
                 ),
               )

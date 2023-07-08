@@ -109,7 +109,7 @@ class _StartPageState extends State<StartPage> {
                           height: 15,
                         ),
                         Image.asset(
-                          "assets/images/app_logo.jpg",
+                          "assets/images/elite_logo.png",
                           width: 120,
                           height: 120,
                         ),

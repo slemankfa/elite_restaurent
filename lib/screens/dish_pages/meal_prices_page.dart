@@ -117,7 +117,7 @@ class _MealPricesPageState extends State<MealPricesPage>
                       child: _mealSizedList.isEmpty
                           ? Center(
                               child: Text(
-                                "لا يوجد قائمة",
+                               "No prices.",
                                 style: Styles.mainTextStyle,
                               ),
                             )

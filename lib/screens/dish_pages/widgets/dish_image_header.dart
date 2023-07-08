@@ -43,12 +43,16 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
           child: Stack(
             children: [
               widget.images.isEmpty
-                  ? const Positioned(
+                  ? Positioned(
                       top: 0,
                       right: 0,
                       left: 0,
                       bottom: 0,
-                      child: FlutterLogo(),
+                      child: Image.asset(
+                        "assets/images/elite_logo.png",
+                        width: 64,
+                        height: 64,
+                      ),
                     )
                   : Positioned(
                       top: 0,
@@ -61,8 +65,10 @@ class _DishImagesHeaderState extends State<DishImagesHeader> {
                             imageUrl: item.toString(),
                             fit: BoxFit.fill,
                             width: double.infinity,
-                            placeholder: (context, url) => const FlutterLogo(
-                              size: 40,
+                            placeholder: (context, url) => Image.asset(
+                              "assets/images/elite_logo.png",
+                              width: 40,
+                              height: 40,
                             ),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),

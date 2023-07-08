@@ -96,8 +96,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                       width: 64,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          const FlutterLogo(
-                                        size: 64,
+                                          Image.asset(
+                                        "assets/images/elite_logo.png",
+                                        width: 120,
+                                        height: 120,
                                       ),
                                       errorWidget: (context, url, error) =>
                                           const Icon(

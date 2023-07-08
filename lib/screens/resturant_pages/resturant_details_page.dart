@@ -185,8 +185,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                       height: double.infinity,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
-                                          const FlutterLogo(
-                                        size: 64,
+                                          Image.asset(
+                                        "assets/images/elite_logo.png",
+                                        width: 120,
+                                        height: 120,
                                       ),
                                       errorWidget: (context, url, error) =>
                                           const Icon(Icons.error),
@@ -228,8 +230,10 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                           width: 64,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) =>
-                                              const FlutterLogo(
-                                            size: 64,
+                                              Image.asset(
+                                            "assets/images/elite_logo.png",
+                                            width: 64,
+                                            height: 64,
                                           ),
                                           errorWidget: (context, url, error) =>
                                               const Icon(Icons.error),
@@ -574,83 +578,6 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                             ))
                                         .toList()),
 
-                                // Padding(
-                                //   padding: const EdgeInsets.all(0),
-                                //   child: LinearPercentIndicator(
-                                //     // width: double.infinity,
-                                //     lineHeight: 10.0,
-                                //     percent: 0.8,
-                                //     leading: const Text("5 star"),
-                                //     trailing: const Text("80%"),
-                                //     // barRadius: Radius.circular(radius),
-                                //     backgroundColor: Colors.grey.shade100,
-                                //     progressColor: Styles.progressColor,
-                                //   ),
-                                // ),
-                                // const SizedBox(
-                                //   height: 14,
-                                // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(0),
-                                //   child: LinearPercentIndicator(
-                                //     // width: double.infinity,
-                                //     lineHeight: 10.0,
-                                //     percent: 0.9,
-                                //     leading: const Text("4 star"),
-                                //     trailing: const Text("90%"),
-                                //     // barRadius: Radius.circular(radius),
-                                //     backgroundColor: Colors.grey.shade100,
-                                //     progressColor: Styles.progressColor,
-                                //   ),
-                                // ),
-                                // const SizedBox(
-                                //   height: 14,
-                                // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(0),
-                                //   child: LinearPercentIndicator(
-                                //     // width: double.infinity,
-                                //     lineHeight: 10.0,
-                                //     percent: 0.2,
-                                //     leading: const Text("3 star"),
-                                //     trailing: const Text("20%"),
-                                //     // barRadius: Radius.circular(radius),
-                                //     backgroundColor: Colors.grey.shade100,
-                                //     progressColor: Styles.progressColor,
-                                //   ),
-                                // ),
-                                // const SizedBox(
-                                //   height: 14,
-                                // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(0),
-                                //   child: LinearPercentIndicator(
-                                //     // width: double.infinity,
-                                //     lineHeight: 10.0,
-                                //     percent: 0.05,
-                                //     leading: const Text("2 star"),
-                                //     trailing: const Text("5%"),
-                                //     // barRadius: Radius.circular(radius),
-                                //     backgroundColor: Colors.grey.shade100,
-                                //     progressColor: Styles.progressColor,
-                                //   ),
-                                // ),
-                                // const SizedBox(
-                                //   height: 14,
-                                // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(0),
-                                //   child: LinearPercentIndicator(
-                                //     // width: double.infinity,
-                                //     lineHeight: 10.0,
-                                //     percent: 0.0,
-                                //     leading: const Text("1 star"),
-                                //     trailing: const Text("0%"),
-                                //     // barRadius: Radius.circular(radius),
-                                //     backgroundColor: Colors.grey.shade100,
-                                //     progressColor: Styles.progressColor,
-                                //   ),
-                                // ),
                                 const SizedBox(
                                   height: 20,
                                 ),

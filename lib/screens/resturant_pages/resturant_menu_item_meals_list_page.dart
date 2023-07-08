@@ -13,7 +13,10 @@ import '../dish_pages/main_meal_details.dart';
 
 class ResturantMenuItemMealsListPage extends StatefulWidget {
   const ResturantMenuItemMealsListPage(
-      {super.key, required this.menuItem, required this.resturantDetails, required this.isFormAddOrderPage});
+      {super.key,
+      required this.menuItem,
+      required this.resturantDetails,
+      required this.isFormAddOrderPage});
 
   @override
   State<ResturantMenuItemMealsListPage> createState() =>
@@ -21,8 +24,7 @@ class ResturantMenuItemMealsListPage extends StatefulWidget {
 
   final ResturantMenuItemModel menuItem;
   final ResturantModel resturantDetails;
-  final bool isFormAddOrderPage ; 
-  
+  final bool isFormAddOrderPage;
 }
 
 class _ResturantMenuItemMealsListPageState
@@ -127,12 +129,13 @@ class MenuItemMeals extends StatelessWidget {
   const MenuItemMeals({
     super.key,
     required this.meal,
-    required this.resturantDetails, required this.isFormAddOrderPage,
+    required this.resturantDetails,
+    required this.isFormAddOrderPage,
   });
 
   final MenuItemMealsListModel meal;
   final ResturantModel resturantDetails;
-   final bool isFormAddOrderPage ; 
+  final bool isFormAddOrderPage;
 
   @override
   Widget build(BuildContext context) {
@@ -162,14 +165,16 @@ class MenuItemMeals extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CachedNetworkImage(
-                imageUrl: 
-                //  "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
-                 meal.mealImage,
+                imageUrl:
+                    //  "https://png.pngtree.com/png-clipart/20200727/original/pngtree-restaurant-logo-design-vector-template-png-image_5441058.jpg",
+                    meal.mealImage,
                 height: 64,
                 width: 64,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const FlutterLogo(
-                  size: 64,
+                placeholder: (context, url) => Image.asset(
+                  "assets/images/elite_logo.png",
+                  width: 64,
+                  height: 64,
                 ),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
@@ -209,8 +214,8 @@ class MenuItemMeals extends StatelessWidget {
               children: [
                 Text(
                   // "4.9",
-                  "${(double.parse(meal.averageRating!) * 100).round() / 100.0}", 
-                    // "(${meal.averageRating.toString()})", 
+                  "${(double.parse(meal.averageRating!) * 100).round() / 100.0}",
+                  // "(${meal.averageRating.toString()})",
                   style: Styles.mainTextStyle.copyWith(
                       color: Styles.mainColor,
                       fontSize: 16,

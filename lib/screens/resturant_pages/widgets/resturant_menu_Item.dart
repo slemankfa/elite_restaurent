@@ -41,8 +41,10 @@ class ResturantMenuItem extends StatelessWidget {
               height: 40,
               width: 40,
               fit: BoxFit.cover,
-              placeholder: (context, url) => const FlutterLogo(
-                size: 40,
+              placeholder: (context, url) => Image.asset(
+                "assets/images/elite_logo.png",
+                width: 40,
+                height: 40,
               ),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),

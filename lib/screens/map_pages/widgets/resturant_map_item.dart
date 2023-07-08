@@ -24,8 +24,10 @@ class ResturantMapItem extends StatelessWidget {
             height: 64,
             width: 64,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const FlutterLogo(
-              size: 64,
+            placeholder: (context, url) => Image.asset(
+              "assets/images/elite_logo.png",
+              width: 64,
+              height: 64,
             ),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),

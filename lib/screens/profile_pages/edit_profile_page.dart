@@ -211,7 +211,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         alignment: Alignment.center,
                         width: 128,
                         height: 128,
-                        child: (userInformation != null &&_userImage == null)
+                        child: (userInformation != null && _userImage == null)
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
                                 child: CachedNetworkImage(
@@ -220,9 +220,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   height: 128,
                                   width: 128,
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      const FlutterLogo(
-                                    size: 100,
+                                  placeholder: (context, url) => Image.asset(
+                                    "assets/images/elite_logo.png",
+                                    width: 120,
+                                    height: 120,
                                   ),
                                   errorWidget: (context, url, error) =>
                                       Image.asset(

@@ -136,9 +136,10 @@ class _NotificationPageState extends State<NotificationPage> {
                                     borderRadius: BorderRadius.circular(10),
                                     side: const BorderSide(color: Colors.grey),
                                   ),
-                                  leading: const Icon(
-                                    Icons.error,
-                                    color: Styles.grayColor,
+                                  leading: Image.asset(
+                                    "assets/images/elite_logo.png",
+                                    // width: 120,
+                                    // height: 12,
                                   ),
                                   title: Text(
                                     _notifiactionList[index].notificationTitle,
