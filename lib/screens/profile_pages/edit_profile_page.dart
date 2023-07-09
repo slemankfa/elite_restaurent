@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -49,7 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _phoneBorderColor = false;
   bool _genderBorderColor = false;
 
-  int loginType = 1;
+  int loginType = 0;
 
   _pickUserImage() async {
     try {
@@ -107,11 +108,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     selectedGenderValue =
         userModel.userGender == "1" ? genderItems[0] : genderItems[1];
 
-// Google = 2 ,platform=1
-
-    loginType = userModel.loginType ?? 1;
-
-    print(loginType.toString());
+// Google = 1 ,platform=0
+    if (userModel.loginType != null) {
+      loginType = userModel.loginType!;
+      log(userModel.loginType.toString());
+    } else {
+      log("can't get login type");
+    }
   }
 
   updateProfile() async {
@@ -135,7 +138,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           age: _userBdTextController.text.trim(),
           cityId: fetchedUserModel.cityId,
           areaId: fetchedUserModel.areaId,
-          loginType: null,
+          loginType: loginType,
           userPhone: _userPhoneTextController.text.trim(),
           userGender: selectedGenderValue == "Male" ? "1" : "2",
           userId: fetchedUserModel.userId);
@@ -315,11 +318,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       labelTextStyle: Styles.mainTextStyle.copyWith(
                           color: Styles.unslectedItemColor, fontSize: 16),
                       formFillColor: Colors.white),
-                  if (loginType == 1)
+                  if (loginType != 1)
                     const SizedBox(
                       height: 18,
                     ),
-                  if (loginType == 1)
+                  if (loginType != 1)
                     CustomFormField(
                       controller: _userPasswordTextController,
                       formatter: const [],

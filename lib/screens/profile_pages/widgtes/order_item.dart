@@ -65,7 +65,9 @@ class OrderItem extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "Table 2",
+                    orderModel.tabelId == null
+                        ? "Outdoor"
+                        : "Table ${orderModel.tabelId}",
                     style: Styles.mainTextStyle.copyWith(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,

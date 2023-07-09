@@ -25,7 +25,7 @@ class ReservationItem extends StatelessWidget {
     if (date == null) return "";
     // "2023-03-18T07:19:23.64"
     DateTime tempDate = DateFormat("yyyy-MM-ddThh:mm:ss", 'en_US').parse(date);
-    return DateFormat("dd MMM yyyy hh:mm:ss").format(tempDate);
+    return DateFormat("dd MMM yyyy").format(tempDate);
   }
 
   //  All = 0 ,Cancel = 1, Past = 2, Upcoming = 3
@@ -171,7 +171,7 @@ class ReservationItem extends StatelessWidget {
               ),
               Expanded(
                   child: Text(
-                "${convertDate(reservationModel.reservationDate)} To ${reservationModel.reservationToTime} ",
+                "${convertDate(reservationModel.reservationDate)} ${reservationModel.reservationFromTime} To ${reservationModel.reservationToTime} ",
                 style: Styles.mainTextStyle.copyWith(
                   color: Styles.midGrayColor,
                   fontSize: 16,

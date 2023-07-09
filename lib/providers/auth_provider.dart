@@ -228,7 +228,9 @@ class AuthProvider with ChangeNotifier {
             "CityID": selectedCity.id,
             "AreaID": selectedRegionCity.id,
             "IsApprove": "True",
-            "Image": ""
+            "Image": "",
+            // signUp =0 platform - 1 Google
+            "signUp": "1"
           });
       if (response.statusCode == 200) {
         var jsonResponse =
@@ -374,7 +376,9 @@ class AuthProvider with ChangeNotifier {
         "CityID": selectedCity.id,
         "AreaID": selectedRegionCity.id,
         "IsApprove": "True",
-        "Image": ""
+        "Image": "",
+        // signUp =0 platform - 1 Google
+        "signUp": "0"
       });
       if (response.statusCode == 200) {
         var jsonResponse =
@@ -389,64 +393,6 @@ class AuthProvider with ChangeNotifier {
         print('Request failed with status: ${response.statusCode}.');
         return false;
       }
-      // var request =
-      //     http.MultipartRequest('POST', Uri.parse('$API_URL/Login/create'));
-      // request.fields.addAll({
-      //   'RoleID': "1",
-      //   'FirstName': user.firstName,
-      //   "LastName": user.lastName,
-      //   'Email': user.email,
-      //   "PhoneNo": user.userPhone,
-      //   'Password': user.password!,
-      //   'Age': user.age,
-      //   "SexID": user.userGender,
-      //   "CityID": selectedCity.id,
-      //   "AreaID": selectedRegionCity.id,
-      //   "IsApprove": "True",
-      //   "Image": ""
-      // });
-      // // request.files.add(await http.MultipartFile.fromPath('Image', null));
-
-      // http.StreamedResponse response = await request.send();
-      // print(response.stream..toString());
-      // print(response.statusCode);
-      // if (response.statusCode == 200) {
-      //   print(await response.stream.bytesToString());
-      //   // var jsonResponse =
-      //   //     convert.jsonDecode(response.stream.bytesToString()) as Map<String, dynamic>;
-      // } else {
-      //   print(response.reasonPhrase);
-      // }
-
-      // Response loginResponse = await _dio.post("${API_URL}Login/create",
-      //     options: Options(
-      //       headers: {
-      //         "Accept": "application/json",
-      //         "Content-Type": "application/json",
-      //         // "contentType": "application/x-www-form-urlencoded",
-      //       },
-      //     ),
-      //     data: {
-      //       'RoleID': 1,
-      //       'FirstName': user.firstName,
-      //       "LastName": user.lastName,
-      //       'Email': user.email,
-      //       "PhoneNo": user.userPhone,
-      //       'Password': user.password,
-      //       'Age': user.age,
-      //       "SexID": user.userGender,
-      //       "CityID": selectedCity.id,
-      //       "AreaID": selectedRegionCity.id,
-      //       "IsApprove": "True",
-      //       "Image": ""
-      //     });
-      // print(loginResponse.toString());
-      // UserModel userModel = UserModel.fromJson(loginResponse.data["userID"]);
-      // await saveAccessTokenlocaly(
-      //     accessToken: loginResponse.data["tokenString"]);
-      // await saveUserDatalocaly(userModel: userModel);
-      // UserModel userModel = UserModel.fromJson(loginResponse.data["user"]);
-      // saveAccessTokenlocaly("asdasd", );
     } on DioError catch (e) {
       // print(e.toString());
       print(e.requestOptions.data.toString());
@@ -454,21 +400,7 @@ class AuthProvider with ChangeNotifier {
       print(e.response);
 
       BotToast.showText(text: "Something went Wrong! \n under development!");
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
-      // if (e.response != null) {
-      //   // print(e.response?.data);
-      //   print(e.response?.data["error_messages"]);
-      //   print(e.response?.statusCode);
-      // String errorMessages = "";
-      // for (var element in e.response?.data["error_messages"]) {
-      //   errorMessages += element + "\n";
-      // }
-      // _helperMethods.showErrorDilog(errorText: errorMessages, context: context);
 
-      //   BotToast.showText(text: _errorMessages); //popup a text toast;
-      //   // cancel();
-      // _helperMethods.handleError(e.response?.statusCode, context, e.response!);
       return false;
     }
   }
@@ -486,7 +418,7 @@ class AuthProvider with ChangeNotifier {
         "LastName": user.lastName,
         'Email': user.email,
         "PhoneNo": user.userPhone,
-        'Password': user.password!,
+        'Password': user.password!.isEmpty ? null : user.password!,
         'Age': user.age,
         "SexID": user.userGender,
         "CityID": user.cityId,

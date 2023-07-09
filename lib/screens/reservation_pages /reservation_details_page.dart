@@ -19,6 +19,7 @@ class ReservationDetailsPage extends StatefulWidget {
       required this.tableModel,
       required this.time,
       required this.date,
+      required this.noOfSeats,
       required this.resturantDetails});
 
   @override
@@ -27,6 +28,7 @@ class ReservationDetailsPage extends StatefulWidget {
   final String time;
   final String date;
   final ResturantModel resturantDetails;
+  final String noOfSeats;
 }
 
 //  required String restId,
@@ -172,6 +174,7 @@ class _ReservationDetailsPageState extends State<ReservationDetailsPage> {
       showPopUpLoading = _helperMethods.showPopUpProgressIndcator();
       Provider.of<ReservationProvider>(context, listen: false)
           .createNewReservation(
+        noOfSeats: widget.noOfSeats,
         restId: widget.resturantDetails.id,
         time: convertFromDateWithOutStand(widget.time),
         date: widget.date,

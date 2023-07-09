@@ -44,11 +44,11 @@ class UserModel {
         cityId: map["cityID"].toString(),
         userGender: map["sexID"].toString(),
         areaId: map["areaID"].toString(),
-        loginType: map["stauts"],
+        loginType: map["signUp"],
         userImage: "$IMAGE_PATH_URL${map["userImage"]}",
         userId: map["userID"].toString());
   }
-// Google = 2 ,platform=1
+// Google = 1 ,platform=0
 
   factory UserModel.fromGetUserIdJson(Map<String, dynamic> map) {
     return UserModel(
@@ -56,7 +56,7 @@ class UserModel {
         lastName: map["user"]["lastName"] ?? "",
         email: map["user"]["email"],
         password: "",
-        loginType: map["stauts"],
+        loginType: map["user"]["signUp"],
         age: map["user"]["age"],
         userPhone: map["user"]["phoneNo"],
         cityId: map["user"]["cityID"].toString(),
@@ -64,7 +64,9 @@ class UserModel {
         myOrdersCount: map["myOrders"] ?? 0,
         myReservationCount: map["myReservations"] ?? 0,
         areaId: map["user"]["areaID"].toString(),
-        userImage: "$IMAGE_PATH_URL${map["user"]["userImage"]}",
+        userImage: map["user"]["userImage"] == null
+            ? null
+            : "$IMAGE_PATH_URL${map["user"]["userImage"]}",
         userId: map["user"]["userID"].toString());
   }
 
@@ -76,11 +78,11 @@ class UserModel {
         password: "",
         userPhone: map["phoneNo"],
         age: map["age"],
-        loginType: map["stauts"],
+        loginType: map["signUp"],
         cityId: map["cityID"],
         userGender: map["sexID"],
         areaId: map["areaID"],
-        userImage: map["userImage"].toString(),
+        userImage: map["userImage"],
         userId: map["userID"].toString());
   }
 
@@ -92,8 +94,8 @@ class UserModel {
         "cityID": cityId,
         "sexID": userGender,
         "areaID": areaId,
-        "stauts": loginType,
-        "userImage": userImage.toString(),
+        "signUp": loginType,
+        "userImage": userImage,
         "userID": userId,
         "phoneNo": userPhone
       };

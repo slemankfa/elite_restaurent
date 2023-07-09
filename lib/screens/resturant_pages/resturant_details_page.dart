@@ -46,6 +46,14 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
   bool _isLoading = false;
   final TextEditingController _peopleCountController = TextEditingController();
 
+  int _selectedPeopleCountIndex = 0;
+  List<int> resevedPeopleCountList = [2, 4, 6, 8];
+  String pickedDate = "";
+  String pickedTime = "";
+  int _sliding = 0;
+  final TimePickerSpinnerController _timePickerSpinnerController =
+      TimePickerSpinnerController();
+
   @override
   void initState() {
     // controller = ScrollController();
@@ -97,7 +105,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                   time: pickedTime,
                   numberOfSeats: _peopleCountController.text.trim().isNotEmpty
                       ? _peopleCountController.text
-                      : resevedPeopleCountList[_selectedPeopleCountIndex!]
+                      : resevedPeopleCountList[_selectedPeopleCountIndex]
                           .toString(),
                 )),
       ).then((value) {
@@ -113,14 +121,6 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
       // print(e.toString());
     }
   }
-
-  int? _selectedPeopleCountIndex = 0;
-  List<int> resevedPeopleCountList = [2, 4, 6, 8];
-  String pickedDate = "";
-  String pickedTime = "";
-  int _sliding = 0;
-  final TimePickerSpinnerController _timePickerSpinnerController =
-      TimePickerSpinnerController();
 
   getResturantDetails() async {
     setState(() {
@@ -340,13 +340,18 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                     children: [
                                       Row(
                                         children: [
-                                          SvgPicture.asset(
-                                              "assets/icons/profile.svg"),
+                                          Icon(
+                                            Icons.table_bar,
+                                            color: Styles.midGrayColor,
+                                          ),
+                                          // SvgPicture.asset(
+                                          //     "assets/icons/profile.svg"),
                                           const SizedBox(
-                                            width: 6,
+                                            width: 2,
                                           ),
                                           Text(
-                                            _resturantDetails!.traficStatus,
+                                            _resturantDetails!.avalibleTabels
+                                                .toString(),
                                             style: Styles.mainTextStyle
                                                 .copyWith(
                                                     color: Styles.midGrayColor,
@@ -757,8 +762,9 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                             selected: _selectedPeopleCountIndex == index,
                             onSelected: (bool selected) {
                               setState(() {
-                                _selectedPeopleCountIndex =
-                                    selected ? index : null;
+                                _selectedPeopleCountIndex = index;
+                                // _selectedPeopleCountIndex =
+                                //     selected ? index : null;
                               });
                             },
                           ),
@@ -924,7 +930,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         //     new DateFormat("yyyy-MM-dd hh:mm:ss", 'en_US')
                         //         .parse(selectedDate.value.toString());
                         pickedDate =
-                            DateFormat("yyyy-MM-d").format(selectedDate.value);
+                            DateFormat("yyyy-MM-dd").format(selectedDate.value);
                         print(pickedDate.toString());
                       },
                     ),

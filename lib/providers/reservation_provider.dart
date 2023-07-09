@@ -129,6 +129,7 @@ class ReservationProvider with ChangeNotifier {
     required String toTime,
     required String date,
     required String note,
+    required String noOfSeats,
     required bool remindSms,
     required TableModel table,
   }) async {
@@ -156,6 +157,7 @@ class ReservationProvider with ChangeNotifier {
             "toTime": toTime,
             "isRemindSMS": remindSms,
             "anySpecialNote": note,
+            "NoOfSeat": noOfSeats,
             "isConfirm": true,
             "isCancel": true,
             "isClose": true,

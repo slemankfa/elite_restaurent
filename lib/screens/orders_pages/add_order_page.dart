@@ -159,7 +159,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
           .createNewOrderOrder(
               addressinformation: orderAddressModel,
               orderNote: _orderNoteController.text,
-              tableId: tableID,
+              tableId: !isIndoor ? null : tableID,
               resturantDetails: widget.resturantDetails!)
           .then((status) {
         showPopUpLoading.call();
@@ -271,11 +271,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
               ),
             ));
   }
-
-/////
-  ///
-  ///
-  ///
 
   @override
   Widget build(BuildContext context) {

@@ -18,6 +18,7 @@ class ResturantModel {
   final List<StarRatingParcentage> starRatingParcentageList;
   final double? latitude;
   final double? longitude;
+  final int avalibleTabels;
 
   ResturantModel(
       {required this.name,
@@ -27,6 +28,7 @@ class ResturantModel {
       required this.traficStatus,
       required this.openStatus,
       required this.cousineType,
+      required this.avalibleTabels,
       this.resturantsImages = const [],
       this.starRatingParcentageList = const [],
       this.averageRating,
@@ -75,6 +77,7 @@ class ResturantModel {
             tempStarRatingParcentageList.reversed.toList(),
         resturantsImages: tempImages,
         cousineType: map["cuisine"].toString(),
+        avalibleTabels: map["tables"] ?? 0,
         latitude: map["latitude"],
         longitude: map["longitude"]);
   }

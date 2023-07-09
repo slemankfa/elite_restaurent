@@ -189,15 +189,23 @@ Outdoor 2 */
     List<Map<String, dynamic>> mealsDetails = [];
     try {
       _items.forEach((key, cartItem) {
+        // side dishes
+        List<Map<String, dynamic>> mealSideDishes = [];
+        cartItem.sideDishes.map((sideDish) {
+          mealSideDishes.add({
+            "extrasItemID": sideDish.id,
+            "ExtrasPrice": sideDish.price,
+            "extrasQty": 1
+          });
+        }).toList();
+        //main meal item
         mealsDetails.add({
           "itemID": cartItem.mealId,
           "qty": cartItem.quantity,
           "price": cartItem.price,
           "sizeID": cartItem.mealSize.id,
           "note": "",
-          "ExtrasItemID": cartItem.sideDishes.first.id,
-          "ExtrasPrice": cartItem.sideDishes.first.price,
-          "ExtrasQty": 1,
+          "extras": mealSideDishes
         });
       });
 
@@ -220,7 +228,7 @@ Outdoor 2 */
             "userID": tempUser.userId,
             "requestDate": "2023-05-30", // it's usless will take it from server
             "reservationID": 0,
-            "tableID": isInsideResturant ? tableId :0,
+            "tableID": tableId,
             "note": orderNote,
             "orderTotal": totalAmount,
             "discount": 0,

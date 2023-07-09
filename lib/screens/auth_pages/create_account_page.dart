@@ -318,7 +318,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       action: TextInputAction.done,
                       hintText: "",
                       isSecureField: true,
-                      textStyle: Styles.mainTextStyle,
+                      textStyle: Styles.mainTextStyle
+                          .copyWith(color: Styles.mainColor),
                       hintStyle: const TextStyle(),
                       labelTextStyle: Styles.mainTextStyle.copyWith(
                           color: Styles.unslectedItemColor, fontSize: 16),
@@ -452,8 +453,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             child: Text(
                               data.name.toString(),
                               textAlign: TextAlign.center,
-                              style:
-                                  Styles.mainTextStyle.copyWith(fontSize: 14),
+                              style: Styles.mainTextStyle.copyWith(
+                                  fontSize: 14, color: Styles.mainColor),
                             ),
                           ),
                           onTap: () {},
@@ -610,8 +611,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             child: Text(
                               data.name.toString(),
                               textAlign: TextAlign.center,
-                              style:
-                                  Styles.mainTextStyle.copyWith(fontSize: 14),
+                              style: Styles.mainTextStyle.copyWith(
+                                  fontSize: 14, color: Styles.mainColor),
                             ),
                           ),
                           onTap: () {},

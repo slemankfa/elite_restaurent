@@ -157,6 +157,7 @@ class _ReservationAvalibleTabelsPageState
                                 return TableItem(
                                   table: _tablesList[index],
                                   time: widget.time,
+                                  noOfSeat: widget.numberOfSeats,
                                   date: widget.date,
                                   resturantDetails: widget.resturantDetails,
                                 );
@@ -177,11 +178,13 @@ class TableItem extends StatelessWidget {
     required this.table,
     required this.time,
     required this.date,
+    required this.noOfSeat,
   });
   final ResturantModel resturantDetails;
   final TableModel table;
   final String time;
   final String date;
+  final String noOfSeat;
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +197,7 @@ class TableItem extends StatelessWidget {
                   tableModel: table,
                   time: time,
                   date: date,
+                  noOfSeats: noOfSeat,
                   resturantDetails: resturantDetails)),
         );
       },

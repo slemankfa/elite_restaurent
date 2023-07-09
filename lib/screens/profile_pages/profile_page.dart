@@ -88,26 +88,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ]),
                             child: userModel == null
                                 ? Container()
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: CachedNetworkImage(
-                                      imageUrl: userModel.userImage.toString(),
-                                      height: 64,
-                                      width: 64,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Image.asset(
+                                : userModel.userImage == null
+                                    ? Image.asset(
                                         "assets/images/elite_logo.png",
-                                        width: 120,
-                                        height: 120,
+                                        width: 64,
+                                        height: 64,
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              userModel.userImage.toString(),
+                                          height: 64,
+                                          width: 64,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Image.asset(
+                                            "assets/images/elite_logo.png",
+                                            width: 120,
+                                            height: 120,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(
+                                            Icons.error,
+                                            size: 64,
+                                          ),
+                                        ),
                                       ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(
-                                        Icons.error,
-                                        size: 64,
-                                      ),
-                                    ),
-                                  ),
                           ),
                           const SizedBox(
                             height: 20,
