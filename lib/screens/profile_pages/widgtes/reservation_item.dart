@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:elite/core/helper_methods.dart';
@@ -10,7 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/custom_outline_button.dart';
 
-class ReservationItem extends StatelessWidget {
+class ReservationItem extends StatefulWidget {
   ReservationItem({
     super.key,
     required this.reservationModel,
@@ -20,7 +22,17 @@ class ReservationItem extends StatelessWidget {
   final ReservationModel reservationModel;
   final Function updateUI;
 
+  @override
+  State<ReservationItem> createState() => _ReservationItemState();
+}
+
+class _ReservationItemState extends State<ReservationItem>
+    with TickerProviderStateMixin {
   final HelperMethods _helperMethods = HelperMethods();
+
+  AnimationController? _controller;
+  int levelClock = 0;
+
   convertDate(String? date) {
     if (date == null) return "";
     // "2023-03-18T07:19:23.64"
@@ -28,10 +40,17 @@ class ReservationItem extends StatelessWidget {
     return DateFormat("dd MMM yyyy").format(tempDate);
   }
 
-  //  All = 0 ,Cancel = 1, Past = 2, Upcoming = 3
+  convertReminingTime(String? date) {
+    if (date == null) return null;
+    // "2023-03-18T07:19:23.64"
+    DateTime tempDate = DateFormat("hh:mm:ss", 'en_US').parse(date);
+    return tempDate;
+    // return DateFormat("hh:mm:ss").format(tempDate);
+  }
 
+  //  All = 0 ,Cancel = 1, Past = 2, Upcoming = 3
   String getResevationType() {
-    switch (reservationModel.status) {
+    switch (widget.reservationModel.status) {
       case 0:
         return "All";
       case 1:
@@ -49,10 +68,10 @@ class ReservationItem extends StatelessWidget {
     try {
       Provider.of<ReservationProvider>(context, listen: false)
           .cancelResrvation(
-              context: context, resvId: reservationModel.reservationId)
+              context: context, resvId: widget.reservationModel.reservationId)
           .then((status) {
         // Navigator.of(context).pop();
-        updateUI();
+        widget.updateUI();
         if (status) {
         } else {
           BotToast.showText(text: "Something went wrong!");
@@ -63,8 +82,62 @@ class ReservationItem extends StatelessWidget {
     }
   }
 
+  handleReminingTime() async {
+    try {
+      if (widget.reservationModel.reservationRemaningTime == "00:00:00") return;
+      DateTime? tempDate =
+          convertReminingTime(widget.reservationModel.reservationRemaningTime);
+      // return "00:00:00"
+
+      if (tempDate == null) return;
+      int sbuTotalMinutes = 15 - tempDate.minute;
+      // log("remaining time in minutes $sbuTotalMinutes");
+      int convertMinutesToSeconds = sbuTotalMinutes * 60;
+      levelClock = convertMinutesToSeconds;
+      // log("remaining time in seconds $convertMinutesToSeconds");
+      _controller = AnimationController(
+          vsync: this,
+          duration: Duration(
+              seconds:
+                  convertMinutesToSeconds) // gameData.levelClock is a user entered number elsewhere in the applciation
+          );
+
+      _controller!.forward();
+
+// will change time to "00:00:00"
+      _controller!.addListener(() {
+        if (_controller!.isCompleted) {
+          log("timer is finished");
+          setState(() {
+            widget.reservationModel.reservationRemaningTime = "00:00:00";
+          });
+        }
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    handleReminingTime();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    if (_controller != null) {
+      _controller!.dispose();
+    }
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    convertReminingTime(widget.reservationModel.reservationRemaningTime);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -101,7 +174,7 @@ class ReservationItem extends StatelessWidget {
                     onTap: () {
                       _helperMethods.showAlertDilog(
                           message:
-                              "Are you sure to cancel the reservation table ${reservationModel.tableNumber}?",
+                              "Are you sure to cancel the reservation table ${widget.reservationModel.tableNumber}?",
                           context: context,
                           function: () {
                             cancelReservation(context);
@@ -131,18 +204,18 @@ class ReservationItem extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Table ${reservationModel.tableNumber}",
+                  "Table ${widget.reservationModel.tableNumber}",
                   style: Styles.mainTextStyle.copyWith(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                       color: Styles.userNameColor),
                 ),
               ),
-              if (reservationModel.peopleCount != null)
+              if (widget.reservationModel.peopleCount != null)
                 Row(
                   children: [
                     Text(
-                      reservationModel.peopleCount.toString(),
+                      widget.reservationModel.peopleCount.toString(),
                       style: Styles.mainTextStyle.copyWith(
                         color: Styles.userNameColor,
                         fontSize: 16,
@@ -171,7 +244,7 @@ class ReservationItem extends StatelessWidget {
               ),
               Expanded(
                   child: Text(
-                "${convertDate(reservationModel.reservationDate)} ${reservationModel.reservationFromTime} To ${reservationModel.reservationToTime} ",
+                "${convertDate(widget.reservationModel.reservationDate)} ${widget.reservationModel.reservationFromTime} To ${widget.reservationModel.reservationToTime} ",
                 style: Styles.mainTextStyle.copyWith(
                   color: Styles.midGrayColor,
                   fontSize: 16,
@@ -183,7 +256,7 @@ class ReservationItem extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-          if (reservationModel.reservationNote.toString().isNotEmpty)
+          if (widget.reservationModel.reservationNote.toString().isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -199,16 +272,16 @@ class ReservationItem extends StatelessWidget {
                   height: 4,
                 ),
                 Text(
-                  reservationModel.reservationNote.toString(),
+                  widget.reservationModel.reservationNote.toString(),
                   style: Styles.mainTextStyle.copyWith(
-                    color: Styles.grayColor,
+                    color: Styles.midGrayColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
-          if (reservationModel.reservationRemaningTime != null)
+          if (widget.reservationModel.reservationRemaningTime != "00:00:00")
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -223,33 +296,39 @@ class ReservationItem extends StatelessWidget {
                 const SizedBox(
                   height: 12,
                 ),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                          text: 'You have ',
-                          style: Styles.mainTextStyle.copyWith(
-                            fontSize: 16,
-                            color: Styles.userNameColor,
-                          )),
-                      TextSpan(
-                        text: '00:14:59 minutes',
-                        style: Styles.mainTextStyle.copyWith(
-                            fontSize: 16,
-                            color: Styles.mainColor,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      TextSpan(
-                        text:
-                            ' to cancel your order, otherwise, your order will be confirmed by the restaurant automatically.',
-                        style: Styles.mainTextStyle.copyWith(
-                          fontSize: 16,
-                          color: Styles.userNameColor,
-                        ),
-                      ),
-                    ],
-                  ),
+                Countdown(
+                  animation: StepTween(
+                    begin: levelClock, // THIS IS A USER ENTERED NUMBER
+                    end: 0,
+                  ).animate(_controller!),
                 ),
+                // Text.rich(
+                //   TextSpan(
+                //     children: [
+                //       TextSpan(
+                //           text: 'You have ',
+                //           style: Styles.mainTextStyle.copyWith(
+                //             fontSize: 16,
+                //             color: Styles.userNameColor,
+                //           )),
+                //       TextSpan(
+                //         text: '00:14:59 minutes',
+                //         style: Styles.mainTextStyle.copyWith(
+                //             fontSize: 16,
+                //             color: Styles.mainColor,
+                //             fontWeight: FontWeight.bold),
+                //       ),
+                //       TextSpan(
+                //         text:
+                //             ' to cancel your order, otherwise, your order will be confirmed by the restaurant automatically.',
+                //         style: Styles.mainTextStyle.copyWith(
+                //           fontSize: 16,
+                //           color: Styles.userNameColor,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(
                   height: 12,
                 ),
@@ -277,6 +356,54 @@ class ReservationItem extends StatelessWidget {
                         fontWeight: FontWeight.bold)),
               ],
             )
+        ],
+      ),
+    );
+  }
+}
+
+class Countdown extends AnimatedWidget {
+  Countdown({required this.animation}) : super(listenable: animation);
+  Animation<int> animation;
+
+  @override
+  build(BuildContext context) {
+    Duration clockTimer = Duration(seconds: animation.value);
+
+    String timerText =
+        '${clockTimer.inHours.remainder(60).toString().padLeft(2, '0')}:${clockTimer.inMinutes.remainder(60).toString().padLeft(2, '0')}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+// return Text(
+    //   "$timerText",
+    //   style: TextStyle(
+    //     // fontSize: 110,
+    //     color: Colors.grey,
+    //   ),
+    // );
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+              text: 'You have ',
+              style: Styles.mainTextStyle.copyWith(
+                fontSize: 16,
+                color: Styles.userNameColor,
+              )),
+          TextSpan(
+            text: '${timerText} minutes',
+            style: Styles.mainTextStyle.copyWith(
+                fontSize: 16,
+                color: Styles.mainColor,
+                fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text:
+                ' to cancel your reservation, otherwise, your order will be confirmed by the restaurant automatically.',
+            style: Styles.mainTextStyle.copyWith(
+              fontSize: 16,
+              color: Styles.userNameColor,
+            ),
+          ),
         ],
       ),
     );

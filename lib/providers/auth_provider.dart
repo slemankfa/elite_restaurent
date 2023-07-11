@@ -331,7 +331,7 @@ class AuthProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     try {
       final token = await _helperMethods.getToken();
-
+      log(_userInformation!.userId.toString());
       Response deleteResponse = await _dio
           .delete("${API_URL}Users/${_userInformation?.userId.toString()}",
               options: Options(

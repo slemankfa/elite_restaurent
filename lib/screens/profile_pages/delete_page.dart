@@ -1,4 +1,4 @@
-import 'package:bot_toast/bot_toast.dart';
+import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/core/valdtion_helper.dart';
 import 'package:elite/models/user_model.dart';
@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/widgets/custom_form_field.dart';
 import '../../core/widgets/custom_outline_button.dart';
+import '../auth_pages/start_page.dart';
 
 class DeletePage extends StatefulWidget {
   const DeletePage({super.key});
@@ -21,6 +21,7 @@ class DeletePage extends StatefulWidget {
 class _DeletePageState extends State<DeletePage> {
   final ValidationHelper _validationHelper = ValidationHelper();
   final TextEditingController _passwordController = TextEditingController();
+  HelperMethods _helperMethods = HelperMethods();
 
   deleteAccount() async {
     try {
@@ -28,13 +29,13 @@ class _DeletePageState extends State<DeletePage> {
           .deleteAccount(context: context)
           .then((value) {
         if (value) {
-          // Navigator.pushAndRemoveUntil<dynamic>(
-          //   context,
-          //   MaterialPageRoute<dynamic>(
-          //     builder: (BuildContext context) => const StartPage(),
-          //   ),
-          //   (route) => false, //if you want to disable back feature set to false
-          // );
+          Navigator.pushAndRemoveUntil<dynamic>(
+            context,
+            MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const StartPage(),
+            ),
+            (route) => false, //if you want to disable back feature set to false
+          );
         }
       });
     } catch (e) {
@@ -193,26 +194,26 @@ class _DeletePageState extends State<DeletePage> {
                                     // SizedBox(
                                     //   height: 11,
                                     // ),
-                                    if (userModel.loginType != 2)
-                                      CustomFormField(
-                                        controller: _passwordController,
-                                        formatter: const [],
-                                        textInputType:
-                                            TextInputType.visiblePassword,
-                                        vladationFunction:
-                                            _validationHelper.validatePassword,
-                                        action: TextInputAction.done,
-                                        hintText: "",
-                                        isSecureField: true,
-                                        textStyle: Styles.mainTextStyle,
-                                        hintStyle: const TextStyle(),
-                                        labelTextStyle: Styles.mainTextStyle
-                                            .copyWith(
-                                                color:
-                                                    Styles.unslectedItemColor,
-                                                fontSize: 16),
-                                        label: "",
-                                      ),
+                                    // if (userModel.loginType != 2)
+                                    //   CustomFormField(
+                                    //     controller: _passwordController,
+                                    //     formatter: const [],
+                                    //     textInputType:
+                                    //         TextInputType.visiblePassword,
+                                    //     vladationFunction:
+                                    //         _validationHelper.validatePassword,
+                                    //     action: TextInputAction.done,
+                                    //     hintText: "",
+                                    //     isSecureField: true,
+                                    //     textStyle: Styles.mainTextStyle,
+                                    //     hintStyle: const TextStyle(),
+                                    //     labelTextStyle: Styles.mainTextStyle
+                                    //         .copyWith(
+                                    //             color:
+                                    //                 Styles.unslectedItemColor,
+                                    //             fontSize: 16),
+                                    //     label: "",
+                                    //   ),
                                   ],
                                 ),
                               ],
@@ -224,13 +225,19 @@ class _DeletePageState extends State<DeletePage> {
                           label: "Delete Account",
                           isIconVisible: true,
                           onPressedButton: () {
-                            if (userModel.loginType == 1) {
-                              if (_passwordController.text.trim().isEmpty) {
-                                BotToast.showText(text: "Enter password");
-                                return;
-                              }
-                            }
-                            deleteAccount();
+                            // if (userModel.loginType == 1) {
+                            //   if (_passwordController.text.trim().isEmpty) {
+                            //     BotToast.showText(text: "Enter password");
+                            //     return;
+                            //   }
+                            // }
+                            _helperMethods.showAlertDilog(
+                                message: "delete Confirmation ? ",
+                                context: context,
+                                function: () {
+                                  deleteAccount();
+                                });
+                            //
                           },
                           icon: Container(),
                           backGroundColor: Styles.cancelREdColor,

@@ -8,7 +8,7 @@ class ReservationModel {
   final String? reservationToTime;
   final String? reservationNote;
   final int? reservationAmountPaid;
-  final String? reservationRemaningTime;
+  String? reservationRemaningTime;
 
   ReservationModel({
     required this.status,

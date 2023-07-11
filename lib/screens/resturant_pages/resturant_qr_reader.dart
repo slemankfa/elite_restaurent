@@ -43,9 +43,12 @@ class _ResturantQrReaderState extends State<ResturantQrReader> {
     controller.scannedDataStream.listen((scanData) {
       // setState(() {
       result = scanData;
+      log(result!.toString());
+      log(result!.code.toString());
+      log(result!.format.toString());
+      log(result!.rawBytes.toString());
       moveToResturantMenu();
       // if (result != null) return;
-      // log(result!.code.toString());
 
       // log(result!.rawBytes.toString());
       // log(result!.format.toString());
