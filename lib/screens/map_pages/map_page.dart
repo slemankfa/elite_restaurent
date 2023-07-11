@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:elite/core/helper_methods.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/widgets/custom_outline_button.dart';
@@ -22,6 +24,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/resturant_provider.dart';
 import '../auth_pages/start_page.dart';
 import 'notifcation_page.dart';
+import 'package:permission_handler/permission_handler.dart' as ph;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -30,7 +33,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   final HelperMethods _helperMethods = HelperMethods();
   final LocationHelper _locationHelper = LocationHelper();
   int resturantsCount = 0;
@@ -51,6 +54,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
 // _resturantsListController.
     // _cursoerController.dispose()
@@ -72,6 +76,66 @@ class _MapPageState extends State<MapPage> {
     fetchRestursantsList();
 
     super.initState();
+  }
+
+  ph.PermissionStatus? _status;
+
+  enableCmaeraPermissions() async {
+    try {
+      var status = await Permission.camera.status;
+      if (status.isDenied) {
+        log("camera is denied");
+
+        // We didn't ask for permission yet or the permission has been denied before but not permanently.
+      } else if (status == ph.PermissionStatus.permanentlyDenied) {
+        log("[log] PermissionStatus.permanentlyDenied");
+      }
+      log(status.toString());
+      await Permission.camera.request();
+      // Permission.camera.status.asStream().map((event) {
+      //   log("From stream : " + event.toString());
+      // });
+    } catch (e) {}
+  }
+
+  // @override
+  // didChangeAppLifecycleState(AppLifecycleState state) {
+  //   log(state.toString());
+  //   if (state == AppLifecycleState.resumed) {
+  //     log("AppLifecycleState.resumed");
+  //     Permission.location.status.then((status) => _updateStatus);
+  //     // Permission
+  //     //     .checkPermissionStatus(PermissionGroup.locationWhenInUse)
+  //     //     .then(_updateStatus);
+  //   }
+  // }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      //TODO: set status to online here in firestore
+      log("client is online");
+    } else {
+      //TODO: set status to offline here in firestore
+      log("client is offline");
+    }
+  }
+
+  void _updateStatus(ph.PermissionStatus status) {
+    if (status != _status) {
+      // check status has changed
+      setState(() {
+        _status = status; // update
+      });
+    } else {
+      if (status != ph.PermissionStatus.granted) {
+        Permission.location.request().then((status) {
+          log(status.toString());
+        });
+        // PermissionHandler().requestPermissions(
+        //     [PermissionGroup.locationWhenInUse]).then(_onStatusRequested);
+      }
+    }
   }
 
   Future refreshList() async {
@@ -614,7 +678,7 @@ class _MapPageState extends State<MapPage> {
             bottom: 16,
             left: 16,
             right: 16,
-            height: MediaQuery.of(context).size.height * 0.25,
+            // height: MediaQuery.of(context).size.height * 0.25,
             child: _isLoading
                 ? Center(
                     child: _helperMethods.progressIndcator(),
@@ -693,7 +757,7 @@ class _MapPageState extends State<MapPage> {
                                 autoPlay: false,
                                 enlargeCenterPage: true,
                                 viewportFraction: 0.8,
-                                aspectRatio: 1,
+                                aspectRatio: 1.5,
                                 disableCenter: true,
                                 reverse: false,
                                 enableInfiniteScroll: false,

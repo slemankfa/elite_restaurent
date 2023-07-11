@@ -954,6 +954,8 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         mode: CupertinoDatePickerMode.time,
                         controller: _timePickerSpinnerController,
                         initTime: DateTime.now(),
+                        paddingHorizontal: 20,
+                        // pressType: PressType.,
                         minTime:
                             DateTime.now().subtract(const Duration(days: 10)),
                         maxTime: DateTime.now().add(const Duration(days: 10)),
@@ -987,7 +989,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                                       .withOpacity(0.12),
                                   borderRadius: BorderRadius.circular(6)),
                               child: Text(
-                                "${dateTime.hour} : ${dateTime.minute} ",
+                                "${dateTime.hour.toString().padLeft(2, '0')} : ${dateTime.minute.toString().padLeft(2, '0')} ",
                                 style:
                                     Styles.mainTextStyle.copyWith(fontSize: 20),
                               ),

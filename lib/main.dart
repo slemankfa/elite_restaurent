@@ -38,7 +38,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(EasyLocalization(
-        supportedLocales: const [Locale('en'), Locale('ar')],
+        supportedLocales: const [Locale('en')],
         path:
             'assets/translations', // <-- change the path of the translation files
         fallbackLocale: const Locale('en'),

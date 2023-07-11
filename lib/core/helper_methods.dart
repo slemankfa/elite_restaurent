@@ -6,7 +6,8 @@ import 'package:elite/core/widgets/custom_outline_button.dart';
 import 'package:elite/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:permission_handler/permission_handler.dart'
+    as permissionhandler;
 
 class HelperMethods {
   static final HelperMethods _helperMethods = HelperMethods._internal();
@@ -17,6 +18,13 @@ class HelperMethods {
   }
 
   HelperMethods._internal();
+
+  openAppSettingToEnable() async {
+    permissionhandler.openAppSettings();
+    // permissionhandler.PermissionStatus locStatus =
+    //     await permissionhandler.Permission.location.request();
+    // print("Location status : $locStatus");
+  }
 
   Widget progressIndcator() {
     return const Center(

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:elite/models/table_model.dart';
@@ -142,15 +141,15 @@ class ReservationProvider with ChangeNotifier {
       if (tempUser == null) {
         return false;
       }
-      log(restId);
-      log(tempUser.userId);
-      log("${date}T$time");
-      log(table.id);
-      log(time);
-      log(toTime);
-      log(remindSms.toString());
-      log(note);
-      log(noOfSeats);
+      // log(restId);
+      // log(tempUser.userId);
+      // log("${date}T$time");
+      // log(table.id);
+      // log(time);
+      // log(toTime);
+      // log(remindSms.toString());
+      // log(note);
+      // log(noOfSeats);
       Response response = await _dio.post("${API_URL}Reservations",
           options: Options(
             headers: {
