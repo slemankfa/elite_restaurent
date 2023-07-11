@@ -43,11 +43,9 @@ class _ResturantQrReaderState extends State<ResturantQrReader> {
     controller.scannedDataStream.listen((scanData) {
       // setState(() {
       result = scanData;
-      log(result!.toString());
-      log(result!.code.toString());
-      log(result!.format.toString());
-      log(result!.rawBytes.toString());
-      moveToResturantMenu();
+      // log(result!.code.toString());
+      if (result!.code == null) return;
+      moveToResturantMenu(result!.code.toString());
       // if (result != null) return;
 
       // log(result!.rawBytes.toString());
@@ -56,9 +54,13 @@ class _ResturantQrReaderState extends State<ResturantQrReader> {
     });
   }
 
-  moveToResturantMenu() async {
+  moveToResturantMenu(String QrCode) async {
     if (!_isreadQrCode) {
-      Provider.of<CartProvider>(context, listen: false).tableIdFromQr = "1";
+      // first index resturant , second index for table id ;
+      List<String> idsList = QrCode.split(",");
+      if (idsList.length < 2) return;
+      Provider.of<CartProvider>(context, listen: false).tableIdFromQr =
+          idsList[1];
       Navigator.push(
         context,
         MaterialPageRoute(

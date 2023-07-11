@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:elite/core/helper_methods.dart';
 import 'package:elite/core/styles.dart';
 import 'package:elite/core/valdtion_helper.dart';
@@ -25,6 +26,8 @@ class _DeletePageState extends State<DeletePage> {
 
   deleteAccount() async {
     try {
+      BotToast.showText(text: "Will be available soon!");
+      return ;
       Provider.of<AuthProvider>(context, listen: false)
           .deleteAccount(context: context)
           .then((value) {

@@ -150,7 +150,9 @@ class OrderItem extends StatelessWidget {
           CustomOutlinedButton(
               label: "View Details",
               isIconVisible: true,
-              onPressedButton: () {},
+              onPressedButton: () {
+                BotToast.showText(text: "Will be available soon!");
+              },
               icon: Container(),
               rectangleBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),

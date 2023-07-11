@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:elite/models/table_model.dart';
 import 'package:flutter/material.dart';
@@ -140,12 +142,21 @@ class ReservationProvider with ChangeNotifier {
       if (tempUser == null) {
         return false;
       }
+      log(restId);
+      log(tempUser.userId);
+      log("${date}T$time");
+      log(table.id);
+      log(time);
+      log(toTime);
+      log(remindSms.toString());
+      log(note);
+      log(noOfSeats);
       Response response = await _dio.post("${API_URL}Reservations",
           options: Options(
             headers: {
               "Accept": "application/json",
               "content-type": "application/json",
-              // "Authorization": token
+              "Authorization": token
             },
           ),
           data: {
@@ -162,6 +173,31 @@ class ReservationProvider with ChangeNotifier {
             "isCancel": true,
             "isClose": true,
           });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> cancelReservation({required String reservationID}) async {
+    try {
+      // print(mealsDetails.toString());
+      final token = await _helperMethods.getToken();
+      final UserModel? tempUser = await _helperMethods.getUser();
+      if (tempUser == null) {
+        return false;
+      }
+      Response response = await _dio.post(
+        "${API_URL}Reservations/ReservationCancel?ReservationID=$reservationID",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": token
+          },
+        ),
+      );
       return true;
     } catch (e) {
       print(e.toString());
