@@ -160,7 +160,7 @@ class _MyReservationListPageState extends State<MyReservationListPage> {
                           ),
                         )
                       : Expanded(
-                          child: ListView.separated(
+                          child: ListView.separated( 
                             itemBuilder: (context, index) => ReservationItem(
                               reservationModel: _reservationList[index],
                               updateUI: fetchReservations,

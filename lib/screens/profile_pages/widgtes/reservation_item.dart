@@ -71,8 +71,9 @@ class _ReservationItemState extends State<ReservationItem>
               context: context, resvId: widget.reservationModel.reservationId)
           .then((status) {
         // Navigator.of(context).pop();
-        widget.updateUI();
+
         if (status) {
+          widget.updateUI();
         } else {
           BotToast.showText(text: "Something went wrong!");
         }
@@ -336,13 +337,13 @@ class _ReservationItemState extends State<ReservationItem>
                     label: "Cancel reservation",
                     isIconVisible: true,
                     onPressedButton: () {
-                      // _helperMethods.showAlertDilog(
-                      //     message:
-                      //         "Are you sure to cancel the order #${orderModel.orderId}?",
-                      //     context: context,
-                      //     function: () {
-                      //       // cancelOrder(context);
-                      //     });
+                      _helperMethods.showAlertDilog(
+                          message:
+                              "Are you sure to cancel the reservation table ${widget.reservationModel.tableNumber}?",
+                          context: context,
+                          function: () {
+                            cancelReservation(context);
+                          });
                     },
                     icon: Container(),
                     backGroundColor: Styles.listTileBorderColr,

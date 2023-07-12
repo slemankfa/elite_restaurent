@@ -954,7 +954,7 @@ class _ResturentDetailPageState extends State<ResturentDetailPage>
                         mode: CupertinoDatePickerMode.time,
                         controller: _timePickerSpinnerController,
                         initTime: DateTime.now(),
-                        paddingHorizontal: 20,
+                        // paddingHorizontal: 20,
                         // pressType: PressType.,
                         minTime:
                             DateTime.now().subtract(const Duration(days: 10)),

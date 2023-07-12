@@ -62,6 +62,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     addCustomIcon();
     _resturantsListController.addListener(() {
       if (_resturantsListController.position.pixels ==
@@ -114,26 +115,34 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       //TODO: set status to online here in firestore
-      log("client is online");
+      // log("client is online");
+      Permission.location.status.then((status) {
+        // log("rusemed status " + status.toString());
+        _updateStatus(status);
+      });
+
+      // Permission
+      //     .checkPermissionStatus(PermissionGroup.locationWhenInUse)
+      //     .then(_updateStatus);
     } else {
       //TODO: set status to offline here in firestore
-      log("client is offline");
+      // log("client is offline");
     }
   }
 
   void _updateStatus(ph.PermissionStatus status) {
+    // log(status.toString());
     if (status != _status) {
       // check status has changed
       setState(() {
         _status = status; // update
       });
+      refreshList();
     } else {
       if (status != ph.PermissionStatus.granted) {
         Permission.location.request().then((status) {
           log(status.toString());
         });
-        // PermissionHandler().requestPermissions(
-        //     [PermissionGroup.locationWhenInUse]).then(_onStatusRequested);
       }
     }
   }
@@ -254,11 +263,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                                 // RestartWidget.restartApp(context);
                                 // (context as Element).reassemble();
                                 Navigator.of(context).pop();
-                                Future.delayed(const Duration(seconds: 2))
-                                    .then((value) {
-                                  print("sdasdasd");
-                                  fetchRestursantsList();
-                                });
+                                // Future.delayed(const Duration(seconds: 2))
+                                //     .then((value) {
+                                //   fetchRestursantsList();
+                                // });
 
                                 // Navigator.push(
                                 //   context,

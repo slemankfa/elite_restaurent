@@ -179,28 +179,28 @@ class ReservationProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> cancelReservation({required String reservationID}) async {
-    try {
-      // print(mealsDetails.toString());
-      final token = await _helperMethods.getToken();
-      final UserModel? tempUser = await _helperMethods.getUser();
-      if (tempUser == null) {
-        return false;
-      }
-      Response response = await _dio.post(
-        "${API_URL}Reservations/ReservationCancel?ReservationID=$reservationID",
-        options: Options(
-          headers: {
-            "Accept": "application/json",
-            "content-type": "application/json",
-            "Authorization": token
-          },
-        ),
-      );
-      return true;
-    } catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
+  // Future<bool> cancelReservation({required String reservationID}) async {
+  //   try {
+  //     // print(mealsDetails.toString());
+  //     final token = await _helperMethods.getToken();
+  //     final UserModel? tempUser = await _helperMethods.getUser();
+  //     if (tempUser == null) {
+  //       return false;
+  //     }
+  //     Response response = await _dio.post(
+  //       "${API_URL}Reservations/ReservationCancel?ReservationID=$reservationID",
+  //       options: Options(
+  //         headers: {
+  //           "Accept": "application/json",
+  //           "content-type": "application/json",
+  //           "Authorization": token
+  //         },
+  //       ),
+  //     );
+  //     return true;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return false;
+  //   }
+  // }
 }
